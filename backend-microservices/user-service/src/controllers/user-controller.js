@@ -1,8 +1,11 @@
-//nguoi dung dang ky
 
-const logger = require('../utils/logger')
-const { validatateRegistration } = require('../utils/validation')
+const User = require('../models/user');
+const generateTokens = require('../utils/generateToken');
+const logger = require('../utils/logger');
+const { validateRegistration } = require('../utils/validation');
 
+
+//dang ky nguoi dung
 const registerUser = async (req, res) => {
     logger.info('Registration endpoint hit...')
     try {
@@ -15,7 +18,7 @@ const registerUser = async (req, res) => {
             });
         }
         const { email, password, username } = req.body
-        let user = await Use.findOne({ $or: [{ email }, { username }] })
+        let user = await User.findOne({ $or: [{ email }, { username }] })
         if (user) {
             logger.warn("nguoi dung da ton tai");
             return res.status(400).json({
@@ -28,7 +31,23 @@ const registerUser = async (req, res) => {
         await user.save();
         logger.warn("User saved successfully", user._id);
 
-        const {} = 
+        const {accessToken, refreshToken} = await generateTokens(user)
+        
+        res.status(201).json({
+            success : true,
+            message : 'User registered successfully',
+            accessToken,
+            refreshToken,
+        })
 
-    } catch (e) { }
-}
+    } catch (e) {
+        logger.error('loi dang ky: ', e)
+        res.status(500).json({
+            success : false,
+            message : 'Internal server error',
+        })
+    }
+};
+
+
+module.exports = { registerUser };
