@@ -1,7 +1,7 @@
 
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const refreshToken = require('../models/refreshToken');
+const RefreshToken = require('../models/refreshToken');
 
 const generateTokens = async(user) => {
     const accessToken = jwt.sign({
@@ -9,17 +9,17 @@ const generateTokens = async(user) => {
         username : user.username,
     }, process.env.JWT_SECRET, {expiresIn : '60m'})
 
-    const refreshToken = crypto.randomBytes(40).toString('hex');
+    const refreshTokenString = crypto.randomBytes(40).toString('hex');
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7) // token het han trong 7 ngay
 
-    await refreshToken.create({
-        token : refreshToken,
+    await RefreshToken.create({
+        token : refreshTokenString,
         user : user._id,
         expiresAt
     })
 
-    return {accessToken, refreshToken}
+    return {accessToken, refreshToken: refreshTokenString}
 }
 
 module.exports = generateTokens;
