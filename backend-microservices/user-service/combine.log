@@ -62,3 +62,15 @@
 {"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-16T19:56:33.858Z"}
 {"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-16T19:56:34.098Z"}
 {"buffer":{"data":[104,241,77,242,227,144,7,133,183,163,149,2],"type":"Buffer"},"level":"warn","message":"User saved successfully","service":"user-service","timestamp":"2025-10-16T19:56:34.344Z"}
+{"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-10-16T21:25:16.922Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-16T21:25:16.929Z"}
+{"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-16T21:25:16.936Z"}
+{"buffer":{"data":[104,241,98,189,227,144,7,133,183,163,149,7],"type":"Buffer"},"level":"warn","message":"User saved successfully","service":"user-service","timestamp":"2025-10-16T21:25:17.191Z"}
+{"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-10-16T21:36:12.064Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-16T21:36:12.065Z"}
+{"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-16T21:36:12.068Z"}
+{"0":"\"","1":"p","10":" ","11":"m","12":"u","13":"s","14":"t","15":" ","16":"b","17":"e","18":" ","19":"a","2":"a","20":" ","21":"s","22":"t","23":"r","24":"i","25":"n","26":"g","3":"s","4":"s","5":"w","6":"o","7":"r","8":"d","9":"\"","level":"warn","message":"Validation error","service":"user-service","timestamp":"2025-10-16T21:36:12.096Z"}
+{"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-10-16T21:36:22.054Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-16T21:36:22.054Z"}
+{"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-16T21:36:22.057Z"}
+{"buffer":{"data":[104,241,101,86,227,144,7,133,183,163,149,12],"type":"Buffer"},"level":"warn","message":"User saved successfully","service":"user-service","timestamp":"2025-10-16T21:36:22.293Z"}
