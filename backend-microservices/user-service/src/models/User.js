@@ -41,7 +41,7 @@ userSchema.pre('save', async function(next){
 
 userSchema.methods.comparePassword = async function(password){
     try{
-        return await argon2.verify(this.password, candidatePassword)
+        return await argon2.verify(this.password, password)
     }catch(error){
         throw error
     }

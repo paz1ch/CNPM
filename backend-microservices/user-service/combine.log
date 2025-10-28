@@ -195,3 +195,217 @@
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:26:37.623Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:26:38.274Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:27:00.221Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:27:01.716Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:27:02.434Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:35:44.176Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:35:44.963Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:35:47.935Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:35:48.687Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:36:24.340Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:36:24.995Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:36:30.262Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:36:30.998Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:36:56.737Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:36:57.540Z"}
+{"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-10-28T03:40:33.512Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-28T03:40:33.513Z"}
+{"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-28T03:40:33.517Z"}
+{"level":"warn","message":"nguoi dung da ton tai","service":"user-service","timestamp":"2025-10-28T03:40:33.593Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-28T03:40:58.331Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-28T03:40:58.332Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-28T03:40:58.335Z"}
+{"0":"\"","1":"u","10":" ","11":"i","12":"s","13":" ","14":"n","15":"o","16":"t","17":" ","18":"a","19":"l","2":"s","20":"l","21":"o","22":"w","23":"e","24":"d","3":"e","4":"r","5":"n","6":"a","7":"m","8":"e","9":"\"","level":"warn","message":"Validation error","service":"user-service","timestamp":"2025-10-28T03:40:58.339Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-28T03:41:07.099Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-28T03:41:07.100Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-28T03:41:07.101Z"}
+{"level":"error","message":"Login error occured:  candidatePassword is not defined","service":"user-service","stack":"ReferenceError: candidatePassword is not defined\n    at userSchema.methods.comparePassword (D:\\ReactNativeProjects\\food-del\\backend-microservices\\user-service\\src\\models\\user.js:44:51)\n    at loginUser (D:\\ReactNativeProjects\\food-del\\backend-microservices\\user-service\\src\\controllers\\user-controller.js:76:44)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-10-28T03:41:07.164Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:45:15.868Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:45:16.707Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-28T03:45:26.808Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-28T03:45:26.808Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-28T03:45:26.814Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-28T03:46:23.434Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-28T03:46:23.435Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-28T03:46:23.436Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-28T03:46:25.858Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-28T03:46:25.860Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-28T03:46:25.861Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:47:44.121Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:47:45.963Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:47:46.599Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:47:49.056Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:47:49.751Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:47:53.672Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:47:54.357Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:48:24.243Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:48:25.086Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:48:31.987Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:48:33.600Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:48:34.309Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:48:41.690Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:48:42.373Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:48:47.737Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:48:48.564Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:06.941Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:07.630Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:09.418Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:10.051Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:15.916Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:16.553Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:23.870Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:24.562Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:27.859Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:28.510Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:31.271Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:31.916Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:34.365Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:37.143Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:41.158Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:41.810Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:51.903Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:52.644Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:54.969Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:49:55.618Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:49:58.600Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:00.713Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:50:01.392Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:04.218Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:50:04.914Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:15.265Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:50:16.002Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:28.489Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:50:29.098Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:32.230Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:50:32.863Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:37.927Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:50:38.628Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:52.222Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:50:52.986Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:50:56.977Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:51:04.629Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:51:05.422Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:51:15.107Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:51:15.851Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:51:28.763Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:51:29.447Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:51:34.825Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:51:35.523Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:51:41.572Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:51:42.207Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:51:50.876Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:51:57.109Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:51:57.854Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:52:03.152Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:52:03.823Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:52:10.946Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:52:15.255Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:52:15.930Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:52:23.450Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:52:24.139Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:52:36.310Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:52:36.977Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:53:01.877Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:53:02.745Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:53:30.529Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:53:31.152Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:54:08.286Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:54:09.124Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:54:12.285Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:54:14.438Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:54:15.108Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:54:46.486Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:54:47.122Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:02.180Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:55:03.010Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:07.394Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:55:08.105Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:15.954Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:17.974Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:55:18.800Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:21.872Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:55:22.616Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:29.399Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:55:30.102Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:45.913Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:55:46.570Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:55:57.246Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:55:57.997Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:56:36.182Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:56:37.016Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:11.322Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:12.124Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:15.667Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:16.463Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:23.256Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:23.929Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:27.192Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:27.807Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:30.724Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:31.356Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:34.319Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:36.102Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:38.162Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:38.903Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:45.597Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:46.233Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:50.897Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:51.598Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:54.674Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:55.331Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:57:57.368Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:57:58.068Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:03.004Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:03.720Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:07.434Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:08.130Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:18.271Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:18.946Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:26.351Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:26.961Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:33.828Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:35.986Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:36.672Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:40.168Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:40.940Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:50.951Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:51.601Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:58:55.260Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:58:55.969Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:59:08.173Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:59:08.867Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:59:19.539Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:59:20.254Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:59:25.302Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:59:26.030Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:59:38.686Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:59:39.407Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T03:59:57.041Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T03:59:57.780Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:00:16.866Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:00:17.555Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:00:19.868Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:00:20.597Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:00:27.911Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:00:28.549Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:00:38.476Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:00:39.255Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:00:53.857Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:00:54.611Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:01:15.518Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:01:16.244Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:01:33.145Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:01:33.995Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:01:42.174Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:01:42.936Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:01:48.342Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:01:49.031Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:01:58.924Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:01:59.643Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:02:03.344Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:02:04.006Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:02:06.826Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:02:07.536Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:02:16.033Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:02:16.718Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-28T04:02:18.541Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-28T04:02:19.256Z"}
