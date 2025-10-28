@@ -25,3 +25,12 @@
 {"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-10-16T21:27:26.663Z"}
 {"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-10-16T21:27:26.667Z"}
 {"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-10-16T21:27:26.668Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-10-16T21:36:12.049Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-16T21:36:12.050Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-10-16T21:36:12.101Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-10-16T21:36:22.049Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-16T21:36:22.049Z"}
+{"level":"info","message":"Response received from user service: 201","service":"api-gateway","timestamp":"2025-10-16T21:36:22.362Z"}
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-10-16T21:58:50.688Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-10-16T21:58:50.693Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-10-16T21:58:50.694Z"}

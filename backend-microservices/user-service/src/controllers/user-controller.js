@@ -5,7 +5,7 @@ const logger = require('../utils/logger');
 const { validateRegistration } = require('../utils/validation');
 
 
-//dang ky nguoi dung
+//dang ky 
 const registerUser = async (req, res) => {
     logger.info('Registration endpoint hit...')
     try {
@@ -31,23 +31,36 @@ const registerUser = async (req, res) => {
         await user.save();
         logger.warn("User saved successfully", user._id);
 
-        const {accessToken, refreshToken} = await generateTokens(user)
-        
+        const { accessToken, refreshToken } = await generateTokens(user)
+
         res.status(201).json({
-            success : true,
-            message : 'User registered successfully',
+            success: true,
+            message: 'User registered successfully',
             accessToken,
             refreshToken,
         })
 
     } catch (e) {
-        logger.error('loi dang ky: ', e)
+        logger.error('Registration error occured: ', e)
         res.status(500).json({
-            success : false,
-            message : 'Internal server error',
+            success: false,
+            message: 'Internal server error',
         })
     }
 };
 
+// dang nhap
+const loginUser = async (req, res) => {
+    logger.info("Login endpoint hit...");
+    try {
+
+    } catch (e) {
+        logger.error('Login error occured: ', e)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        })
+    }
+}
 
 module.exports = { registerUser };
