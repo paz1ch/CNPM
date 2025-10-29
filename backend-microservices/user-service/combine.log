@@ -546,3 +546,33 @@
 {"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-29T13:53:12.163Z"}
 {"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T13:53:12.164Z"}
 {"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T13:53:12.167Z"}
+{"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-10-29T14:19:13.611Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:19:13.611Z"}
+{"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:19:13.614Z"}
+{"level":"warn","message":"nguoi dung da ton tai","service":"user-service","timestamp":"2025-10-29T14:19:13.670Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-29T14:19:19.535Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:19:19.536Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:19:19.537Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-29T14:19:37.258Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:19:37.259Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:19:37.270Z"}
+{"level":"warn","message":"Invalid password","service":"user-service","timestamp":"2025-10-29T14:19:37.415Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-29T14:30:24.015Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:30:24.015Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:30:24.016Z"}
+{"level":"warn","message":"Invalid password","service":"user-service","timestamp":"2025-10-29T14:30:24.176Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-29T14:30:30.091Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:30:30.092Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:30:30.093Z"}
+{"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-10-29T14:30:42.486Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:30:42.486Z"}
+{"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:30:42.487Z"}
+{"level":"warn","message":"nguoi dung da ton tai","service":"user-service","timestamp":"2025-10-29T14:30:42.538Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-29T14:30:46.796Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:30:46.796Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:30:46.798Z"}
+{"level":"info","message":"Received POST request to /api/auth/login","service":"user-service","timestamp":"2025-10-29T14:30:49.943Z"}
+{"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-29T14:30:49.944Z"}
+{"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:30:49.946Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-29T15:38:12.840Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-29T15:38:13.603Z"}
