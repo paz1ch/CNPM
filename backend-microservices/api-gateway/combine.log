@@ -67,3 +67,30 @@
 {"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-10-28T03:46:25.860Z"}
 {"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T03:46:25.860Z"}
 {"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-10-28T03:46:26.079Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-10-28T06:43:38.266Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:43:38.267Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-10-28T06:43:39.395Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-10-28T06:43:43.295Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:43:43.296Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-10-28T06:43:43.362Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-10-28T06:44:40.233Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:44:40.234Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-10-28T06:44:40.305Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-10-28T06:44:52.676Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:44:52.677Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-10-28T06:44:52.741Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-10-28T06:44:59.141Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:44:59.142Z"}
+{"level":"info","message":"Response received from user service: 201","service":"api-gateway","timestamp":"2025-10-28T06:44:59.431Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-10-28T06:45:09.456Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:45:09.457Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-10-28T06:45:09.467Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-10-28T06:45:18.614Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:45:18.615Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-10-28T06:45:18.823Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-10-28T06:45:21.542Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:45:21.543Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-10-28T06:45:21.763Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-10-28T06:45:23.045Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-28T06:45:23.046Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-10-28T06:45:23.260Z"}
