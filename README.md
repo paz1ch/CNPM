@@ -1,1 +1,6 @@
-Fast food delivery website / Web app using React js
+Fast food delivery website / Web app 
+
+FE: reactjs
+BE: expressjs
+DB: MongoDB
+Tools: PostMan, RabbitMQ
