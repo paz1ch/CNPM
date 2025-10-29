@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/paz1ch/CNPM/issues"
   },
-  "homepage": "https://github.com/paz1ch/CNPM#readme"
+  "homepage": "https://github.com/paz1ch/CNPM#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
