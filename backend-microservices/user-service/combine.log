@@ -576,3 +576,7 @@
 {"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:30:49.946Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-29T15:38:12.840Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-29T15:38:13.603Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-30T06:38:07.696Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-30T06:38:08.482Z"}
+{"level":"info","message":"Received GET request to /","service":"user-service","timestamp":"2025-10-30T06:39:45.604Z"}
+{"level":"info","message":"Request body, undefined","service":"user-service","timestamp":"2025-10-30T06:39:45.605Z"}
