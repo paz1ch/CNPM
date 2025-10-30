@@ -576,6 +576,7 @@
 {"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-10-29T14:30:49.946Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-29T15:38:12.840Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-29T15:38:13.603Z"}
+<<<<<<< HEAD
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-30T06:27:05.925Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-30T06:27:06.722Z"}
 {"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-10-30T06:32:23.654Z"}
@@ -600,3 +601,9 @@
 {"level":"info","message":"Request body, [object Object]","service":"user-service","timestamp":"2025-10-30T07:52:01.095Z"}
 {"level":"info","message":"Registration endpoint hit...","service":"user-service","timestamp":"2025-10-30T07:52:01.097Z"}
 {"buffer":{"data":[105,3,25,33,38,51,169,182,52,178,226,60],"type":"Buffer"},"level":"warn","message":"User saved successfully","service":"user-service","timestamp":"2025-10-30T07:52:01.304Z"}
+=======
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-10-30T06:38:07.696Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-10-30T06:38:08.482Z"}
+{"level":"info","message":"Received GET request to /","service":"user-service","timestamp":"2025-10-30T06:39:45.604Z"}
+{"level":"info","message":"Request body, undefined","service":"user-service","timestamp":"2025-10-30T06:39:45.605Z"}
+>>>>>>> 0f7e69a57b011aa3a173af7a2410d4ed87db1b68

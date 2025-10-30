@@ -130,6 +130,7 @@
 {"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-10-29T15:38:11.069Z"}
 {"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-10-29T15:38:11.074Z"}
 {"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-10-29T15:38:11.075Z"}
+<<<<<<< HEAD
 {"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-10-30T06:12:30.548Z"}
 {"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-10-30T06:12:30.554Z"}
 {"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-10-30T06:12:30.555Z"}
@@ -208,3 +209,15 @@
 {"level":"info","message":"Received POST request to /v1/products/create-product","service":"api-gateway","timestamp":"2025-10-30T07:56:16.644Z"}
 {"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-30T07:56:16.645Z"}
 {"level":"info","message":"Response received from Product service: 201","service":"api-gateway","timestamp":"2025-10-30T07:56:16.787Z"}
+=======
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-10-30T06:36:41.790Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-10-30T06:36:41.794Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-10-30T06:36:41.795Z"}
+{"level":"info","message":"Received GET request to /","service":"api-gateway","timestamp":"2025-10-30T06:37:24.123Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-10-30T06:37:24.125Z"}
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-10-30T06:37:48.508Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-10-30T06:37:48.512Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-10-30T06:37:48.513Z"}
+{"level":"info","message":"Received GET request to /","service":"api-gateway","timestamp":"2025-10-30T06:39:43.438Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-10-30T06:39:43.439Z"}
+>>>>>>> 0f7e69a57b011aa3a173af7a2410d4ed87db1b68
