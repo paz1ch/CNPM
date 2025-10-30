@@ -193,3 +193,18 @@
 {"level":"info","message":"Received POST request to /v1/products/create-product","service":"api-gateway","timestamp":"2025-10-30T07:31:30.513Z"}
 {"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-30T07:31:30.514Z"}
 {"level":"info","message":"Response received from Product service: 500","service":"api-gateway","timestamp":"2025-10-30T07:31:30.527Z"}
+{"level":"info","message":"Received POST request to /v1/products/create-product","service":"api-gateway","timestamp":"2025-10-30T07:49:33.073Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-30T07:49:33.073Z"}
+{"level":"warn","message":"Invalid token!","service":"api-gateway","timestamp":"2025-10-30T07:49:33.075Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-10-30T07:49:39.650Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-30T07:49:39.650Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-10-30T07:49:39.941Z"}
+{"level":"info","message":"Received POST request to /v1/products/create-product","service":"api-gateway","timestamp":"2025-10-30T07:49:54.745Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-30T07:49:54.746Z"}
+{"level":"info","message":"Response received from Product service: 201","service":"api-gateway","timestamp":"2025-10-30T07:49:54.884Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-10-30T07:52:01.092Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-30T07:52:01.093Z"}
+{"level":"info","message":"Response received from user service: 201","service":"api-gateway","timestamp":"2025-10-30T07:52:01.362Z"}
+{"level":"info","message":"Received POST request to /v1/products/create-product","service":"api-gateway","timestamp":"2025-10-30T07:56:16.644Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-10-30T07:56:16.645Z"}
+{"level":"info","message":"Response received from Product service: 201","service":"api-gateway","timestamp":"2025-10-30T07:56:16.787Z"}
