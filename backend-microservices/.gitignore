@@ -1,4 +1,8 @@
 node_modules
 .env
-combine.log
-error.log
+
+#logs
+logs
+*.log
+combine.log*
+error.log*
