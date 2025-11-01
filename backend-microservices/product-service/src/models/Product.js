@@ -1,20 +1,6 @@
 const mongoose = require('mongoose');
 
-const reviewSchema = new mongoose.Schema({
-    userId: {
-        type: String,
-        required: true,
-    },
-    rating: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5,
-    },
-    comment: {
-        type: String,
-    },
-}, { timestamps: true });
+
 
 const addOnSchema = new mongoose.Schema({
     name: {
@@ -57,17 +43,7 @@ const ProductSchema = new mongoose.Schema({
         ref: 'Restaurant',
         required: true,
     },
-    ratings: {
-        average: {
-            type: Number,
-            default: 0,
-        },
-        count: {
-            type: Number,
-            default: 0,
-        },
-    },
-    reviews: [reviewSchema],
+
     isAvailable: {
         type: Boolean,
         default: true,

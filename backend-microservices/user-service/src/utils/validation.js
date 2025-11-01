@@ -2,9 +2,10 @@ const Joi = require('joi');
 
 const validateRegistration = (data) =>{
     const schema = Joi.object({
-        username: Joi.string().min(3).max(50).required(),
+        username: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(6).required(),
+        role: Joi.string().valid('user', 'admin', 'restaurant')
     });
 
     return schema.validate(data);

@@ -1,6 +1,6 @@
 const Product = require('../models/Product');
 const logger = require('../utils/logger');
-const { validateCreateProduct, validateUpdateProduct, validateCreateReview } = require('../utils/validation');
+const { validateCreateProduct } = require('../utils/validation');
 
 // @desc    Create a new product
 // @route   POST /api/products
@@ -19,6 +19,7 @@ const createProduct = async (req, res) => {
 
         const product = new Product({
             ...req.body,
+            restaurantId: req.body.restaurantId, // Add restaurantId
         });
 
         await product.save();
@@ -106,18 +107,20 @@ const getProductById = async (req, res) => {
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
     try {
-        const { error } = validateUpdateProduct(req.body);
-        if (error) {
-            logger.warn('Validation error', error.details[0].message);
-            return res.status(400).json({
-                success: false,
-                message: error.details[0].message,
-            });
-        }
+
 
         const product = await Product.findById(req.params.id);
 
         if (product) {
+            // Authorization check
+            if (req.user.role === 'restaurant' && product.restaurantId.toString() !== req.user._id) {
+                logger.warn(`User ${req.user._id} is not authorized to update this product`);
+                return res.status(403).json({
+                    success: false,
+                    message: "Not authorized to update this product",
+                });
+            }
+
             Object.assign(product, req.body);
 
             const updatedProduct = await product.save();
@@ -149,7 +152,16 @@ const deleteProduct = async (req, res) => {
         const product = await Product.findById(req.params.id);
 
         if (product) {
-            await product.remove();
+            // Authorization check
+            if (req.user.role === 'restaurant' && product.restaurantId.toString() !== req.user._id) {
+                logger.warn(`User ${req.user._id} is not authorized to delete this product`);
+                return res.status(403).json({
+                    success: false,
+                    message: "Not authorized to delete this product",
+                });
+            }
+
+            await Product.deleteOne({ _id: req.params.id });
             res.status(200).json({
                 success: true,
                 message: "Product removed successfully",
@@ -210,54 +222,7 @@ const getProductsByCategory = async (req, res) => {
 };
 
 
-// @desc    Create a new review
-// @route   POST /api/products/:id/reviews
-// @access  Private
-const addProductReview = async (req, res) => {
-    try {
-        const { error } = validateCreateReview(req.body);
-        if (error) {
-            logger.warn('Validation error', error.details[0].message);
-            return res.status(400).json({
-                success: false,
-                message: error.details[0].message,
-            });
-        }
 
-        const { rating, comment } = req.body;
-        const product = await Product.findById(req.params.id);
-
-        if (product) {
-            const review = {
-                userId: req.user._id, // Assuming req.user is available after auth middleware
-                rating: Number(rating),
-                comment,
-            };
-
-            product.reviews.push(review);
-
-            product.ratings.count = product.reviews.length;
-            product.ratings.average = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
-
-            await product.save();
-            res.status(201).json({
-                success: true,
-                message: "Review added successfully",
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: "Product not found",
-            });
-        }
-    } catch (error) {
-        logger.error('Error adding product review', error);
-        res.status(500).json({
-            success: false,
-            message: "Error adding product review",
-        });
-    }
-};
 
 // @desc    Get all unique categories
 // @route   GET /api/products/categories
@@ -288,6 +253,5 @@ module.exports = {
     deleteProduct,
     getProductsByRestaurant,
     getProductsByCategory,
-    addProductReview,
     getAllCategories,
 };

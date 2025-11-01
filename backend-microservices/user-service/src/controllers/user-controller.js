@@ -18,7 +18,15 @@ const registerUser = async (req, res) => {
                 message: error.details[0].message,
             });
         }
-        const { email, password, username } = req.body;
+        const { email, password, username, role } = req.body;
+
+        if (role && !['user', 'restaurant'].includes(role)) {
+            logger.warn('Invalid role specified during registration');
+            return res.status(400).json({
+                success: false,
+                message: "Invalid role specified",
+            });
+        }
 
         let user = await User.findOne({ $or: [{ email }, { username }] })
         if (user) {
@@ -29,7 +37,7 @@ const registerUser = async (req, res) => {
             });
         }
 
-        user = new User({ username, email, password });
+        user = new User({ username, email, password, role: role || 'user' });
         await user.save();
         logger.warn("User saved successfully", user._id);
 

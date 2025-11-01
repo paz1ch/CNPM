@@ -8,9 +8,7 @@ const { RedisStore } = require('rate-limit-redis');
 const logger = require('./utils/logger');
 const proxy = require('express-http-proxy');
 const errorHandler = require('./middleware/errorHandler');
-const { validateToken } = require('./middleware/authMiddleware');
-
-
+const { validateToken, attachUser } = require('./middleware/authMiddleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +18,7 @@ const redisClient = new Redis(process.env.REDIS_URL);
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+app.use(attachUser);
 
 //rate limiting
 const ratelimitOptions = rateLimit({
@@ -63,6 +62,10 @@ app.use('/v1/auth', proxy(process.env.USER_SERVICE_URL, {
     ...proxyOptions,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
         proxyReqOpts.headers["Content-type"] = "application/json";
+        if (srcReq.user) {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
+        }
         return proxyReqOpts;
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
@@ -73,12 +76,14 @@ app.use('/v1/auth', proxy(process.env.USER_SERVICE_URL, {
 }));
 
 //setting up proxy for product service
-app.use('/v1/products', validateToken, proxy(process.env.PRODUCT_SERVICE_URL, {
+app.use('/v1/products', proxy(process.env.PRODUCT_SERVICE_URL, {
     ...proxyOptions,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
         proxyReqOpts.headers["Content-type"] = "application/json";
-        proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
-
+        if (srcReq.user) {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
+        }
         return proxyReqOpts;
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
