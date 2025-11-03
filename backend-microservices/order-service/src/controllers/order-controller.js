@@ -120,3 +120,66 @@ export const getOrderById = async (req, res) => {
     }
 };
 
+export const updateOrderStatus = async (req, res) => {
+    const token = req.cookies.token;
+    const user = await validateToken(token);
+    if (!user) return res.status(401).json({ message: 'Unauthorized user not found' });
+
+    const orderId = req.params.id;
+    console.log("Order ID to update:", orderId);
+
+    try {
+        const order = await Order.findOne({ orderID: orderId });
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        //Validate permissions based on role
+        if (user.role === 'user') {
+            if (req.body.status !== 'Cancelled') {
+                return res.status(403).json({ message: 'Users can only cancel orders' });
+            }
+            if (order.status !== 'Pending') {
+                return res.status(400).json({ message: 'Only pending orders can be cancelled' });
+            }    
+        } else if (user.role === 'restaurant') {
+            // remove CONFIRMED from allowed statuses for sellers
+            if (!['Preparing', 'Ready', 'Completed'].includes(req.body.status)) {
+                return res.status(403).json({message: "Restaurants can only update status to Preparing, Ready, or Completed"});
+            }
+
+            // Special handling for APPROVED status
+            if (req.body.status === 'Completed' && order.status !== 'Ready') {
+                return res.status(400).json({ message: 'Order must be Ready before marking as Completed' });
+            }
+        } else if (user.role === 'delivery') {
+            if (!['Out for Delivery', 'Delivered'].includes(req.body.status)) {
+                return res.status(403).json({ message: 'Delivery personnel can only update status to Out for Delivery or Delivered' });
+            }
+            if (req.body.status === 'Delivered' && order.status !== 'Out for Delivery') {
+                return res.status(400).json({ message: 'Order must be Out for Delivery before marking as Delivered' });
+            }
+        }
+
+        // Validate status transitions
+        const statusFlow = {
+            'Pending': ['Cancelled', 'Preparing'],
+            'Preparing': ['Ready'],
+            'Ready': ['Out for Delivery'],
+            'Out for Delivery': ['Delivered'],
+            'Delivered': [],
+            'Cancelled': []
+        };
+        const currentIndex = statusFlow.indexOf(order.status);
+        const newIndex = statusFlow.indexOf(req.body.status);
+
+        if (req.body.status === 'Cancelled')
+            // Special handling for cancellation
+            if (user.role !== 'user' && order.status !== 'Pending') {
+                return res.status(403).json({ message: 'Only users can cancel pending orders' });
+            }
+            if (user.role === 'restaurant' && !['Pending', 'Preparing'].includes(order.status)) {
+                return res.status(403).json({ message: 'Restaurants can only cancel Pending or Preparing orders' });
+            }
+    }
+};
