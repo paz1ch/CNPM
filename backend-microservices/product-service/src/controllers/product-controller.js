@@ -20,6 +20,7 @@ const createProduct = async (req, res) => {
         const product = new Product({
             ...req.body,
             restaurantId: req.body.restaurantId, // Add restaurantId
+            image: req.body.image, // Add image path
         });
 
         await product.save();
@@ -122,6 +123,7 @@ const updateProduct = async (req, res) => {
             }
 
             Object.assign(product, req.body);
+            product.image = req.body.image; // Add image path
 
             const updatedProduct = await product.save();
             res.status(200).json({
@@ -244,6 +246,21 @@ const getAllCategories = async (req, res) => {
     }
 };
 
+const uploadImage = (req, res) => {
+    if (req.file) {
+        res.status(200).json({
+            success: true,
+            message: 'Image uploaded successfully',
+            data: `/${req.file.path}`
+        });
+    } else {
+        res.status(400).json({
+            success: false,
+            message: 'No image file provided'
+        });
+    }
+};
+
 
 module.exports = {
     createProduct,
@@ -254,4 +271,5 @@ module.exports = {
     getProductsByRestaurant,
     getProductsByCategory,
     getAllCategories,
+    uploadImage,
 };

@@ -668,3 +668,5 @@
 {"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-11-01T19:02:12.310Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-01T19:25:44.553Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-01T19:25:45.324Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-01T19:36:02.517Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-01T19:36:03.239Z"}

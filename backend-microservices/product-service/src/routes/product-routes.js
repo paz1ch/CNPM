@@ -8,8 +8,10 @@ const {
     getProductsByRestaurant,
     getProductsByCategory,
     getAllCategories,
+    uploadImage,
 } = require('../controllers/product-controller');
 const { protect, checkRole } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
 
@@ -24,6 +26,7 @@ router.get('/category/:categoryName', getProductsByCategory);
 router.post('/', protect, checkRole(['admin', 'restaurant']), createProduct);
 router.put('/:id', protect, checkRole(['admin', 'restaurant']), updateProduct);
 router.delete('/:id', protect, checkRole(['admin', 'restaurant']), deleteProduct);
+router.post('/upload', protect, checkRole(['admin', 'restaurant']), upload.single('image'), uploadImage);
 
 
 module.exports = router;

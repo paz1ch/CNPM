@@ -8,3 +8,4 @@
 {"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:49:00.770Z"}
 {"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:52:45.384Z"}
 {"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:52:49.435Z"}
+{"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:54:02.038Z"}

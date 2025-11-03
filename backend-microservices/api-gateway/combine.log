@@ -265,3 +265,97 @@
 {"level":"info","message":"Received POST request to /v1/products","service":"api-gateway","timestamp":"2025-11-01T18:52:49.434Z"}
 {"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:52:49.435Z"}
 {"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:52:49.435Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-11-01T18:53:33.310Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:53:33.311Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-11-01T18:53:33.429Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-01T18:53:37.270Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:53:37.270Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-11-01T18:53:37.521Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-01T18:53:40.288Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:53:40.288Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-11-01T18:53:40.507Z"}
+{"level":"info","message":"Received POST request to /v1/products/create-product","service":"api-gateway","timestamp":"2025-11-01T18:53:48.030Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:53:48.030Z"}
+{"level":"info","message":"Response received from Product service: 404","service":"api-gateway","timestamp":"2025-11-01T18:53:48.088Z"}
+{"level":"info","message":"Received POST request to /v1/products","service":"api-gateway","timestamp":"2025-11-01T18:54:02.037Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:54:02.038Z"}
+{"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:54:02.038Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-01T18:55:12.439Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:55:12.439Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-11-01T18:55:12.657Z"}
+{"level":"info","message":"Received POST request to /v1/products","service":"api-gateway","timestamp":"2025-11-01T18:55:32.195Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T18:55:32.195Z"}
+{"level":"info","message":"Response received from Product service: 201","service":"api-gateway","timestamp":"2025-11-01T18:55:32.302Z"}
+{"level":"info","message":"Received POST request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T18:57:36.676Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T18:57:36.677Z"}
+{"level":"info","message":"Response received from Product service: 400","service":"api-gateway","timestamp":"2025-11-01T18:57:36.686Z"}
+{"level":"info","message":"Received POST request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T18:58:08.441Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T18:58:08.442Z"}
+{"level":"info","message":"Response received from Product service: 400","service":"api-gateway","timestamp":"2025-11-01T18:58:08.448Z"}
+{"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T18:58:11.291Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T18:58:11.292Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T18:58:11.418Z"}
+{"level":"info","message":"Received POST request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:01:50.501Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:01:50.502Z"}
+{"level":"info","message":"Response received from Product service: 404","service":"api-gateway","timestamp":"2025-11-01T19:01:50.511Z"}
+{"level":"info","message":"Received PUT request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:01:58.696Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:01:58.697Z"}
+{"level":"info","message":"Response received from Product service: 403","service":"api-gateway","timestamp":"2025-11-01T19:01:58.756Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-01T19:02:12.302Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:02:12.303Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-11-01T19:02:12.521Z"}
+{"level":"info","message":"Received PUT request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:02:22.745Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:02:22.746Z"}
+{"level":"info","message":"Response received from Product service: 403","service":"api-gateway","timestamp":"2025-11-01T19:02:22.802Z"}
+{"level":"info","message":"Received PUT request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:02:35.678Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:02:35.678Z"}
+{"level":"info","message":"Response received from Product service: 403","service":"api-gateway","timestamp":"2025-11-01T19:02:35.739Z"}
+{"level":"info","message":"Received PUT request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:06:57.838Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:06:57.838Z"}
+{"level":"info","message":"Response received from Product service: 403","service":"api-gateway","timestamp":"2025-11-01T19:06:57.968Z"}
+{"level":"info","message":"Received PUT request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:07:04.273Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:07:04.273Z"}
+{"level":"info","message":"Response received from Product service: 403","service":"api-gateway","timestamp":"2025-11-01T19:07:04.338Z"}
+{"level":"info","message":"Received PUT request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:13:43.030Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:13:43.030Z"}
+{"level":"info","message":"Response received from Product service: 403","service":"api-gateway","timestamp":"2025-11-01T19:13:43.093Z"}
+{"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T19:16:41.912Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:16:41.913Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T19:16:42.042Z"}
+{"level":"info","message":"Received PUT request to /v1/products/69030a6fbff7da4abc290be9","service":"api-gateway","timestamp":"2025-11-01T19:16:55.176Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:16:55.176Z"}
+{"level":"info","message":"Response received from Product service: 403","service":"api-gateway","timestamp":"2025-11-01T19:16:55.247Z"}
+{"level":"info","message":"Received PUT request to /v1/products/507f1f77bcf86cd799439011","service":"api-gateway","timestamp":"2025-11-01T19:17:36.323Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:17:36.323Z"}
+{"level":"info","message":"Response received from Product service: 404","service":"api-gateway","timestamp":"2025-11-01T19:17:36.383Z"}
+{"level":"info","message":"Received PUT request to /v1/products/690657a414689bfd77603034","service":"api-gateway","timestamp":"2025-11-01T19:19:17.065Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:19:17.065Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T19:19:17.208Z"}
+{"level":"info","message":"Received POST request to /v1/products","service":"api-gateway","timestamp":"2025-11-01T19:21:01.040Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-01T19:21:01.041Z"}
+{"level":"info","message":"Response received from Product service: 201","service":"api-gateway","timestamp":"2025-11-01T19:21:01.115Z"}
+{"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T19:21:19.481Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:21:19.481Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T19:21:19.605Z"}
+{"level":"info","message":"Received DELETE request to /v1/products/69065d9dd31bdb41d1b0a3a4","service":"api-gateway","timestamp":"2025-11-01T19:24:24.618Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:24:24.619Z"}
+{"level":"info","message":"Response received from Product service: 500","service":"api-gateway","timestamp":"2025-11-01T19:24:24.694Z"}
+{"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T19:24:36.046Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:24:36.047Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T19:24:36.161Z"}
+{"level":"info","message":"Received DELETE request to /v1/products/69065d9dd31bdb41d1b0a3a4","service":"api-gateway","timestamp":"2025-11-01T19:25:02.790Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:25:02.791Z"}
+{"level":"info","message":"Response received from Product service: 500","service":"api-gateway","timestamp":"2025-11-01T19:25:02.882Z"}
+{"level":"info","message":"Received DELETE request to /v1/products/69065d9dd31bdb41d1b0a3a4","service":"api-gateway","timestamp":"2025-11-01T19:27:21.467Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:27:21.468Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T19:27:21.640Z"}
+{"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T19:27:27.900Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:27:27.900Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T19:27:28.026Z"}
+{"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-01T19:29:12.454Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-01T19:29:12.455Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-01T19:29:12.570Z"}
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-11-01T19:36:01.709Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-01T19:36:01.713Z"}
+{"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-01T19:36:01.714Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-01T19:36:01.715Z"}

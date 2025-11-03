@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const Redis = require("ioredis");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 const productRoutes = require("./routes/product-routes");
 const errorHandler = require("./middleware/errorHandler");
 const logger = require("./utils/logger");
@@ -18,6 +19,7 @@ const redisClient = new Redis(process.env.REDIS_URL);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, '..' ,'uploads')));
 
 
 app.use((req, res, next) => {
