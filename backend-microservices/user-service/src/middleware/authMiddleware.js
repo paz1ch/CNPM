@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+const User = require('../models/User');
 const logger = require('../utils/logger');
 
 const protect = async (req, res, next) => {
@@ -13,19 +13,17 @@ const protect = async (req, res, next) => {
             next();
         } catch (error) {
             logger.error('Not authorized, token failed', error);
-            res.status(401).json({ success: false, message: 'Not authorized, token failed' });
+            return res.status(401).json({ success: false, message: 'Not authorized, token failed' });
         }
-    }
-
-    if (!token) {
+    } else {
         logger.warn('Not authorized, no token');
-        res.status(401).json({ success: false, message: 'Not authorized, no token' });
+        return res.status(401).json({ success: false, message: 'Not authorized, no token' });
     }
 };
 
 const checkRole = (roles) => (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-        logger.warn(`User with role '${req.user.role}' tried to access a protected route`);
+    if (!req.user || !roles.includes(req.user.role)) {
+        logger.warn(`User with role '${req.user ? req.user.role : 'guest'}' tried to access a protected route`);
         return res.status(403).json({ success: false, message: 'Forbidden' });
     }
     next();
