@@ -99,7 +99,24 @@ export const getOrderById = async (req, res) => {
 
         //Check user permissions based on role
         if (user.role === 'user' && order.userID !== user.userID) {
-            return res.status(403).json({ message: 'Forbidden: You do not have access to this order' });
+            return res.status(403).json({ message: "Unauthorized to view this order" });
+        } else if (user.role === 'restaurant' && order.restaurantID !== user.restaurantID) {
+            return res.status(403).json({ message: "Unauthorized to view this order" });
         }
+
+        // Get restaurant details
+        try {
+            const restaurantDetails = await getRestaurantDetails(order.restaurantID);
+            order._doc.restaurantDetails = restaurantDetails; // Attach restaurant details to order
+        } catch (error) {
+            console.error("Error fetching restaurant details:", error);
+            order._doc.restaurantDetails = null; // Proceed without restaurant details
+        }
+
+        res.status(200).json({ order });
+    } catch (error) {
+        console.error('Error fetching order:', error);
+        res.status(500).json({ message: 'Failed to fetch order' });
     }
-}
+};
+
