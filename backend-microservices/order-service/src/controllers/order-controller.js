@@ -1,154 +1,123 @@
 const logger = require('../utils/logger');
 const Order = require('../models/order');
-const validateToken = require('../utils/validateUser');
-import order from '../models/order';
-import { getMenuItemsDetails, getRestaurantDetails } from '../utils/menuService';
+const { validateToken } = require('../utils/validateUser');
+const { getMenuItemsDetails, getRestaurantDetails } = require('../utils/menuService');
 
-// Other controller methods...
-export const creatOrder = async (req, res) => {
-    const token = req.cookies.token;
-    const user = await validateToken(token);
-
-    console.log("User from token:", user);
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-    if (user.role !== 'user') {return res.status(403).json({ message: 'Only users can place orders' });
-
+/** Create a new order */
+const createOrder = async (req, res) => {
     try {
-        const{
-            restaurantID,
-            items
-        } = req.body;
-        // Fetch restaurant details to ensure it exists
+        const token = req.cookies && req.cookies.token;
+        const user = await validateToken(token);
 
-        if(!items || !Array.isArray(items) || items.length === 0)
-            return res.status(400).json({message: 'Invalid order data'});
+        if (!user) return res.status(401).json({ message: 'Unauthorized' });
+        if (user.role !== 'user') return res.status(403).json({ message: 'Only users can place orders' });
 
-        // Validate restaurant_id by fetching restaurant details
-        const restaurantDetails2 = await getRestaurantDetails(restaurantID);
-
-        if(!restaurantDetails2){
-            return res.status(400).json({message: 'Invalid restaurant ID'});
+        const { restaurantID, items } = req.body || {};
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ message: 'Invalid order data' });
         }
 
-        const postal_code_of_restaurant = restaurantDetails2.postal_code;
+        const restaurantDetails = await getRestaurantDetails(restaurantID);
+        if (!restaurantDetails) return res.status(400).json({ message: 'Invalid restaurant ID' });
 
+        const postal_code_of_restaurant = restaurantDetails.postal_code;
         const orderID = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-        // Process order items and validate with restaurant service
         const orderItems = [];
         const menuItemDetails = [];
         let totalAmount = 0;
-    
+
         for (const item of items) {
             try {
                 const menuItem = await getMenuItemsDetails(item.menuItemId);
-            
-                menuItemDetails.push(menuItem); // store menu item details for later use
-            
+                if (!menuItem) throw new Error('Menu item not found');
+
+                menuItemDetails.push(menuItem);
+
                 const orderItem = {
                     orderItemID: `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
                     menuItemId: item.menuItemId,
                     quantity: item.quantity,
                     price: menuItem.price,
-                    totalPrice: menuItem.price * item.quantity
+                    totalPrice: menuItem.price * item.quantity,
                 };
 
                 totalAmount += orderItem.totalPrice;
                 orderItems.push(orderItem);
-            } catch (error) {
-                return res.status(400).json({ message: `Error processing item ${item.menuItemId}: ${error.message}` });
+            } catch (err) {
+                return res.status(400).json({ message: `Error processing item ${item.menuItemId}: ${err.message}` });
             }
         }
 
         const order = await Order.create({
             orderID,
-            userID: user.userID,
+            userID: user.userID || user.id || user._id,
             restaurantID,
             items: orderItems,
             totalAmount,
             status: 'Pending',
             postal_code_of_restaurant,
             paymentStatus: 'Unpaid',
-            modification_deadline: new Date(Date.now() + 30 * 60000) // 30 minutes from now 
+            modification_deadline: new Date(Date.now() + 30 * 60000),
         });
 
-
-        res.status(201).json({
-            orderDetails: order,
-            restaurant: restaurantDetails2,
-            menuItems: menuItemDetails // send menu item details back to client
-        });
+        return res.status(201).json({ orderDetails: order, restaurant: restaurantDetails, menuItems: menuItemDetails });
     } catch (error) {
-        console.error('Error creating order:', error);
-        res.status(500).json({ message: 'Failed to create order' });
+        logger.error('Error creating order: %o', error);
+        return res.status(500).json({ message: 'Failed to create order' });
     }
 };
-}
 
-export const getOrderById = async (req, res) => {
-    const token = req.cookies.token;
-    const user = await validateToken(token);
-
-    if (!user) return res.status(401).json({ message: 'Unauthorized user not found' });
-
+/** Get order by id */
+const getOrderById = async (req, res) => {
     try {
-        const { orderId } = await Order.findById({orderId: req.params.id });
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
+        const token = req.cookies && req.cookies.token;
+        const user = await validateToken(token);
+        if (!user) return res.status(401).json({ message: 'Unauthorized user not found' });
+
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        if (user.role === 'user' && order.userID !== user.userID && order.userID !== (user.id || user._id)) {
+            return res.status(403).json({ message: "Unauthorized to view this order" });
+        }
+        if (user.role === 'restaurant' && order.restaurantID !== user.restaurantID) {
+            return res.status(403).json({ message: "Unauthorized to view this order" });
         }
 
-        //Check user permissions based on role
-        if (user.role === 'user' && order.userID !== user.userID) {
-            return res.status(403).json({ message: "Unauthorized to view this order" });
-        } else if (user.role === 'restaurant' && order.restaurantID !== user.restaurantID) {
-            return res.status(403).json({ message: "Unauthorized to view this order" });
-        }
-
-        // Get restaurant details
         try {
             const restaurantDetails = await getRestaurantDetails(order.restaurantID);
-            order._doc.restaurantDetails = restaurantDetails; // Attach restaurant details to order
-        } catch (error) {
-            console.error("Error fetching restaurant details:", error);
-            order._doc.restaurantDetails = null; // Proceed without restaurant details
+            if (order._doc) order._doc.restaurantDetails = restaurantDetails;
+        } catch (err) {
+            logger.error('Error fetching restaurant details: %o', err);
         }
 
-        res.status(200).json({ order });
+        return res.status(200).json({ order });
     } catch (error) {
-        console.error('Error fetching order:', error);
-        res.status(500).json({ message: 'Failed to fetch order' });
+        logger.error('Error fetching order: %o', error);
+        return res.status(500).json({ message: 'Failed to fetch order' });
     }
 };
 
-export const updateOrderStatus = async (req, res) => {
-    const token = req.cookies.token;
-    const user = await validateToken(token);
-    if (!user) return res.status(401).json({ message: 'Unauthorized user not found' });
-
-    const orderId = req.params.id;
-    console.log("Order ID to update:", orderId);
-
+/** Update order status */
+const updateOrderStatus = async (req, res) => {
     try {
+        const token = req.cookies && req.cookies.token;
+        const user = await validateToken(token);
+        if (!user) return res.status(401).json({ message: 'Unauthorized user not found' });
+
+        const orderId = req.params.id;
         const order = await Order.findOne({ orderID: orderId });
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
+        if (!order) return res.status(404).json({ message: 'Order not found' });
 
-        //Validate permissions based on role
+        // Validate permissions based on role
         if (user.role === 'user') {
-            if (req.body.status !== 'Cancelled') {
-                return res.status(403).json({ message: 'Users can only cancel orders' });
-            }
-            if (order.status !== 'Pending') {
-                return res.status(400).json({ message: 'Only pending orders can be cancelled' });
-            }    
+            if (req.body.status !== 'Cancelled') return res.status(403).json({ message: 'Users can only cancel orders' });
+            if (order.status !== 'Pending') return res.status(400).json({ message: 'Only pending orders can be cancelled' });
         } else if (user.role === 'restaurant') {
-            // remove CONFIRMED from allowed statuses for sellers
             if (!['Preparing', 'Ready', 'Completed'].includes(req.body.status)) {
-                return res.status(403).json({message: "Restaurants can only update status to Preparing, Ready, or Completed"});
+                return res.status(403).json({ message: 'Restaurants can only update status to Preparing, Ready, or Completed' });
             }
-
-            // Special handling for APPROVED status
             if (req.body.status === 'Completed' && order.status !== 'Ready') {
                 return res.status(400).json({ message: 'Order must be Ready before marking as Completed' });
             }
@@ -161,247 +130,213 @@ export const updateOrderStatus = async (req, res) => {
             }
         }
 
-        // Validate status transitions
+        // Allowed transitions map
         const statusFlow = {
-            'Pending': ['Cancelled', 'Preparing'],
-            'Preparing': ['Ready'],
-            'Ready': ['Out for Delivery'],
+            Pending: ['Cancelled', 'Preparing'],
+            Preparing: ['Ready'],
+            Ready: ['Out for Delivery'],
             'Out for Delivery': ['Delivered'],
-            'Delivered': [],
-            'Cancelled': []
+            Delivered: [],
+            Cancelled: [],
         };
-        const currentIndex = statusFlow.indexOf(order.status);
-        const newIndex = statusFlow.indexOf(req.body.status);
 
-        if (req.body.status === 'Cancelled')
-        {
-            // Special handling for cancellation
-            if (user.role !== 'user' && order.status !== 'Pending') {
-                return res.status(403).json({ message: 'Only users can cancel pending orders' });
-            }
-            if (user.role === 'restaurant' && !['Pending', 'Preparing'].includes(order.status)) {
-                return res.status(403).json({ message: 'Restaurants can only cancel Pending or Preparing orders' });
-            }
-        } else if (newIndex <= currentIndex || newIndex - currentIndex > 1) {
-            //Exception for seller approving a confirmed order
-            if (!(user.role ==='restaurant' && order.status === 'confirmed' && req.body.status === 'aproved')) {
-                // Ensure proper status progression (one step at a time)
-                return res.status(400).json({ message: `Invalid status transition from ${order.status} to ${req.body.status}` });
-            }
+        const allowedNext = statusFlow[order.status] || [];
+        if (req.body.status !== 'Cancelled' && !allowedNext.includes(req.body.status)) {
+            return res.status(400).json({ message: `Invalid status transition from ${order.status} to ${req.body.status}` });
         }
 
-        // update order status
         order.status = req.body.status;
         await order.save();
+
+        return res.status(200).json({ order });
     } catch (error) {
-        console.error('Error updating order status:', error);
-        res.status(500).json({ message: 'Failed to update order status' });
+        logger.error('Error updating order status: %o', error);
+        return res.status(500).json({ message: 'Failed to update order status' });
     }
 };
 
-export const getOrdersByUser = async (req, res) => {
-    const token = req.cookies.token;
-    const user = await validateToken(token);
-    if (!user) return res.status(401).json({ message: 'Unauthorized from getUserOrder' });
-
+/** Get orders by user */
+const getOrdersByUser = async (req, res) => {
     try {
-        // Find all orders for this user, sorted by most recent first
+        const token = req.cookies && req.cookies.token;
+        const user = await validateToken(token);
+        if (!user) return res.status(401).json({ message: 'Unauthorized from getUserOrder' });
+
         const orders = await Order.find({ userID: user.userID }).sort({ createdAt: -1 });
 
-        // For each order, fetch the restaurant details and menu item details
         for (let i = 0; i < orders.length; i++) {
-            // Fetch restaurant details
             try {
                 const restaurantDetails = await getRestaurantDetails(orders[i].restaurantID);
-                orders[i]._doc.restaurantDetails = restaurantDetails; // Attach restaurant details to order
-            } catch (error) {
-                console.error("Error fetching restaurant details for order:", orders[i]._id, error);
-                // Continue without restaurant details if there's an error
-                orders[i]._doc.restaurantDetails = null; // Proceed without restaurant details
+                if (orders[i]._doc) orders[i]._doc.restaurantDetails = restaurantDetails;
+            } catch (err) {
+                logger.error('Error fetching restaurant details for order %s: %o', orders[i]._id, err);
+                if (orders[i]._doc) orders[i]._doc.restaurantDetails = null;
             }
 
-            // Fetch menu item details for each item in the order
             if (orders[i].items && orders[i].items.length > 0) {
                 for (let j = 0; j < orders[i].items.length; j++) {
                     try {
                         const menuItemDetails = await getMenuItemsDetails(orders[i].items[j].menuItemId);
-
-                        // Add menu item name and image to the order item
-                        orders[i].items[j]._doc ={
+                        orders[i].items[j]._doc = {
                             ...orders[i].items[j]._doc,
                             name: menuItemDetails.name,
                             image_url: menuItemDetails.image_url,
-                            description: menuItemDetails.description
+                            description: menuItemDetails.description,
                         };
-                    } catch (error) {
-                        console.error("Error fetching menu item details for order item:", orders[i].items[j]._id, error);
-                        // Continue without menu item details if there's an error
+                    } catch (err) {
+                        logger.error('Error fetching menu item details for order item %s: %o', orders[i].items[j]._id, err);
                     }
                 }
             }
         }
 
-    res.status(200).json({ orders });
+        return res.status(200).json({ orders });
     } catch (error) {
-        console.error('Error fetching user orders:', error);
-        res.status(500).json({ message: 'Failed to fetch user orders' });
+        logger.error('Error fetching user orders: %o', error);
+        return res.status(500).json({ message: 'Failed to fetch user orders' });
     }
 };
 
-export const getOrdersByRestaurant = async (req, res) => {
-    const token = req.cookies.token;
-    const user = await validateToken(token);
-    if (!user) return res.status(401).json({ message: 'Unauthorized'});
-    if (user.role !== 'restaurant') return res.status(403).json({ message: 'Only restaurants can view their orders' });
-
+/** Get orders by restaurant */
+const getOrdersByRestaurant = async (req, res) => {
     try {
+        const token = req.cookies && req.cookies.token;
+        const user = await validateToken(token);
+        if (!user) return res.status(401).json({ message: 'Unauthorized' });
+        if (user.role !== 'restaurant') return res.status(403).json({ message: 'Only restaurants can view their orders' });
+
         const restaurantID = req.params.restaurantId || user.restaurantID;
-        
-        // Fetch restaurant details
-        let restaurantDetails;
+
+        let restaurantDetails = null;
         try {
             restaurantDetails = await getRestaurantDetails(restaurantID);
-        } catch (error) {
-            console.error("Error fetching restaurant details:", error);
-             // Continue without restaurant details
+        } catch (err) {
+            logger.error('Error fetching restaurant details: %o', err);
         }
 
-        // Modified query to only show confirmed or later status orders
         const orders = await Order.find({
             restaurantID,
-            status: { $in: ['Confirmed', 'Preparing', 'Out for Delivery', 'Delivered'] }
+            status: { $in: ['Confirmed', 'Preparing', 'Out for Delivery', 'Delivered'] },
         }).sort({ createdAt: -1 });
 
-        // For each order, fetch menu item details
         for (let i = 0; i < orders.length; i++) {
             if (orders[i].items && orders[i].items.length > 0) {
                 for (let j = 0; j < orders[i].items.length; j++) {
                     try {
                         const menuItemDetails = await getMenuItemsDetails(orders[i].items[j].menuItemId);
-
-                        // Add menu item name and image to the order item
-                        orders[i].items[j]._doc ={
+                        orders[i].items[j]._doc = {
                             ...orders[i].items[j]._doc,
                             name: menuItemDetails.name,
                             image_url: menuItemDetails.image_url,
-                            description: menuItemDetails.description
+                            description: menuItemDetails.description,
                         };
-                    } catch (error) {
-                        console.error("Error fetching menu item details for order item:", orders[i].items[j]._id, error);
-                        // Continue without menu item details if there's an error
+                    } catch (err) {
+                        logger.error('Error fetching menu item details for order item %s: %o', orders[i].items[j]._id, err);
                     }
                 }
             }
         }
 
-        const response = {
-            restaurant = restaurantDetails || null,
-            orders = orders
-        };
-
-        res.status(200).json(response);
+        const response = { restaurant: restaurantDetails || null, orders };
+        return res.status(200).json(response);
     } catch (error) {
-        console.error('Error fetching restaurant orders:', error);
-        res.status(500).json({ message: 'Failed to fetch restaurant orders' });
+        logger.error('Error fetching restaurant orders: %o', error);
+        return res.status(500).json({ message: 'Failed to fetch restaurant orders' });
     }
 };
 
-export const getOrdersByPostalCode = async (req, res) => {
-    const token = req.cookies.token;
-    const user = await validateToken(token);
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-
+/** Get orders by postal code */
+const getOrdersByPostalCode = async (req, res) => {
     try {
-        const { postalCode } = req.params;
+        const token = req.cookies && req.cookies.token;
+        const user = await validateToken(token);
+        if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
-        // Only fetch orders with status PREPARED
-        const query = {
-            postal_code_of_restaurant = postalCode,
-            status: 'Prepared'
-        };
+        const { postalCode } = req.params;
+        const query = { postal_code_of_restaurant: postalCode, status: 'Prepared' };
 
         const orders = await Order.find(query).sort({ createdAt: -1 });
 
-        // Fetch restaurant details for each order
-        const ordersWithRestaurantDetails = await Promise.all(orders.map(async (order) => {
-            const orderObj = order.toObject();
-            try {
-                orderObj.restaurantDetails = await getRestaurantDetails(order.restaurantID);
-            } catch (error) {
-                console.error(`Error fetching restaurant details for order ${order.order_id}:`, error)
-            }
-            return orderObj;
-        }));
+        const ordersWithRestaurantDetails = await Promise.all(
+            orders.map(async (ord) => {
+                const orderObj = ord.toObject();
+                try {
+                    orderObj.restaurantDetails = await getRestaurantDetails(ord.restaurantID);
+                } catch (err) {
+                    logger.error('Error fetching restaurant details for order %s: %o', ord.orderID || ord._id, err);
+                    orderObj.restaurantDetails = null;
+                }
+                return orderObj;
+            })
+        );
 
-        res.status(200).json({ ordersWithRestaurantDetails });
+        return res.status(200).json({ ordersWithRestaurantDetails });
     } catch (error) {
-        console.error('Error fetching orders by postal code:', error);
-        res.status(500).json({ message: 'Failed to fetch orders by postal code' });
+        logger.error('Error fetching orders by postal code: %o', error);
+        return res.status(500).json({ message: 'Failed to fetch orders by postal code' });
     }
 };
 
-export const modifyPendingOrder = async (req, res) => {
-    const token = req.cookies.token;
-    const user = await validateToken(token);
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-    if (user.role !== 'user') return res.status(403).json({ message: 'Only users can modify orders' });
-
+/** Modify pending order (user) */
+const modifyPendingOrder = async (req, res) => {
     try {
+        const token = req.cookies && req.cookies.token;
+        const user = await validateToken(token);
+        if (!user) return res.status(401).json({ message: 'Unauthorized' });
+        if (user.role !== 'user') return res.status(403).json({ message: 'Only users can modify orders' });
+
         const order = await Order.findOne({ orderID: req.params.id });
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-
-        if (order.status !== 'Pending') {
-            return res.status(400).json({ message: 'Only pending orders can be modified' });
-        }
-
-        if ( order.userID !== user.userID) {
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+        if (order.status !== 'Pending') return res.status(400).json({ message: 'Only pending orders can be modified' });
+        if (order.userID !== user.userID && order.userID !== (user.id || user._id)) {
             return res.status(403).json({ message: 'Unauthorized to modify this order' });
         }
 
-        // Check if modification deadline has passed
-        if (Date.now() > order.modification_deadline) {
-            return res.status(400).json({ message: "Modification time limit exceeded" });
+        if (Date.now() > new Date(order.modification_deadline).getTime()) {
+            return res.status(400).json({ message: 'Modification time limit exceeded' });
         }
 
-        const {items} = req.body;
+        const { items } = req.body;
+        if (!items || !items.length) return res.status(400).json({ message: 'Order must contain at least one item' });
 
-        if (!items || !items.length) {
-            return res.status(400).json({ message: "Order must contain at least one item" });
-        }
-
-        // Process and validate new items
         const orderItems = [];
         let totalAmount = 0;
-
         for (const item of items) {
             try {
-                // Fetch menu item details from restaurant service
-                const menuItem = await getMenuItemsDetails(item.menuItemId)
+                const menuItem = await getMenuItemsDetails(item.menuItemId);
+                if (!menuItem) throw new Error('Menu item not found');
 
                 const orderItem = {
-                    orderItemID: item.orderItemID || `ITEM-${Date.now()}-${Math.floor(Math.random()*1000)}`,
+                    orderItemID: item.orderItemID || `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
                     menuItemId: item.menuItemId,
                     quantity: item.quantity,
                     price: menuItem.price,
-                    totalPrice: menuItem.price*item.quantity
+                    totalPrice: menuItem.price * item.quantity,
                 };
 
                 totalAmount += orderItem.totalPrice;
                 orderItems.push(orderItem);
-            } catch (error){
+            } catch (err) {
                 return res.status(400).json({ message: `Invalid menu item: ${item.menuItemId}` });
             }
         }
 
         order.items = orderItems;
-        order.TotalAmount = totalAmount;
-
+        order.totalAmount = totalAmount;
         await order.save();
-        res.status(200).json(order);
-    } catch (error){
-        console.error('Error modifying order:', error);
-        res.status(500).json({message: 'Failed to modify order'});
+        return res.status(200).json(order);
+    } catch (error) {
+        logger.error('Error modifying order: %o', error);
+        return res.status(500).json({ message: 'Failed to modify order' });
     }
+};
+
+module.exports = {
+    createOrder,
+    getOrderById,
+    updateOrderStatus,
+    getOrdersByUser,
+    getOrdersByRestaurant,
+    getOrdersByPostalCode,
+    modifyPendingOrder,
 };
