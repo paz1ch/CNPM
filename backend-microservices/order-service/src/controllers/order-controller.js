@@ -331,6 +331,57 @@ const modifyPendingOrder = async (req, res) => {
     }
 };
 
+export const addOrderItem = async (orderId, newItem) => {
+    const token = req.cookies && req.cookies.token;
+    const user = await validateToken(token);
+    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+    if (user.role !== 'user') return res.status(403).json({ message: 'Only users can modify orders' });
+
+    try {
+        const order = await Order.findOne({ orderID: orderId });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        if (order.status !== 'Pending') return res.status(400).json({ message: 'Only pending orders can be modified' });
+        
+
+        // Check if modification deadline has passed
+        if (Date.now() > new Date(order.modification_deadline).getTime())
+            return res.status(400).json({ message: 'Modification time limit exceeded' });
+        
+        const { menuItemId, quantity } = req.body;
+
+        if (!menuItemId || !quantity || quantity <= 0) 
+            return res.status(400).json({ message: 'Invalid menu item or quantity' });
+
+        // Fetch menu item details from restaurant service
+        try {
+            const menuItem = await getMenuItemsDetails(menuItemId);
+
+            const newItem = {
+                orderItemID: `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                menuItemId,
+                quantity,
+                price: menuItem.price,
+                totalPrice: menuItem.price * quantity
+            };
+
+            order.items.push(newItem);
+            order.totalAmount = recalculateTotalAmount(order.items);
+            await order.save();
+            return res.status(200).json(order);
+        } catch (error){
+            return res.status(400).json({ message: 'Error fetching menu item details' });
+        }
+    } catch (error) {
+        logger.error('Error adding item to order: %o', error);
+        return res.status(500).json({ message: 'Failed to add item to order' });
+    }
+};
+
+export const removeOrderItem = async (orderId, orderItemId) => {
+    
+}
+
 module.exports = {
     createOrder,
     getOrderById,
