@@ -379,8 +379,171 @@ export const addOrderItem = async (orderId, newItem) => {
 };
 
 export const removeOrderItem = async (orderId, orderItemId) => {
-    
-}
+    const token = req.cookies && req.cookies.token;
+    const user = await validateToken(token);
+
+    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+    if (user.role !== 'user') return res.status(403).json({ message: 'Only users can modify orders' });
+
+    try {
+        const order = await Order.findOne({ orderID: orderId });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        const itemIndex = order.items.findIndex(item => item.orderItemID === orderItemId);
+        if (itemIndex === -1) return res.status(404).json({ message: 'Order item not found' });
+
+        order.items.splice(itemIndex, 1);
+        order.totalAmount = recalculateTotalAmount(order.items);
+        await order.save();
+        return res.status(200).json(order);
+    } catch (error) {
+        logger.error('Error removing item from order: %o', error);
+        return res.status(500).json({ message: 'Failed to remove item from order' });
+    }
+};
+
+export const updateItemQuantity = async (orderId, orderItemId, newQuantity) => {
+    const token = req.cookies.token;
+    const user = await validateToken(token);
+
+    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+    if (user.role !== 'user') return res.status(403).json({ message: 'Only users can modify orders' });
+
+    try {
+        const order = await Order.findOne({ orderID: orderId });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        if (order.status !== 'Pending') 
+            return res.status(400).json({ message: 'Only pending orders can be modified' });
+
+        // Check if modification deadline has passed
+        if (Date.now() > new Date(order.modification_deadline).getTime())
+            return res.status(400).json({ message: 'Modification time limit exceeded' });
+
+        const {orderItemId, newQuantity} = req.body;
+
+        if (!orderItemId || !newQuantity || newQuantity <= 0) 
+            return res.status(400).json({ message: 'Invalid order item ID or quantity' });
+
+        order.items[itemIndex].quantity = newQuantity;
+        order.items[itemIndex].totalPrice = order.items[itemIndex].price * newQuantity;
+        order.totalAmount = recalculateTotalAmount(order.items);
+
+        await order.save();
+        res.status(200).json(order);
+    } catch (error) {
+        logger.error('Error updating item quantity in order: %o', error);
+        return res.status(500).json({ message: 'Failed to update item quantity in order' });
+    }
+};
+
+export const comfirmOrder = async (orderId) => {
+    const order = req.cookies.order;
+    const User = await validateToken(order.token);
+
+    if (!User) return res.status(401).json({ message: 'Unauthorized' });
+    if (User.role !== 'user') return res.status(403).json({ message: 'Only users can confirm orders' });
+
+    try {
+        const order = await Order.findOne({ orderID: orderId });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        if (order.status !== 'Pending')
+            return res.status(400).json({ message: 'Only pending orders can be confirmed' });
+
+        // Get restaurant details before confirming
+        try {
+            const restaurantDetails = await getRestaurantDetails(order.restaurantID);
+            //We can use restaurant details here if needed for any business logic
+        } catch (err) {
+            logger.error('Error fetching restaurant details: %o', err);
+            return res.status(400).json({ message: 'Invalid restaurant ID' });
+            //Continue with confirmation even if restaurant details can't be fetched
+        }
+
+        order.status = 'Confirmed';
+        order.modification_deadline = new Date(); // Reset modification deadline upon confirmation
+
+        await order.save();
+        res.status(200).json(order);
+    } catch (error) {
+        console.error('Error confirming order: %o', error);
+        res.status(500).json({ message: 'Failed to confirm order' });
+    }
+};
+
+// Helper function to recalculate order total
+const recalculateTotalAmount = (items) => {
+    return items.reduce((total, item) => total + item.totalPrice, 0);
+};
+
+// Update order status by delivery personnel
+export const updateOrderStatusByDelivery = async (orderId, newStatus) => {
+    const token = req.cookies && req.cookies.token;
+    const user = await validateToken(token);
+    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+
+    try {
+        const order = await Order.findOne({ orderID: orderId });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        //Simply update the status to whatever was provided
+        order.status = req.body.status;
+
+        await order.save();
+        res.status(200).json(order);
+    } catch (error) {
+        console.error('Error updating order status by delivery: %o', error);
+        res.status(500).json({ message: 'Failed to update order status' });
+    }
+};
+
+//get order by id for driver
+export const getOrderByIdForDriver = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        
+        // Find order by MongoDB _id or orderID
+        const order = await Order.findOne({ orderID: orderId });
+
+        // If order doesn't exist, return 404
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        // Get restaurant details
+        try {
+            const restaurantDetails = await getRestaurantDetails(order.restaurantID);
+            if (order._doc) order._doc.restaurantDetails = restaurantDetails;
+        } catch (error) {
+            console.error('Error fetching restaurant details: %o', error);
+            // Continue with order data even if restaurant details can't be fetched
+        }
+
+        // Get menu item details for each item in the order
+        if (order.items && order.items.length > 0) {
+            for (let i = 0; i < order.items.length; i++) {
+                try {
+                    const menuItemDetails = await getMenuItemsDetails(order.items[i].menuItemId);
+
+                    // Add menu item name and image to order item
+                    order.items[i]._doc = {
+                        ...order.items[i]._doc,
+                        name: menuItemDetails.name,
+                        image_url: menuItemDetails.image_url,
+                        description: menuItemDetails.description,
+                    };
+                } catch (error) {
+                    console.error('Error fetching menu item details for order item %s: %o', order.items[i]._id, error);
+                    // Continue without menu item details if there's an error
+                }
+            }
+        }
+
+        res.status(200).json({ order });
+    } catch (error) {
+        console.error('Error fetching order for driver: %o', error);
+        res.status(500).json({ message: 'Failed to fetch order' });
+    }
+};
 
 module.exports = {
     createOrder,
@@ -390,4 +553,10 @@ module.exports = {
     getOrdersByRestaurant,
     getOrdersByPostalCode,
     modifyPendingOrder,
+    addOrderItem,
+    removeOrderItem,
+    updateItemQuantity,
+    comfirmOrder,
+    updateOrderStatusByDelivery,
+    getOrderByIdForDriver,
 };
