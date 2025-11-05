@@ -36,7 +36,7 @@ const rateLimiter = async (req, res, next) => {
     const key = `rate-limit:${ip}`;
 
     try {
-        const [count] = await redisClient.multi().incr(key).expire(key, windowSizeInSeconds, 'NX').exec();
+        const [count] = await redisClient.multi().incr(key).expire(key, windowSizeInSeconds).exec();
 
         if (count[1] > maxRequests) {
             logger.warn(`Rate limit exceeded for IP: ${ip}`);
