@@ -111,6 +111,24 @@ app.use('/v1/orders', proxy(process.env.ORDER_SERVICE_URL, {
     }
 }))
 
+//setting up proxy for payment service
+app.use('/v1/payment', proxy(process.env.PAYMENT_SERVICE_URL, {
+    ...proxyOptions,
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers["Content-type"] = "application/json";
+        if (srcReq.user) {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
+        }
+        return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response received from Payment service: ${proxyRes.statusCode}`);
+
+        return proxyResData;
+    }
+}))
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
@@ -118,5 +136,6 @@ app.listen(PORT, () => {
     logger.info(`User service running on port ${process.env.USER_SERVICE_URL}`);
     logger.info(`Product service running on port ${process.env.PRODUCT_SERVICE_URL}`);
     logger.info(`Order service running on port ${process.env.ORDER_SERVICE_URL}`);
+    logger.info(`Payment service running on port ${process.env.PAYMENT_SERVICE_URL}`);
     logger.info(`Redis Url ${process.env.REDIS_URL}`);
 })

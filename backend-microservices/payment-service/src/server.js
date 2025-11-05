@@ -1,35 +1,43 @@
 
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const helmet = require('helmet');
-const winston = require('winston');
 
-dotenv.config();
+require('dotenv').config()
+const mongoose = require('mongoose')
+const logger = require('./utils/logger')
+const express = require('express')
+const helmet = require('helmet')
+const cors = require('cors')
+const routes = require('./routes/payment-routes');
+const errorHandler = require('./middleware/errorHandler');
 
-const app = express();
+const app = express()
+const PORT = process.env.PORT || 3004
 
-app.use(cors());
-app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+//ket noi db
+mongoose.connect(process.env.MONGO_URI).then(()=> 
+logger.info('Ket noi db thanh cong')).catch(e=>
+logger.error("Ket noi db that bai", e))
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
-  ],
-});
+//middleware
+app.use(helmet())
+app.use(cors())
+app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.send('Payment service is running');
-});
+app.use((req,res,next)=>{
+    logger.info(`Received ${req.method} request to ${req.url}`);
+    next();
+})
 
-const PORT = process.env.PORT || 3004;
+//route
+app.use('/api/payment', routes);
 
-app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT}`);
-});
+//error handler
+app.use(errorHandler);
+
+app.listen(PORT, ()=>{
+    logger.info(`payment service running on port ${PORT}`);
+})
+
+process.on('unhandledRejection', (reason, promise)=>{
+    logger.error('Unhandled Rejection at', promise, "reason: ", reason)
+})
+
