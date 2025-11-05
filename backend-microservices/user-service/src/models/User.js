@@ -54,9 +54,4 @@ userSchema.methods.comparePassword = async function(password){
 
 userSchema.index({username: 'text'});
 
-<<<<<<< HEAD
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);
-=======
-const User = mongoose.models.User || mongoose.model('User', userSchema);
-module.exports = User;
->>>>>>> b7f834a1180e764bd850ca5afa9105688d19a204
