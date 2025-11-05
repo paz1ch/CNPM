@@ -1,25 +1,29 @@
-import axios from 'axios';
-import { restaurantServiceUrl } from './axiosInstances.js';
-import logger from './logger.js';
+const { restaurantService } = require('./axiosInstances');
+const logger = require('./logger');
 
 // Get menu item details from restaurant service
-export const getMenuItemsDetails = async (menuItemId) => {
+const getMenuItemsDetails = async (menuItemId) => {
     try {
-        const response = await restaurantServiceUrl.get(`menu/menu-items/$menuItemId`,);
+        const response = await restaurantService.get(`/menu/menu-items/${menuItemId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching menu item ${menuItemId}:', error.message);
-        throw new Error('Failed to fetch menu item details');
+        logger.error(`Error fetching menu item ${menuItemId}: ${error.message}`);
+        throw new Error(`Failed to fetch menu item details: ${error.message}`);
     }
 };
 
 //get restaurant details from restaurant service
-export const getRestaurantDetails = async (restaurantId) => {
+const getRestaurantDetails = async (restaurantId) => {
     try {
-        const response = await restaurantServiceUrl.get(`/restaurants/${restaurantId}`);
+        const response = await restaurantService.get(`/restaurants/${restaurantId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching restaurant ${restaurantId}:', error.message);
-        throw new Error('Failed to fetch restaurant details');
+        logger.error(`Error fetching restaurant ${restaurantId}: ${error.message}`);
+        throw new Error(`Failed to fetch restaurant details: ${error.message}`);
     }
+};
+
+module.exports = {
+    getMenuItemsDetails,
+    getRestaurantDetails
 };
