@@ -670,3 +670,7 @@
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-01T19:25:45.324Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-01T19:36:02.517Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-01T19:36:03.239Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T08:19:56.495Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T08:19:57.204Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T08:22:50.295Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T08:22:51.594Z"}

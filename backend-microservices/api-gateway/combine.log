@@ -359,3 +359,7 @@
 {"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-01T19:36:01.713Z"}
 {"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-01T19:36:01.714Z"}
 {"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-01T19:36:01.715Z"}
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-11-05T08:14:43.583Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-05T08:14:43.589Z"}
+{"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-05T08:14:43.589Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-05T08:14:43.590Z"}

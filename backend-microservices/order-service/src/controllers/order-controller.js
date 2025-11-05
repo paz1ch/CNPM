@@ -331,7 +331,7 @@ const modifyPendingOrder = async (req, res) => {
     }
 };
 
-export const addOrderItem = async (orderId, newItem) => {
+const addOrderItem = async (orderId, newItem) => {
     const token = req.cookies && req.cookies.token;
     const user = await validateToken(token);
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
@@ -378,7 +378,7 @@ export const addOrderItem = async (orderId, newItem) => {
     }
 };
 
-export const removeOrderItem = async (orderId, orderItemId) => {
+const removeOrderItem = async (orderId, orderItemId) => {
     const token = req.cookies && req.cookies.token;
     const user = await validateToken(token);
 
@@ -402,7 +402,7 @@ export const removeOrderItem = async (orderId, orderItemId) => {
     }
 };
 
-export const updateItemQuantity = async (orderId, orderItemId, newQuantity) => {
+const updateItemQuantity = async (orderId, orderItemId, newQuantity) => {
     const token = req.cookies.token;
     const user = await validateToken(token);
 
@@ -437,7 +437,7 @@ export const updateItemQuantity = async (orderId, orderItemId, newQuantity) => {
     }
 };
 
-export const comfirmOrder = async (orderId) => {
+const comfirmOrder = async (orderId) => {
     const order = req.cookies.order;
     const User = await validateToken(order.token);
 
@@ -478,7 +478,7 @@ const recalculateTotalAmount = (items) => {
 };
 
 // Update order status by delivery personnel
-export const updateOrderStatusByDelivery = async (orderId, newStatus) => {
+const updateOrderStatusByDelivery = async (orderId, newStatus) => {
     const token = req.cookies && req.cookies.token;
     const user = await validateToken(token);
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
@@ -499,7 +499,7 @@ export const updateOrderStatusByDelivery = async (orderId, newStatus) => {
 };
 
 //get order by id for driver
-export const getOrderByIdForDriver = async (req, res) => {
+const getOrderByIdForDriver = async (req, res) => {
     try {
         const orderId = req.params.id;
         
