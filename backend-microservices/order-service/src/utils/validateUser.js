@@ -1,4 +1,4 @@
-const authService = require('./axiosInstance.js');
+const { authService } = require('./axiosInstances.js');
 const logger = require('./logger');
 
 const validateToken = async (token) => {

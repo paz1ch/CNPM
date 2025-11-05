@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { base } = require('../models/order');
+//const { base } = require('../models/order');
 
 const authService = axios.create({
     baseURL: process.env.AUTH_SERVICE_URL || 'http://localhost:5000',

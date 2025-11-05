@@ -359,3 +359,16 @@
 {"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-01T19:36:01.713Z"}
 {"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-01T19:36:01.714Z"}
 {"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-01T19:36:01.715Z"}
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-11-05T09:30:44.426Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-05T09:30:44.432Z"}
+{"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-05T09:30:44.433Z"}
+{"level":"info","message":"Order service running on port http://localhost:3003","service":"api-gateway","timestamp":"2025-11-05T09:30:44.433Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-05T09:30:44.434Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-11-05T09:35:08.006Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-05T09:35:08.007Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-11-05T09:35:08.733Z"}
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-11-05T09:41:25.665Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-05T09:41:25.729Z"}
+{"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-05T09:41:25.733Z"}
+{"level":"info","message":"Order service running on port http://localhost:3003","service":"api-gateway","timestamp":"2025-11-05T09:41:25.734Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-05T09:41:25.751Z"}

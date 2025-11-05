@@ -65,7 +65,7 @@ app.use('/api/products', (req, res, next) =>{
 app.use(errorHandler);
 
 app.listen(PORT, () =>{
-    logger.info(`Server is running on port ${PORT}`);
+    logger.info(` Product Service is running on port ${PORT}`);
 });
 
 process.on("unhandledRejection", (reason, promise) =>{

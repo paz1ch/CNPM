@@ -86,7 +86,7 @@ const loginUser = async (req, res) => {
         if(!isValidPassword){
             logger.warn("Invalid password");
             return res.status(400).json({
-                sucess : false,
+                success : false,
                 message : "Invalid credentials"
             })
         }
