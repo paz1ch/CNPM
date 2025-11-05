@@ -687,3 +687,5 @@
 >>>>>>> b7f834a1180e764bd850ca5afa9105688d19a204
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T10:15:02.881Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T10:15:03.604Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T14:48:32.600Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T14:48:35.376Z"}
