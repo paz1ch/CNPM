@@ -198,3 +198,5 @@
 {"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-05T09:30:04.925Z"}
 {"level":"info","message":" Product Service is running on port 3002","service":"product-service","timestamp":"2025-11-05T09:41:27.789Z"}
 {"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-05T09:41:28.495Z"}
+{"level":"info","message":" Product Service is running on port 3002","service":"product-service","timestamp":"2025-11-05T09:43:22.848Z"}
+{"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-05T09:43:23.588Z"}

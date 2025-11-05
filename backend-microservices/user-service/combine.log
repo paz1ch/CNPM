@@ -670,6 +670,7 @@
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-01T19:25:45.324Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-01T19:36:02.517Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-01T19:36:03.239Z"}
+<<<<<<< HEAD
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T08:46:10.474Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T08:46:11.238Z"}
 {"level":"info","message":"Received POST request to /api/auth/register","service":"user-service","timestamp":"2025-11-05T09:35:08.179Z"}
@@ -678,3 +679,9 @@
 {"level":"warn","message":"nguoi dung da ton tai","service":"user-service","timestamp":"2025-11-05T09:35:08.724Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T09:41:27.891Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T09:41:28.587Z"}
+=======
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T08:19:56.495Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T08:19:57.204Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-05T08:22:50.295Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-05T08:22:51.594Z"}
+>>>>>>> b7f834a1180e764bd850ca5afa9105688d19a204
