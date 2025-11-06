@@ -1,333 +1,165 @@
-# Food Delivery Microservices System
+# Hệ thống Đặt đồ ăn - Kiến trúc Microservices
 
-## Technology Stack
-- Frontend: React.js with Vite
-- Backend: Express.js microservices
-- Database: MongoDB
-- Tools: Postman, RabbitMQ
-- Authentication: JWT
+Dự án này là một hệ thống đặt đồ ăn hoàn được xây dựng dựa trên kiến trúc microservice. Hệ thống bao gồm các dịch vụ backend độc lập để xử lý người dùng, sản phẩm, đơn hàng, và một ứng dụng frontend được xây dựng bằng React.
 
-## System Architecture
+## Tính năng chính
 
-This project implements a microservices-based food delivery system with the following components:
+- **Frontend:** Giao diện người dùng đáp ứng (responsive) để duyệt sản phẩm, quản lý giỏ hàng, đặt hàng và xem lịch sử.
+- **Xác thực người dùng:** Đăng ký, đăng nhập, và quản lý thông tin người dùng với JWT.
+- **Quản lý sản phẩm:** Thêm, sửa, xóa và xem các sản phẩm đồ ăn.
+- **Quản lý đơn hàng:** Tạo đơn hàng, theo dõi trạng thái và xem lịch sử đặt hàng.
+- **Thanh toán:** Tích hợp cổng thanh toán (mô phỏng).
 
-### 1. API Gateway (`api-gateway`)
-- Entry point for all client requests
-- Routes requests to appropriate services
-- Handles authentication token validation
-- Port: 5000
+---
 
-### 2. User Service (`user-service`)
-- Manages user accounts and authentication
-- Handles user registration and login
-- Manages user profiles and preferences
-- Port: 5001
+## Kiến trúc hệ thống
 
-Key Features:
-- JWT-based authentication
-- Password hashing with bcrypt
-- Refresh token management
-- User role management (customer, admin)
+Hệ thống bao gồm các microservice sau:
 
-### 3. Product Service (`product-service`)
-- Manages food products and categories
-- Handles menu items 
-- Manages product availability
-- Port: 5002
+- **API Gateway (`api-gateway`):** Điểm vào duy nhất cho tất cả các yêu cầu từ client. Chịu trách nhiệm định tuyến, xác thực và rate limiting.
+- **User Service (`user-service`):** Quản lý tất cả logic liên quan đến người dùng, bao gồm đăng ký, đăng nhập và thông tin người dùng.
+- **Product Service (`product-service`):** Quản lý thông tin về sản phẩm và danh mục.
+- **Order Service (`order-service`):** Xử lý logic đặt hàng, giỏ hàng và lịch sử đơn hàng.
+- **Payment Service (`payment-service`):** Xử lý các giao dịch thanh toán.
+- **Frontend (`frontend`):** Ứng dụng React cung cấp giao diện người dùng cho khách hàng.
 
-Key Features:
-- Product CRUD operations
-- Category management
-- Product search and filtering
-- Image management
+---
 
-### 4. Order Service (`order-service`)
-- Processes and manages food orders
-- Tracks order status and history
-- Handles order modifications and cancellations
-- Port: 5003
+## Công nghệ sử dụng
 
-Key Features:
-- Order creation and management
-- Real-time order status updates
-- Order history tracking
-- Integration with payment service
+- **Backend:** Node.js, Express.js
+- **Frontend:** React.js, Vite
+- **Cơ sở dữ liệu:** MongoDB (với Mongoose), Redis (cho caching và rate limiting)
+- **Giao tiếp giữa các service:** REST API
+- **Bảo mật:** JWT (JSON Web Tokens), Helmet
+- **Tools:** Docker, Postman, Winston (logging)
 
-### 5. Payment Service (`payment-service`)
-- Processes payments
-- Manages payment status
-- Handles refunds and payment confirmations
-- Port: 5004
+---
 
-Key Features:
-- Secure payment processing
-- Multiple payment method support
-- Payment status tracking
-- Refund handling
+## Hướng dẫn Cài đặt và Chạy dự án
+
+### Yêu cầu tiên quyết
+
+- [Node.js](https://nodejs.org/) (phiên bản 16.x trở lên)
+- [MongoDB](https://www.mongodb.com/try/download/community)
+- [Redis](https://redis.io/docs/getting-started/installation/)
+
+### 1. Tải mã nguồn
+
+```bash
+git clone <https://github.com/paz1ch/CNPM.git>
+cd CNPM
+```
+
+### 2. Cài đặt phụ thuộc (Dependencies)
+
+Dự án này bao gồm nhiều service, mỗi service có các phụ thuộc riêng. Bạn cần cài đặt cho tất cả.
+
+Để tiết kiệm thời gian, bạn có thể mở nhiều cửa sổ terminal, mỗi cửa sổ cho một thư mục service và chạy `npm install` song song.
+
+```bash
+# Trong thư mục gốc /CNPM
+
+# Terminal 1: API Gateway
+cd backend-microservices/api-gateway && npm install
+
+# Terminal 2: User Service
+cd backend-microservices/user-service && npm install
+
+# Terminal 3: Product Service
+cd backend-microservices/product-service && npm install
+
+# Terminal 4: Order Service
+cd backend-microservices/order-service && npm install
+
+# Terminal 5: Payment Service
+cd backend-microservices/payment-service && npm install
+
+# Terminal 6: Frontend
+cd frontend && npm install
+```
+
+### 3. Cấu hình biến môi trường
+
+Mỗi service backend cần một tệp `.env` để hoạt động. Hãy sao chép từ tệp `.env.example` (nếu có) hoặc tạo một tệp `.env` mới trong thư mục gốc của mỗi service và điền các giá trị phù hợp.
+
+**Ví dụ cho `user-service/.env`:**
+```env
+PORT=5001
+MONGO_URI=mongodb://localhost:27017/user-service
+JWT_SECRET=your_jwt_secret
+```
+
+**Ví dụ cho `product-service/.env`:**
+```env
+PORT=5002
+MONGO_URI=mongodb://localhost:27017/product-service
+REDIS_URL=redis://localhost:6379
+```
+
+**Ví dụ cho `order-service/.env`:**
+```env
+PORT=5003
+MONGO_URI=mongodb://localhost:27017/order-service
+JWT_SECRET=your_jwt_secret
+AUTH_SERVICE_URL=http://localhost:5001
+RESTAURANT_SERVICE_URL=http://localhost:5002
+```
+*(Lặp lại tương tự cho các service khác)*
+
+### 4. Chạy ứng dụng (Chế độ Development)
+
+Bạn cần chạy tất cả các service cùng một lúc. Hãy mở các cửa sổ terminal riêng biệt cho mỗi service.
+
+```bash
+# Terminal 1: API Gateway
+cd backend-microservices/api-gateway && npm run dev
+
+# Terminal 2: User Service
+cd backend-microservices/user-service && npm run dev
+
+# Terminal 3: Product Service
+cd backend-microservices/product-service && npm run dev
+
+# Terminal 4: Order Service
+cd backend-microservices/order-service && npm run dev
+
+# Terminal 5: Payment Service
+cd backend-microservices/payment-service && npm run dev
+
+# Terminal 6: Frontend
+cd frontend && npm run dev
+```
+
+Sau khi tất cả đã khởi động:
+- **Backend** sẽ có sẵn tại các cổng tương ứng (5000, 5001, ...).
+- **Frontend** sẽ có thể truy cập tại `http://localhost:5173` (hoặc một cổng khác do Vite chỉ định).
 
 ## API Documentation
 
+*(Phần này có thể được giữ nguyên hoặc mở rộng với các công cụ như Swagger/OpenAPI)*
+
 ### User Service API
 
-#### Authentication
-```http
-POST /api/auth/register
-Content-Type: application/json
-
+#### Đăng ký
+`POST /api/auth/register`
+```json
 {
     "username": "string",
     "email": "string",
+aliqua",
     "password": "string",
     "role": "user|admin"
 }
-
-Response: 201 Created
-{
-    "userId": "string",
-    "token": "string"
-}
 ```
 
-```http
-POST /api/auth/login
-Content-Type: application/json
-
+#### Đăng nhập
+`POST /api/auth/login`
+```json
 {
     "email": "string",
     "password": "string"
 }
-
-Response: 200 OK
-{
-    "token": "string",
-    "user": {
-        "id": "string",
-        "username": "string",
-        "role": "string"
-    }
-}
 ```
 
-### Product Service API
-
-#### Product Management
-```http
-POST /api/products
-Content-Type: application/json
-Authorization: Bearer {token}
-
-{
-    "name": "string",
-    "description": "string",
-    "price": number,
-    "category": "string",
-    "image_url": "string"
-}
-
-Response: 201 Created
-{
-    "id": "string",
-    "name": "string",
-    "price": number
-}
-```
-
-```http
-GET /api/products
-Authorization: Bearer {token}
-
-Response: 200 OK
-{
-    "items": [
-        {
-            "id": "string",
-            "name": "string",
-            "description": "string",
-            "price": number,
-            "category": "string"
-        }
-    ]
-}
-```
-
-### Order Service API
-
-#### Order Management
-```http
-POST /api/orders
-Content-Type: application/json
-Authorization: Bearer {token}
-
-{
-    "items": [
-        {
-            "productId": "string",
-            "quantity": number
-        }
-    ],
-    "deliveryAddress": {
-        "street": "string",
-        "city": "string",
-        "postalCode": "string"
-    }
-}
-
-Response: 201 Created
-{
-    "orderId": "string",
-    "status": "PENDING",
-    "totalAmount": number
-}
-```
-
-```http
-PUT /api/orders/{orderId}/status
-Content-Type: application/json
-Authorization: Bearer {token}
-
-{
-    "status": "PREPARING|READY|DELIVERED|CANCELLED"
-}
-
-Response: 200 OK
-{
-    "orderId": "string",
-    "status": "string",
-    "updatedAt": "string"
-}
-```
-
-### Payment Service API
-
-#### Payment Processing
-```http
-POST /api/payments
-Content-Type: application/json
-Authorization: Bearer {token}
-
-{
-    "orderId": "string",
-    "amount": number,
-    "method": "CARD|CASH"
-}
-
-Response: 201 Created
-{
-    "paymentId": "string",
-    "status": "PENDING|COMPLETED",
-    "transactionId": "string"
-}
-```
-
-## Error Handling
-
-All services follow a standard error response format:
-
-```json
-{
-    "error": {
-        "code": "string",
-        "message": "string",
-        "details": {} // optional
-    }
-}
-```
-
-Common HTTP Status Codes:
-- 200: Success
-- 201: Created
-- 400: Bad Request
-- 401: Unauthorized
-- 403: Forbidden
-- 404: Not Found
-- 500: Internal Server Error
-
-## Setup & Installation
-
-1. Prerequisites:
-   - Node.js ≥ 14
-   - MongoDB ≥ 4.4
-   - RabbitMQ
-
-2. Environment Setup:
-   ```bash
-   # Clone repository
-   git clone <repository-url>
-   cd CNPM
-
-   # Install dependencies for all services
-   cd api-gateway && npm install
-   cd ../user-service && npm install
-   cd ../product-service && npm install
-   cd ../order-service && npm install
-   cd ../payment-service && npm install
-   ```
-
-3. Environment Variables:
-   Create `.env` files in each service directory with:
-   ```
-   PORT=service_port
-   MONGODB_URI=mongodb://localhost:27017/service_name
-   JWT_SECRET=your_jwt_secret
-   RABBITMQ_URL=amqp://localhost
-   ```
-
-4. Start Services:
-   ```bash
-   # In separate terminals
-   cd api-gateway && npm run dev
-   cd user-service && npm run dev
-   cd product-service && npm run dev
-   cd order-service && npm run dev
-   cd payment-service && npm run dev
-   ```
-
-## Security Features
-
-1. Authentication:
-   - JWT tokens with expiration
-   - Refresh token rotation
-   - Password hashing with bcrypt
-
-2. Authorization:
-   - Role-based access control
-   - Resource-level permissions
-   - Request validation
-
-3. Data Protection:
-   - Input sanitization
-   - CORS configuration
-   - Rate limiting
-
-## Monitoring & Logging
-
-Each service implements:
-- Health check endpoints (/health)
-- Winston logging
-- Request tracing
-- Error tracking
-
-## Frontend Features
-
-1. User Interface:
-   - Responsive design
-   - Cart management
-   - Order tracking
-   - User profile management
-
-2. Performance:
-   - Lazy loading
-   - State management with Context API
-   - Optimized image loading
-   - Error boundary implementation
-
-## Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Create pull request
-
-## License
-
-ISC
+... (giữ nguyên phần còn lại của tài liệu API) ...
