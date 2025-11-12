@@ -21,6 +21,7 @@
     "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2",
+    "stripe": "^19.3.0",
     "winston": "^3.18.3"
   }
 }
