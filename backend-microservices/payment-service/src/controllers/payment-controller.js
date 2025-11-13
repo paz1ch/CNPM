@@ -1,4 +1,3 @@
-
 const Payment = require('../models/payment');
 const logger = require('../utils/logger');
 
