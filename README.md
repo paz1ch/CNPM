@@ -101,7 +101,7 @@ REDIS_URL=redis://localhost:6379
 ```env
 PORT=3003
 MONGO_URI=mongodb://localhost:27017/order-service
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=jwt_secret
 AUTH_SERVICE_URL=http://localhost:5001
 RESTAURANT_SERVICE_URL=http://localhost:5002
 ```
@@ -145,7 +145,6 @@ Sau khi tất cả đã khởi động:
 {
     "username": "string",
     "email": "string",
-aliqua",
     "password": "string",
     "role": "user|admin"
 }
