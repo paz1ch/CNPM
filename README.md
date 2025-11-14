@@ -28,7 +28,7 @@ Hệ thống bao gồm các microservice sau:
 ## Công nghệ sử dụng
 
 - **Backend:** Node.js, Express.js
-- **Frontend:** React.js, Vite
+- **Frontend:** 
 - **Cơ sở dữ liệu:** MongoDB (với Mongoose), Redis (cho caching và rate limiting)
 - **Giao tiếp giữa các service:** REST API
 - **Bảo mật:** JWT (JSON Web Tokens), Helmet
