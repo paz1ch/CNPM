@@ -215,3 +215,9 @@
 {"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-05T15:38:06.077Z"}
 {"level":"info","message":" Product Service is running on port 3002","service":"product-service","timestamp":"2025-11-05T15:38:14.969Z"}
 {"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-05T15:38:15.677Z"}
+{"level":"info","message":" Product Service is running on port 3002","service":"product-service","timestamp":"2025-11-14T00:14:54.846Z"}
+{"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-14T00:14:55.889Z"}
+{"level":"info","message":"Received GET request to /api/products/","service":"product-service","timestamp":"2025-11-14T00:18:01.608Z"}
+{"level":"info","message":"Request body, [object Object]","service":"product-service","timestamp":"2025-11-14T00:18:01.609Z"}
+{"level":"info","message":" Product Service is running on port 3002","service":"product-service","timestamp":"2025-11-14T03:57:53.630Z"}
+{"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-14T03:57:54.675Z"}

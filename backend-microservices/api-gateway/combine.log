@@ -387,3 +387,25 @@
 {"level":"info","message":"Order service running on port http://localhost:3003","service":"api-gateway","timestamp":"2025-11-05T16:09:01.208Z"}
 {"level":"info","message":"Payment service running on port http://localhost:3004","service":"api-gateway","timestamp":"2025-11-05T16:09:01.208Z"}
 {"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-05T16:09:01.209Z"}
+{"level":"info","message":"APT Gateway running on port 3000","service":"api-gateway","timestamp":"2025-11-14T00:13:50.464Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-14T00:13:50.468Z"}
+{"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-14T00:13:50.469Z"}
+{"level":"info","message":"Order service running on port http://localhost:3003","service":"api-gateway","timestamp":"2025-11-14T00:13:50.469Z"}
+{"level":"info","message":"Payment service running on port http://localhost:3004","service":"api-gateway","timestamp":"2025-11-14T00:13:50.470Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-14T00:13:50.470Z"}
+{"level":"info","message":"Received POST request to /v1/auth/register","service":"api-gateway","timestamp":"2025-11-14T00:16:54.406Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-14T00:16:54.407Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-11-14T00:16:54.948Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-14T00:17:20.382Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-14T00:17:20.383Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-11-14T00:17:20.397Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-14T00:17:27.404Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-14T00:17:27.404Z"}
+{"level":"info","message":"Response received from user service: 400","service":"api-gateway","timestamp":"2025-11-14T00:17:27.412Z"}
+{"level":"error","message":"SyntaxError: Expected double-quoted property name in JSON at position 71 (line 4 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\lib\\types\\json.js:77:19)\n    at D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\lib\\read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)","service":"api-gateway","timestamp":"2025-11-14T00:17:34.491Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-14T00:17:39.526Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-14T00:17:39.527Z"}
+{"level":"info","message":"Response received from user service: 200","service":"api-gateway","timestamp":"2025-11-14T00:17:39.940Z"}
+{"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-14T00:18:01.581Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-14T00:18:01.581Z"}
+{"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-14T00:18:01.788Z"}
