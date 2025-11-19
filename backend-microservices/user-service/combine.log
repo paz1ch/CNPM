@@ -749,3 +749,13 @@
 {"level":"info","message":"Login endpoint hit...","service":"user-service","timestamp":"2025-11-14T00:17:39.531Z"}
 {"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-14T03:57:53.501Z"}
 {"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-14T03:57:54.435Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-19T16:47:55.874Z"}
+{"level":"info","message":"Connected to RabbitMQ","service":"user-service","timestamp":"2025-11-19T16:47:56.173Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-19T16:47:56.177Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-19T16:54:04.498Z"}
+{"level":"info","message":"Connected to RabbitMQ","service":"user-service","timestamp":"2025-11-19T16:54:04.537Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-19T16:54:04.540Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-19T17:34:48.963Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-19T17:34:48.979Z"}
+{"level":"info","message":"Ket noi db thanh cong","service":"user-service","timestamp":"2025-11-19T17:41:26.543Z"}
+{"level":"info","message":"user service running on port 3001","service":"user-service","timestamp":"2025-11-19T17:41:26.549Z"}

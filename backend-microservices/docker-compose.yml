@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # API Gateway: Cổng vào cho tất cả request
   api-gateway:
@@ -12,83 +10,53 @@ services:
     depends_on:
       - redis
       - rabbitmq
-    networks:
-      - food-del-net
 
   # User Service: Quản lý người dùng
   user-service:
     build: ./user-service
     environment:
-      - MONGO_URI=mongodb://mongo:27017/user-service
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
     depends_on:
-      - mongo
       - redis
       - rabbitmq
-    networks:
-      - food-del-net
 
   # Product Service: Quản lý sản phẩm
   product-service:
     build: ./product-service
     environment:
-      - MONGO_URI=mongodb://mongo:27017/product-service
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
     depends_on:
-      - mongo
       - redis
       - rabbitmq
-    networks:
-      - food-del-net
+
 
   # Order Service: Quản lý đơn hàng
   order-service:
     build: ./order-service
     environment:
-      - MONGO_URI=mongodb://mongo:27017/order-service
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
     depends_on:
-      - mongo
       - redis
       - rabbitmq
-    networks:
-      - food-del-net
 
   # Payment Service: Quản lý thanh toán
   payment-service:
     build: ./payment-service
     environment:
-      - MONGO_URI=mongodb://mongo:27017/payment-service
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
     depends_on:
-      - mongo
       - redis
       - rabbitmq
-    networks:
-      - food-del-net
-
-  #MongoDB
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - food-del-net
-    restart: unless-stopped
 
   #Redis
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
-    networks:
-      - food-del-net
     restart: unless-stopped
 
   #RabbitMQ
@@ -97,8 +65,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    networks:
-      - food-del-net
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 30s
@@ -106,12 +72,3 @@ services:
       retries: 5
     restart: unless-stopped
 
-# Định nghĩa network chung
-networks:
-  food-del-net:
-    driver: bridge
-
-# Định nghĩa volume để lưu trữ dữ liệu
-volumes:
-  mongo-data:
-    driver: local

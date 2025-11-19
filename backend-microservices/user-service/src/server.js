@@ -7,9 +7,8 @@ const cors = require('cors')
 const {RateLimiterRedis} = require('rate-limiter-flexible');
 const Redis = require('ioredis');
 const {rateLimit} = require('express-rate-limit');
-const {RedisStore} = require('rate-limit-redis');
-const { connectToRabbitMQ } = require('./utils/rabbitmq');
 const errorHandler = require('./middleware/errorHandler');
+const { RedisStore } = require('rate-limit-redis');
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -23,7 +22,7 @@ app.use(express.json())
 
 app.use((req,res,next)=>{
     logger.info(`Received ${req.method} request to ${req.url}`);
-    logger.info(`Request body, ${req.body}`);
+    logger.info(`Request body: ${JSON.stringify(req.body)}`);
     next();
 })
 
@@ -41,6 +40,7 @@ app.use((req,res,next)=>{
     });
 });
 
+
 const sensitiveEndpointsLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 50,
@@ -51,13 +51,14 @@ const sensitiveEndpointsLimiter = rateLimit({
         res.status(429).json({success: false, message: "Too many requests"});
     },
     store: new RedisStore({
-        sendCommand: (...args) => redisClient.call(...args)
+        sendCommand: (...args) => redisClient.call(...args),
     }),
 })
 
 
-app.use('api/auth/register', sensitiveEndpointsLimiter);
+app.use('/api/auth/register', sensitiveEndpointsLimiter);
 
+const routes = require('./routes/user-service.js')
 //route
 app.use('/api/auth', routes);
 
@@ -69,24 +70,15 @@ mongoose.connect(process.env.MONGO_URI)
     .then(()=> {
         logger.info('Ket noi db thanh cong');
         
-        async function startServer() {
-            try {
-                await connectToRabbitMQ();
-                app.listen(PORT, () => {
-                    logger.info(`user service running on port ${PORT}`);
-                });
-            } catch (error) {
-                logger.error('Failed to start server', error);
-                process.exit(1);
-            }
-        }
-
-        startServer();
+        app.listen(PORT, () => {
+            logger.info(`user service running on port ${PORT}`);
+        });
     })
     .catch(e=> {
         logger.error("Ket noi db that bai", e)
         process.exit(1);
     })
+
 
 process.on('unhandledRejection', (reason, promise)=>{
     logger.error('Unhandled Rejection at', promise, "reason: ", reason)

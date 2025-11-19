@@ -223,3 +223,6 @@
 {"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-14T03:57:54.675Z"}
 {"level":"info","message":" Product Service is running on port 3002","service":"product-service","timestamp":"2025-11-19T12:45:05.732Z"}
 {"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-19T12:45:08.578Z"}
+{"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-19T16:54:21.053Z"}
+{"level":"info","message":"Connected to RabbitMQ","service":"product-service","timestamp":"2025-11-19T16:54:21.093Z"}
+{"level":"info","message":"Product Service running on port 3002","service":"product-service","timestamp":"2025-11-19T16:54:21.098Z"}

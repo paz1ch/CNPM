@@ -1,6 +1,6 @@
 
-const RefreshToken = require('../models/refreshToken');
-const User = require('../models/user');
+const RefreshToken = require('../models/RefreshToken');
+const User = require('../models/User');
 const generateTokens = require('../utils/generateToken');
 const logger = require('../utils/logger');
 const { validateRegistration, validatelogin } = require('../utils/validation');

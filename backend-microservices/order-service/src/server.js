@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const orderRoutes = require('./routes/order-routes');
-const { connectToRabbitMQ } = require('./utils/rabbitMQ');
+const { connectToRabbitMQ } = require('./utils/rabbitmq');
 
 // Load environment variables
 require('dotenv').config();
