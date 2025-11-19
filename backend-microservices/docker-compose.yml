@@ -71,7 +71,7 @@ services:
     networks:
       - food-del-net
 
-  # Dịch vụ MongoDB
+  #MongoDB
   mongo:
     image: mongo:latest
     ports:
@@ -82,7 +82,7 @@ services:
       - food-del-net
     restart: unless-stopped
 
-  # Dịch vụ Redis
+  #Redis
   redis:
     image: redis:alpine
     ports:
@@ -91,7 +91,7 @@ services:
       - food-del-net
     restart: unless-stopped
 
-  # Dịch vụ RabbitMQ
+  #RabbitMQ
   rabbitmq:
     image: rabbitmq:3-management
     ports:
