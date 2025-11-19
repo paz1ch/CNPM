@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const orderRoutes = require('./routes/order-routes');
+const { connectToRabbitMQ } = require('./utils/rabbitMQ');
 
 // Load environment variables
 require('dotenv').config();
@@ -50,9 +51,20 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         logger.info('Connected to MongoDB');
         const PORT = process.env.PORT || 3003;
-        app.listen(PORT, () => {
-            logger.info(`Order Service running on port ${PORT}`);
-        });
+
+        async function startServer() {
+            try {
+                await connectToRabbitMQ();
+                app.listen(PORT, () => {
+                    logger.info(`Order Service running on port ${PORT}`);
+                });
+            } catch (error) {
+                logger.error('Failed to connect to server', error);
+                process.exit(1);
+            }
+        }
+
+        startServer();
     })
     .catch((error) => {
         logger.error('Error connecting to MongoDB: %o', error);

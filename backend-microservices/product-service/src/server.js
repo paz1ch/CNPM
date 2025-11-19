@@ -6,13 +6,12 @@ const cors = require("cors");
 const helmet = require("helmet");
 const path = require("path");
 const productRoutes = require("./routes/product-routes");
+const { connectToRabbitMQ } = require("./utils/rabbitmq");
 const errorHandler = require("./middleware/errorHandler");
 const logger = require("./utils/logger");
 
 const app = express();
 const PORT = process.env.PORT || 3002;
-
-mongoose.connect(process.env.MONGO_URI).then(() => logger.info("Connected to MongoDB")).catch((e) => logger.error("Mongo connection error", e));
 
 const redisClient = new Redis(process.env.REDIS_URL);
 
@@ -64,9 +63,29 @@ app.use('/api/products', (req, res, next) =>{
 
 app.use(errorHandler);
 
-app.listen(PORT, () =>{
-    logger.info(` Product Service is running on port ${PORT}`);
-});
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        logger.info("Connected to MongoDB");
+
+        async function startServer() {
+            try {
+                await connectToRabbitMQ();
+                app.listen(PORT, () => {
+                    logger.info(`Product Service running on port ${PORT}`);
+                });
+            } catch (error) {
+                logger.error('Failed to start server', error);
+                process.exit(1);
+            }
+        }
+
+        startServer();
+    })
+    .catch((e) => {
+        logger.error("Mongo connection error", e)
+        process.exit(1);
+    });
+
 
 process.on("unhandledRejection", (reason, promise) =>{
     logger.error("Unhandled Rejection at:", promise, "reason:", reason);
