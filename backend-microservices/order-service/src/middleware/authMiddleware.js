@@ -40,4 +40,12 @@ const isDelivery = (req, res, next) => {
     }
 };
 
-module.exports = { protect, isUser, isRestaurant, isDelivery };
+const isRestaurantOrDelivery = (req, res, next) => {
+    if (req.user && (req.user.role === 'restaurant' || req.user.role === 'delivery')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Forbidden, restaurant or delivery role required' });
+    }
+};
+
+module.exports = { protect, isUser, isRestaurant, isDelivery, isRestaurantOrDelivery };
