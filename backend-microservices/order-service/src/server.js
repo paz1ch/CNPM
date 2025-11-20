@@ -1,84 +1,56 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
+require('dotenv').config();
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
-const errorHandler = require('./middleware/errorHandler');
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
 const orderRoutes = require('./routes/order-routes');
 const { connectToRabbitMQ } = require('./utils/rabbitmq');
-
-// Load environment variables
-require('dotenv').config();
-
-// Validate required env vars
-const requiredEnvVars = ['MONGO_URI', 'AUTH_SERVICE_URL', 'RESTAURANT_SERVICE_URL'];
-for (const envVar of requiredEnvVars) {
-    if (!process.env[envVar]) {
-        logger.error(`Missing required environment variable: ${envVar}`);
-        process.exit(1);
-    }
-}
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
+const PORT = process.env.PORT || 3003;
 
-// Security middleware
+// Middleware
 app.use(helmet());
-app.use(cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-    credentials: true
-}));
+app.use(cors());
+app.use(express.json());
 
-// Body parsing middleware
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+    logger.info(`Received ${req.method} request to ${req.url}`);
+    next();
+});
 
 // Routes
 app.use('/api/orders', orderRoutes);
 
-// Health check endpoint
-app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
-
-// Error handling
+// Error handler
 app.use(errorHandler);
-
-// Handle unhandled routes
-app.use((req, res) => {
-    res.status(404).json({ message: `Route ${req.originalUrl} not found` });
-});
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        logger.info('Connected to MongoDB');
-        const PORT = process.env.PORT || 3003;
+        logger.info('Ket noi db thanh cong');
 
         async function startServer() {
             try {
                 await connectToRabbitMQ();
                 app.listen(PORT, () => {
-                    logger.info(`Order Service running on port ${PORT}`);
+                    logger.info(`Order service running on port ${PORT}`);
                 });
             } catch (error) {
-                logger.error('Failed to connect to server', error);
+                logger.error('Failed to start server', error);
                 process.exit(1);
             }
         }
 
         startServer();
     })
-    .catch((error) => {
-        logger.error('Error connecting to MongoDB: %o', error);
+    .catch(e => {
+        logger.error("Ket noi db that bai", e);
         process.exit(1);
     });
 
-// Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-    logger.error('Uncaught Exception: %o', error);
-    process.exit(1);
-});
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (error) => {
-    logger.error('Unhandled Rejection: %o', error);
-    process.exit(1);
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at', promise, "reason: ", reason);
 });

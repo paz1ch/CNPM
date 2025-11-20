@@ -3,6 +3,7 @@ const logger = require('../utils/logger');
 const protect = (req, res, next) => {
     const userId = req.headers['x-user-id'];
     const userRole = req.headers['x-user-role'];
+    const restaurantId = req.headers['x-restaurant-id'];
 
     if (!userId) {
         logger.warn('Unauthorized access attempt: No x-user-id header');
@@ -10,8 +11,14 @@ const protect = (req, res, next) => {
     }
     req.user = {
         userId: userId,
+        _id: userId,  // Add _id field to match controller expectations
         role: userRole
     };
+
+    // Add restaurantID for restaurant users
+    if (restaurantId) {
+        req.user.restaurantID = restaurantId;
+    }
 
     next();
 };

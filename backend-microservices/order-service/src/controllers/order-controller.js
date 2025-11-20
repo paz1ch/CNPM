@@ -1,6 +1,5 @@
 const logger = require('../utils/logger');
 const Order = require('../models/order');
-const { getMenuItemsDetails, getRestaurantDetails } = require('../utils/menuService');
 const { ORDER_MODIFICATION_DEADLINE, statusFlow } = require('../config/order');
 
 /** Create a new order */
@@ -8,38 +7,42 @@ const createOrder = async (req, res) => {
     try {
         const user = req.user;
 
-        const { restaurantID, items } = req.body || {};
+        const { restaurantID, items, postal_code_of_restaurant } = req.body || {};
+
         if (!items || !Array.isArray(items) || items.length === 0) {
             return res.status(400).json({ message: 'Invalid order data' });
         }
 
-        const restaurantDetails = await getRestaurantDetails(restaurantID);
-        if (!restaurantDetails) return res.status(400).json({ message: 'Invalid restaurant ID' });
+        if (!restaurantID) {
+            return res.status(400).json({ message: 'Restaurant ID is required' });
+        }
 
-        const postal_code_of_restaurant = restaurantDetails.postal_code;
+        if (!postal_code_of_restaurant) {
+            return res.status(400).json({ message: 'Postal code is required' });
+        }
+
         const orderID = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
         const orderItems = [];
         let totalAmount = 0;
 
         for (const item of items) {
-            try {
-                const menuItem = await getMenuItemsDetails(item.menuItemId);
-                if (!menuItem) throw new Error('Menu item not found');
-
-                const orderItem = {
-                    orderItemID: `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-                    menuItemId: item.menuItemId,
-                    quantity: item.quantity,
-                    price: menuItem.price,
-                    totalPrice: menuItem.price * item.quantity,
-                };
-
-                totalAmount += orderItem.totalPrice;
-                orderItems.push(orderItem);
-            } catch (err) {
-                return res.status(400).json({ message: `Error processing item ${item.menuItemId}: ${err.message}` });
+            if (!item.menuItemId || !item.quantity || !item.price) {
+                return res.status(400).json({
+                    message: 'Each item must have menuItemId, quantity, and price'
+                });
             }
+
+            const orderItem = {
+                orderItemID: `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                menuItemId: item.menuItemId,
+                quantity: item.quantity,
+                price: item.price,
+                totalPrice: item.price * item.quantity,
+            };
+
+            totalAmount += orderItem.totalPrice;
+            orderItems.push(orderItem);
         }
 
         const order = await Order.create({
@@ -54,10 +57,15 @@ const createOrder = async (req, res) => {
             modification_deadline: new Date(Date.now() + ORDER_MODIFICATION_DEADLINE * 60000),
         });
 
-        return res.status(201).json({ orderDetails: order, restaurant: restaurantDetails });
+        return res.status(201).json({ orderDetails: order });
     } catch (error) {
         logger.error('Error creating order: %o', error);
-        return res.status(500).json({ message: 'Failed to create order' });
+        logger.error('Error stack: %s', error.stack);
+        logger.error('Error message: %s', error.message);
+        return res.status(500).json({
+            message: 'Failed to create order',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 };
 
@@ -66,7 +74,7 @@ const getOrderById = async (req, res) => {
     try {
         const user = req.user;
 
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findOne({ orderID: req.params.id });
         if (!order) return res.status(404).json({ message: 'Order not found' });
 
         if (user.role === 'user' && order.userID.toString() !== user._id.toString()) {
@@ -74,13 +82,6 @@ const getOrderById = async (req, res) => {
         }
         if (user.role === 'restaurant' && order.restaurantID !== user.restaurantID) {
             return res.status(403).json({ message: "Unauthorized to view this order" });
-        }
-
-        try {
-            const restaurantDetails = await getRestaurantDetails(order.restaurantID);
-            if (order._doc) order._doc.restaurantDetails = restaurantDetails;
-        } catch (err) {
-            logger.error('Error fetching restaurant details: %o', err);
         }
 
         return res.status(200).json({ order });
@@ -123,40 +124,6 @@ const getOrdersByUser = async (req, res) => {
 
         const orders = await Order.find({ userID: user._id }).sort({ createdAt: -1 });
 
-        const restaurantIds = [...new Set(orders.map(order => order.restaurantID))];
-        const restaurantDetailsMap = new Map();
-
-        await Promise.all(restaurantIds.map(async (id) => {
-            try {
-                const details = await getRestaurantDetails(id);
-                restaurantDetailsMap.set(id, details);
-            } catch (err) {
-                logger.error('Error fetching restaurant details for restaurant %s: %o', id, err);
-            }
-        }));
-
-        for (let i = 0; i < orders.length; i++) {
-            if (orders[i]._doc) {
-                orders[i]._doc.restaurantDetails = restaurantDetailsMap.get(orders[i].restaurantID) || null;
-            }
-
-            if (orders[i].items && orders[i].items.length > 0) {
-                for (let j = 0; j < orders[i].items.length; j++) {
-                    try {
-                        const menuItemDetails = await getMenuItemsDetails(orders[i].items[j].menuItemId);
-                        orders[i].items[j]._doc = {
-                            ...orders[i].items[j]._doc,
-                            name: menuItemDetails.name,
-                            image_url: menuItemDetails.image_url,
-                            description: menuItemDetails.description,
-                        };
-                    } catch (err) {
-                        logger.error('Error fetching menu item details for order item %s: %o', orders[i].items[j]._id, err);
-                    }
-                }
-            }
-        }
-
         return res.status(200).json({ orders });
     } catch (error) {
         logger.error('Error fetching user orders: %o', error);
@@ -171,48 +138,12 @@ const getOrdersByRestaurant = async (req, res) => {
 
         const restaurantID = req.params.restaurantId || user.restaurantID;
 
-        let restaurantDetails = null;
-        try {
-            restaurantDetails = await getRestaurantDetails(restaurantID);
-        } catch (err) {
-            logger.error('Error fetching restaurant details: %o', err);
-        }
-
         const orders = await Order.find({
             restaurantID,
-            status: { $in: ['Confirmed', 'Preparing', 'Out for Delivery', 'Delivered'] },
+            status: { $in: ['Pending', 'Confirmed', 'Preparing', 'Ready', 'Out for Delivery', 'Delivered'] },
         }).sort({ createdAt: -1 });
 
-        const menuItemIds = [...new Set(orders.flatMap(order => order.items.map(item => item.menuItemId)))];
-        const menuItemDetailsMap = new Map();
-
-        await Promise.all(menuItemIds.map(async (id) => {
-            try {
-                const details = await getMenuItemsDetails(id);
-                menuItemDetailsMap.set(id, details);
-            } catch (err) {
-                logger.error('Error fetching menu item details for item %s: %o', id, err);
-            }
-        }));
-
-        for (let i = 0; i < orders.length; i++) {
-            if (orders[i].items && orders[i].items.length > 0) {
-                for (let j = 0; j < orders[i].items.length; j++) {
-                    const details = menuItemDetailsMap.get(orders[i].items[j].menuItemId);
-                    if (details) {
-                        orders[i].items[j]._doc = {
-                            ...orders[i].items[j]._doc,
-                            name: details.name,
-                            image_url: details.image_url,
-                            description: details.description,
-                        };
-                    }
-                }
-            }
-        }
-
-        const response = { restaurant: restaurantDetails || null, orders };
-        return res.status(200).json(response);
+        return res.status(200).json({ orders });
     } catch (error) {
         logger.error('Error fetching restaurant orders: %o', error);
         return res.status(500).json({ message: 'Failed to fetch restaurant orders' });
@@ -227,20 +158,7 @@ const getOrdersByPostalCode = async (req, res) => {
 
         const orders = await Order.find(query).sort({ createdAt: -1 });
 
-        const ordersWithRestaurantDetails = await Promise.all(
-            orders.map(async (ord) => {
-                const orderObj = ord.toObject();
-                try {
-                    orderObj.restaurantDetails = await getRestaurantDetails(ord.restaurantID);
-                } catch (err) {
-                    logger.error('Error fetching restaurant details for order %s: %o', ord.orderID || ord._id, err);
-                    orderObj.restaurantDetails = null;
-                }
-                return orderObj;
-            })
-        );
-
-        return res.status(200).json({ ordersWithRestaurantDetails });
+        return res.status(200).json({ orders });
     } catch (error) {
         logger.error('Error fetching orders by postal code: %o', error);
         return res.status(500).json({ message: 'Failed to fetch orders by postal code' });
@@ -268,24 +186,22 @@ const modifyPendingOrder = async (req, res) => {
 
         const orderItems = [];
         let totalAmount = 0;
+
         for (const item of items) {
-            try {
-                const menuItem = await getMenuItemsDetails(item.menuItemId);
-                if (!menuItem) throw new Error('Menu item not found');
-
-                const orderItem = {
-                    orderItemID: item.orderItemID || `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-                    menuItemId: item.menuItemId,
-                    quantity: item.quantity,
-                    price: menuItem.price,
-                    totalPrice: menuItem.price * item.quantity,
-                };
-
-                totalAmount += orderItem.totalPrice;
-                orderItems.push(orderItem);
-            } catch (err) {
-                return res.status(400).json({ message: `Invalid menu item: ${item.menuItemId}` });
+            if (!item.menuItemId || !item.quantity || !item.price) {
+                return res.status(400).json({ message: 'Each item must have menuItemId, quantity, and price' });
             }
+
+            const orderItem = {
+                orderItemID: item.orderItemID || `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                menuItemId: item.menuItemId,
+                quantity: item.quantity,
+                price: item.price,
+                totalPrice: item.price * item.quantity,
+            };
+
+            totalAmount += orderItem.totalPrice;
+            orderItems.push(orderItem);
         }
 
         order.items = orderItems;
