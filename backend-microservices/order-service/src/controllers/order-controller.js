@@ -8,12 +8,16 @@ const createOrder = async (req, res) => {
     try {
         const user = req.user;
 
-        const { restaurantID, items } = req.body || {};
-        if (!items || !Array.isArray(items) || items.length === 0) {
-            return res.status(400).json({ message: 'Invalid order data' });
-        }
+        const { restaurantID, items } = req.body;
 
-        const restaurantDetails = await getRestaurantDetails(restaurantID);
+        let restaurantDetails;
+        try {
+            restaurantDetails = await getRestaurantDetails(restaurantID);
+        } catch (err) {
+            logger.error('Failed to fetch restaurant details for ID %s: %o', restaurantID, err);
+            return res.status(400).json({ message: 'Failed to retrieve restaurant information. Please check the restaurant ID.' });
+        }
+        
         if (!restaurantDetails) return res.status(400).json({ message: 'Invalid restaurant ID' });
 
         const postal_code_of_restaurant = restaurantDetails.postal_code;
