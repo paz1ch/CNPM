@@ -48,9 +48,12 @@ cd CNPM
 ### 3. Chạy Docker Compose
 ```bash
 docker-compose build
-docker-compose up
+docker-compose up -d
 ```
-
+hoặc
+```bash
+docker-compose up -d --build
+```
 
 
 
