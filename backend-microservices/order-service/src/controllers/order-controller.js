@@ -7,7 +7,6 @@ const createOrder = async (req, res) => {
     try {
         const user = req.user;
 
-<<<<<<< HEAD
         const { restaurantID, items, postal_code_of_restaurant } = req.body || {};
 
         if (!items || !Array.isArray(items) || items.length === 0) {
@@ -21,19 +20,6 @@ const createOrder = async (req, res) => {
         if (!postal_code_of_restaurant) {
             return res.status(400).json({ message: 'Postal code is required' });
         }
-=======
-        const { restaurantID, items } = req.body;
-
-        let restaurantDetails;
-        try {
-            restaurantDetails = await getRestaurantDetails(restaurantID);
-        } catch (err) {
-            logger.error('Failed to fetch restaurant details for ID %s: %o', restaurantID, err);
-            return res.status(400).json({ message: 'Failed to retrieve restaurant information. Please check the restaurant ID.' });
-        }
-        
-        if (!restaurantDetails) return res.status(400).json({ message: 'Invalid restaurant ID' });
->>>>>>> 96d58a87d730573806bf3b04a72a08d5291653df
 
         const orderID = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
