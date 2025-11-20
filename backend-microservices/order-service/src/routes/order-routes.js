@@ -40,7 +40,7 @@ const updateOrderValidation = [
 ];
 
 // Routes
-router.post('/', protect, isUser, createOrderValidation, validateRequest, orderController.createOrder);
+router.post('/create', protect, isUser, createOrderValidation, validateRequest, orderController.createOrder);
 router.get('/user', protect, isUser, orderController.getOrdersByUser);
 router.get('/restaurant/:restaurantId', protect, isRestaurant, orderController.getOrdersByRestaurant);
 router.get('/postal-code/:postalCode', protect, isDelivery, orderController.getOrdersByPostalCode);
