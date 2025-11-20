@@ -29,7 +29,7 @@ Hệ thống bao gồm các microservice sau:
 
 - **Backend:** Node.js, Express.js
 - **Frontend:** 
-- **Cơ sở dữ liệu:** MongoDB (với Mongoose), Redis (cho caching và rate limiting)
+- **Cơ sở dữ liệu:** MongoDB (với Mongoose), Redis (rate limiting)
 - **Giao tiếp giữa các service:** REST API
 - **Bảo mật:** JWT (JSON Web Tokens), Helmet
 - **Tools:** Docker, Postman, Winston (logging)
@@ -37,13 +37,6 @@ Hệ thống bao gồm các microservice sau:
 ---
 
 ## Hướng dẫn Cài đặt và Chạy dự án
-
-### Yêu cầu tiên quyết
-
-- [Node.js](https://nodejs.org/) (phiên bản 16.x trở lên)
-- [MongoDB](https://www.mongodb.com/try/download/community)
-- [Redis](https://redis.io/docs/getting-started/installation/)
-
 ### 1. Tải mã nguồn
 
 ```bash
@@ -51,112 +44,13 @@ git clone <https://github.com/paz1ch/CNPM.git>
 cd CNPM
 ```
 
-### 2. Cài đặt phụ thuộc (Dependencies)
-
-Dự án này bao gồm nhiều service, mỗi service có các phụ thuộc riêng. Ta cần cài đặt cho tất cả
-
-Để tiết kiệm thời gian, ta có thể mở nhiều cửa sổ terminal, mỗi cửa sổ cho một thư mục service và chạy `npm install` song song.
-
+### 2. Mở Docker Desktop
+### 3. Chạy Docker Compose
 ```bash
-# Trong thư mục gốc /CNPM
-
-# Terminal 1: API Gateway
-cd backend-microservices/api-gateway && npm install
-
-# Terminal 2: User Service
-cd backend-microservices/user-service && npm install
-
-# Terminal 3: Product Service
-cd backend-microservices/product-service && npm install
-
-# Terminal 4: Order Service
-cd backend-microservices/order-service && npm install
-
-# Terminal 5: Payment Service
-cd backend-microservices/payment-service && npm install
-
-# Terminal 6: Frontend
-cd frontend && npm install
+docker-compose build
+docker-compose up
 ```
 
-### 3. Cấu hình biến môi trường
 
-Mỗi service backend cần một tệp `.env` để hoạt động
-
-**Ví dụ cho `user-service/.env`:**
-```env
-PORT=3001
-MONGO_URI=mongodb://localhost:27017/user-service
-JWT_SECRET=jwt_secret
-```
-
-**Ví dụ cho `product-service/.env`:**
-```env
-PORT=3002
-MONGO_URI=mongodb://localhost:27017/product-service
-REDIS_URL=redis://localhost:6379
-```
-
-**Ví dụ cho `order-service/.env`:**
-```env
-PORT=3003
-MONGO_URI=mongodb://localhost:27017/order-service
-JWT_SECRET=jwt_secret
-AUTH_SERVICE_URL=http://localhost:5001
-RESTAURANT_SERVICE_URL=http://localhost:5002
-```
-...
-
-### 4. Chạy ứng dụng (Chế độ Development)
-
-Ta cần chạy tất cả các service cùng một lúc
-
-```bash
-# Terminal 1: API Gateway
-cd backend-microservices/api-gateway && npm run dev
-
-# Terminal 2: User Service
-cd backend-microservices/user-service && npm run dev
-
-# Terminal 3: Product Service
-cd backend-microservices/product-service && npm run dev
-
-# Terminal 4: Order Service
-cd backend-microservices/order-service && npm run dev
-
-# Terminal 5: Payment Service
-cd backend-microservices/payment-service && npm run dev
-
-# Terminal 6: Frontend
-cd frontend && npm run dev
-```
-
-Sau khi tất cả đã khởi động:
-- **Backend** sẽ có sẵn tại các cổng tương ứng (3000, 3001, ...).
-- **Frontend** sẽ có thể truy cập tại `http://localhost:5173` (hoặc một cổng khác do Vite chỉ định). (chưa hoàn thiện)
-
-
-
-### User Service API
-
-#### Đăng ký
-`POST /api/auth/register`
-```json
-{
-    "username": "string",
-    "email": "string",
-    "password": "string",
-    "role": "user|admin"
-}
-```
-
-#### Đăng nhập
-`POST /api/auth/login`
-```json
-{
-    "email": "string",
-    "password": "string"
-}
-```
 
 
