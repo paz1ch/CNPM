@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/Product'); // This needs to be changed to a user model if it exists in this service
+const User = require('../models/Product'); 
 const logger = require('../utils/logger');
 
 const protect = async (req, res, next) => {

@@ -1,25 +1,21 @@
 
-const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
 const protect = (req, res, next) => {
-  let token;
+    const userId = req.headers['x-user-id'];
+    const userRole = req.headers['x-user-role'];
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;
-      next();
-    } catch (error) {
-      logger.error('Token verification failed', error);
-      res.status(401).json({ success: false, message: 'Not authorized, token failed' });
+    if (!userId) {
+        logger.warn('Unauthorized access attempt: No x-user-id header');
+        return res.status(401).json({ message: 'Unauthorized' });
     }
-  }
 
-  if (!token) {
-    res.status(401).json({ success: false, message: 'Not authorized, no token' });
-  }
+    req.user = {
+        userId: userId,
+        role: userRole
+    };
+
+    next();
 };
 
 const checkRole = (roles) => (req, res, next) => {

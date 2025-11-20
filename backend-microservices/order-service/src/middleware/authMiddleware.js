@@ -1,24 +1,19 @@
-const { validateToken } = require('../utils/validateUser');
 const logger = require('../utils/logger');
 
-const protect = async (req, res, next) => {
-    try {
-        const token = req.cookies && req.cookies.token;
-        if (!token) {
-            return res.status(401).json({ message: 'Unauthorized, no token' });
-        }
+const protect = (req, res, next) => {
+    const userId = req.headers['x-user-id'];
+    const userRole = req.headers['x-user-role'];
 
-        const user = await validateToken(token);
-        if (!user) {
-            return res.status(401).json({ message: 'Unauthorized, invalid token' });
-        }
-
-        req.user = user;
-        next();
-    } catch (error) {
-        logger.error('Error in auth middleware: %o', error);
-        return res.status(500).json({ message: 'Something went wrong' });
+    if (!userId) {
+        logger.warn('Unauthorized access attempt: No x-user-id header');
+        return res.status(401).json({ message: 'Unauthorized' });
     }
+    req.user = {
+        userId: userId,
+        role: userRole
+    };
+
+    next();
 };
 
 const isUser = (req, res, next) => {

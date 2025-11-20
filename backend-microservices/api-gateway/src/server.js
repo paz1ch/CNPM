@@ -132,7 +132,7 @@ app.use('/v1/payment', proxy(process.env.PAYMENT_SERVICE_URL, {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-    logger.info(`APT Gateway running on port ${PORT}`);
+    logger.info(`API Gateway running on port ${PORT}`);
     logger.info(`User service running on port ${process.env.USER_SERVICE_URL}`);
     logger.info(`Product service running on port ${process.env.PRODUCT_SERVICE_URL}`);
     logger.info(`Order service running on port ${process.env.ORDER_SERVICE_URL}`);

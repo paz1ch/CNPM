@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const User = require('./src/models/user.js');
+const User = require('./src/models/User.js');
 require('dotenv').config();
 
 const seedAdmin = async () => {

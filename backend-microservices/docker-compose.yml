@@ -1,65 +1,82 @@
 services:
-  # API Gateway: Cổng vào cho tất cả request
+  # API Gateway
   api-gateway:
     build: ./api-gateway
     ports:
       - "3000:3000"
     environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - JWT_SECRET=JWT_SECRET
+      - USER_SERVICE_URL=http://user-service:3001
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - ORDER_SERVICE_URL=http://order-service:3003
+      - PAYMENT_SERVICE_URL=http://payment-service:3004
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
     depends_on:
       - redis
       - rabbitmq
+      - user-service
+      - product-service
+      - order-service
+      - payment-service
 
-  # User Service: Quản lý người dùng
+  # User Service
   user-service:
     build: ./user-service
     environment:
+      - PORT=3001 
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db
     depends_on:
       - redis
       - rabbitmq
 
-  # Product Service: Quản lý sản phẩm
+  # Product Service
   product-service:
     build: ./product-service
     environment:
+      - PORT=3002
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db
     depends_on:
       - redis
       - rabbitmq
 
-
-  # Order Service: Quản lý đơn hàng
+  # Order Service
   order-service:
     build: ./order-service
     environment:
+      - PORT=3003
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db
     depends_on:
       - redis
       - rabbitmq
 
-  # Payment Service: Quản lý thanh toán
+  # Payment Service
   payment-service:
     build: ./payment-service
     environment:
+      - PORT=3004
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db
     depends_on:
       - redis
       - rabbitmq
 
-  #Redis
+
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
     restart: unless-stopped
 
-  #RabbitMQ
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -71,4 +88,3 @@ services:
       timeout: 10s
       retries: 5
     restart: unless-stopped
-

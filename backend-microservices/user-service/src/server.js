@@ -11,7 +11,7 @@ const errorHandler = require('./middleware/errorHandler');
 const { RedisStore } = require('rate-limit-redis');
 
 const app = express()
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001;
 
 const  redisClient = new Redis(process.env.REDIS_URL);
 

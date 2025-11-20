@@ -44,7 +44,7 @@ const createOrder = async (req, res) => {
 
         const order = await Order.create({
             orderID,
-            userID: user._id,
+            userID: user.userId,
             restaurantID,
             items: orderItems,
             totalAmount,
