@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const Order = require('../models/order');
 const { ORDER_MODIFICATION_DEADLINE, statusFlow } = require('../config/order');
+const { publishToQueue } = require('../utils/rabbitmq');
 
 /** Create a new order */
 const createOrder = async (req, res) => {
@@ -109,6 +110,29 @@ const updateOrderStatus = async (req, res) => {
 
         order.status = status;
         await order.save();
+
+        // Publish ORDER_READY event when order becomes Ready
+        if (status === 'Ready') {
+            logger.info('Order is ready, publishing ORDER_READY event', { orderId: order.orderID });
+
+            const orderReadyMessage = {
+                orderId: order.orderID,
+                restaurantID: order.restaurantID,
+                restaurantLocation: {
+                    lat: 10.762622,  // Default restaurant location (should come from restaurant data)
+                    lng: 106.660172
+                },
+                customerLocation: {
+                    lat: 10.782622,   // Default customer location (should come from user/order data)
+                    lng: 106.680172
+                },
+                items: order.items,
+                totalAmount: order.totalAmount,
+                readyAt: new Date().toISOString()
+            };
+
+            await publishToQueue('ORDER_READY', orderReadyMessage);
+        }
 
         return res.status(200).json({ order });
     } catch (error) {

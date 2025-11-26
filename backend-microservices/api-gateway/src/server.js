@@ -23,7 +23,7 @@ app.use(attachUser);
 //rate limiting
 const ratelimitOptions = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 1000,
     standardHeaders: true,
     legacyHeaders: false,
     handler: (req, res) => {
@@ -129,6 +129,35 @@ app.use('/v1/payment', proxy(process.env.PAYMENT_SERVICE_URL, {
     }
 }))
 
+//setting up proxy for drone service
+app.use('/v1/drones', proxy(process.env.DRONE_SERVICE_URL || 'http://drone-service:3005', {
+    ...proxyOptions,
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers["Content-type"] = "application/json";
+        if (srcReq.user) {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
+        }
+        return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response received from Drone service: ${proxyRes.statusCode}`);
+
+        return proxyResData;
+    }
+}))
+
+// Proxy for static images (uploads)
+app.use('/uploads', proxy(process.env.PRODUCT_SERVICE_URL, {
+    proxyReqPathResolver: (req) => {
+        return `/uploads${req.url}`;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response received from Product service (images): ${proxyRes.statusCode}`);
+        return proxyResData;
+    }
+}));
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
@@ -138,4 +167,4 @@ app.listen(PORT, () => {
     logger.info(`Order service running on port ${process.env.ORDER_SERVICE_URL}`);
     logger.info(`Payment service running on port ${process.env.PAYMENT_SERVICE_URL}`);
     logger.info(`Redis Url ${process.env.REDIS_URL}`);
-})
+});

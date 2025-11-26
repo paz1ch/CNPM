@@ -12,21 +12,15 @@ services:
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
       - PAYMENT_SERVICE_URL=http://payment-service:3004
+      - DRONE_SERVICE_URL=http://drone-service:3005
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
-    depends_on:
-      - redis
-      - rabbitmq
-      - user-service
-      - product-service
-      - order-service
-      - payment-service
 
   # User Service
   user-service:
     build: ./user-service
     environment:
-      - PORT=3001 
+      - PORT=3001
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
       - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db
@@ -71,6 +65,15 @@ services:
       - redis
       - rabbitmq
 
+  # Drone Service
+  drone-service:
+    build: ./drone-service
+    environment:
+      - PORT=3005
+      - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
 
   redis:
     image: redis:alpine
@@ -84,7 +87,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
       interval: 30s
       timeout: 10s
       retries: 5
