@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useJsApiLoader } from '@react-google-maps/api';
+
 import api from '../config/api';
 import DroneCard from '../components/DroneCard';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -25,25 +25,11 @@ const AdminDashboard = () => {
         location: { lat: 10.762622, lng: 106.660172 }
     });
 
-    const [newRestaurant, setNewRestaurant] = useState({
-        name: '',
-        address: '',
-        imageUrl: ''
-    });
 
-    const [newProduct, setNewProduct] = useState({
-        name: '',
-        price: '',
-        description: '',
-        category: '',
-        restaurantId: '',
-        image: ''
-    });
 
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: "AIzaSyA81ehjfUrZJ65iNbBgjWAmSBumY8g-oks"
-    });
+
+
+
 
     useEffect(() => {
         // Get user role
@@ -62,7 +48,6 @@ const AdminDashboard = () => {
             fetchRestaurants();
         } else if (activeTab === 'products') {
             fetchProducts();
-            fetchRestaurants(); // Need restaurants for dropdown
         }
     }, [activeTab]);
 
@@ -221,56 +206,11 @@ const AdminDashboard = () => {
         }
     };
 
-    const geocodeAddress = async (address) => {
-        if (!isLoaded || !window.google) return null;
 
-        const geocoder = new window.google.maps.Geocoder();
 
-        return new Promise((resolve, reject) => {
-            geocoder.geocode({ address }, (results, status) => {
-                if (status === 'OK' && results[0]) {
-                    const location = results[0].geometry.location;
-                    resolve({
-                        lat: location.lat(),
-                        lng: location.lng()
-                    });
-                } else {
-                    reject(new Error(`Geocoding failed for ${address}: ${status}`));
-                }
-            });
-        });
-    };
 
-    const handleAddRestaurant = async (e) => {
-        e.preventDefault();
-        try {
-            const location = await geocodeAddress(newRestaurant.address);
-            if (!location) {
-                alert('Could not geocode address');
-                return;
-            }
 
-            await api.post('/restaurants', {
-                ...newRestaurant,
-                location
-            });
-            setNewRestaurant({ name: '', address: '', imageUrl: '' });
-            fetchRestaurants();
-        } catch (err) {
-            alert('Failed to add restaurant: ' + (err.response?.data?.message || err.message));
-        }
-    };
 
-    const handleAddProduct = async (e) => {
-        e.preventDefault();
-        try {
-            await api.post('/products', newProduct);
-            setNewProduct({ name: '', price: '', description: '', category: '', restaurantId: '', image: '' });
-            fetchProducts();
-        } catch (err) {
-            alert('Failed to add product: ' + (err.response?.data?.message || err.message));
-        }
-    };
 
     const handleDeleteProduct = async (id) => {
         if (!window.confirm('Are you sure you want to delete this product?')) return;
@@ -502,39 +442,7 @@ const AdminDashboard = () => {
             {activeTab === 'restaurants' && (
                 <div>
                     {/* Add Restaurant Form */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl shadow-premium p-6 mb-8"
-                    >
-                        <h3 className="text-2xl font-bold text-secondary mb-4">Add New Restaurant</h3>
-                        <form onSubmit={handleAddRestaurant} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <input
-                                type="text"
-                                placeholder="Restaurant Name"
-                                value={newRestaurant.name}
-                                onChange={(e) => setNewRestaurant({ ...newRestaurant, name: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="text"
-                                placeholder="Address (e.g., 123 Street, City)"
-                                value={newRestaurant.address}
-                                onChange={(e) => setNewRestaurant({ ...newRestaurant, address: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg"
-                            >
-                                Add Restaurant
-                            </motion.button>
-                        </form>
-                    </motion.div>
+
 
                     {/* Restaurants List */}
                     {loading ? (
@@ -572,73 +480,7 @@ const AdminDashboard = () => {
             {/* Products Tab */}
             {activeTab === 'products' && (
                 <div>
-                    {/* Add Product Form */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl shadow-premium p-6 mb-8"
-                    >
-                        <h3 className="text-2xl font-bold text-secondary mb-4">Add New Product</h3>
-                        <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <input
-                                type="text"
-                                placeholder="Product Name"
-                                value={newProduct.name}
-                                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="number"
-                                placeholder="Price"
-                                value={newProduct.price}
-                                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <select
-                                value={newProduct.restaurantId}
-                                onChange={(e) => setNewProduct({ ...newProduct, restaurantId: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            >
-                                <option value="">Select Restaurant</option>
-                                {restaurants.map(r => (
-                                    <option key={r._id} value={r._id}>{r.name}</option>
-                                ))}
-                            </select>
-                            <input
-                                type="text"
-                                placeholder="Category"
-                                value={newProduct.category}
-                                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="text"
-                                placeholder="Image URL"
-                                value={newProduct.image}
-                                onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Description"
-                                value={newProduct.description}
-                                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                            />
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg md:col-span-3"
-                            >
-                                Add Product
-                            </motion.button>
-                        </form>
-                    </motion.div>
+
 
                     {/* Products List */}
                     {loading ? (
