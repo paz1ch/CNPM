@@ -75,23 +75,54 @@ app.use('/v1/auth', proxy(process.env.USER_SERVICE_URL, {
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
         logger.info(`Response received from user service: ${proxyRes.statusCode}`);
-
         return proxyResData;
     }
 }));
 
 //setting up proxy for product service
 app.use('/v1/products', proxy(process.env.PRODUCT_SERVICE_URL, {
-    // Products endpoint in product-service is mounted at /api/products (no v1).
-    // Override the global proxyReqPathResolver so requests to /v1/products
-    // are forwarded to /api/products on the product service.
     ...proxyOptions,
     proxyReqPathResolver: (req) => {
         return req.originalUrl.replace(/^\/v1\/products/, "/api/products");
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
         proxyReqOpts.headers["Content-type"] = "application/json";
-        // Order service mounts under /api/orders (no v1)
+        if (srcReq.user) {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
+        }
+        return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response received from Product service: ${proxyRes.statusCode}`);
+        return proxyResData;
+    }
+}));
+
+//setting up proxy for restaurant service (part of product service)
+app.use('/v1/restaurants', proxy(process.env.PRODUCT_SERVICE_URL, {
+    ...proxyOptions,
+    proxyReqPathResolver: (req) => {
+        return req.originalUrl.replace(/^\/v1\/restaurants/, "/api/restaurants");
+    },
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers["Content-type"] = "application/json";
+        if (srcReq.user) {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
+        }
+        return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response received from Restaurant service: ${proxyRes.statusCode}`);
+        return proxyResData;
+    }
+}));
+
+//setting up proxy for order service
+app.use('/v1/orders', proxy(process.env.ORDER_SERVICE_URL, {
+    ...proxyOptions,
+    proxyReqPathResolver: (req) => {
         return req.originalUrl.replace(/^\/v1\/orders/, "/api/orders");
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
@@ -104,16 +135,14 @@ app.use('/v1/products', proxy(process.env.PRODUCT_SERVICE_URL, {
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
         logger.info(`Response received from Order service: ${proxyRes.statusCode}`);
-
         return proxyResData;
     }
-}))
+}));
 
 //setting up proxy for payment service
 app.use('/v1/payment', proxy(process.env.PAYMENT_SERVICE_URL, {
     ...proxyOptions,
     proxyReqPathResolver: (req) => {
-        // Payment service mounts routes under /api/payment (no v1)
         return req.originalUrl.replace(/^\/v1\/payment/, "/api/payment");
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
@@ -126,18 +155,14 @@ app.use('/v1/payment', proxy(process.env.PAYMENT_SERVICE_URL, {
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
         logger.info(`Response received from Payment service: ${proxyRes.statusCode}`);
-
         return proxyResData;
     }
-}))
+}));
 
 //setting up proxy for drone service
 app.use('/v1/drones', proxy(process.env.DRONE_SERVICE_URL || 'http://drone-service:3005', {
     ...proxyOptions,
-    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
-        proxyReqOpts.headers["Content-type"] = "application/json";
-    },
-    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+    proxyReqPathResolver: (req) => {
         return req.originalUrl.replace(/^\/v1\/missions/, "/api/v1/missions");
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
@@ -152,7 +177,7 @@ app.use('/v1/drones', proxy(process.env.DRONE_SERVICE_URL || 'http://drone-servi
         logger.info(`Response received from Drone service (missions): ${proxyRes.statusCode}`);
         return proxyResData;
     }
-}))
+}));
 
 // Proxy for static images (uploads)
 app.use('/uploads', proxy(process.env.PRODUCT_SERVICE_URL, {
