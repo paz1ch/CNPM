@@ -7,6 +7,7 @@ const http = require('http');
 
 const { initWebSocketServer } = require('./websocket/websocket');
 const { connectRabbitMQ } = require('./rabbitmq/consumer');
+const { connectPublisher } = require('./rabbitmq/publisher');
 const logger = require('./utils/logger');
 
 // Load environment variables
@@ -51,8 +52,8 @@ app.get('/health', (req, res) => {
 
 // --- Centralized Error Handling ---
 app.use((err, req, res, next) => {
-    logger.error('Unhandled application error', { 
-        error: err.message, 
+    logger.error('Unhandled application error', {
+        error: err.message,
         stack: err.stack,
         path: req.path,
         method: req.method
@@ -77,9 +78,10 @@ async function startServer() {
         // 2. Initialize WebSocket Server
         initWebSocketServer(server);
 
-        // 3. Connect to RabbitMQ
+        // 3. Connect to RabbitMQ (Consumer & Publisher)
         await connectRabbitMQ();
-        
+        await connectPublisher();
+
         // 4. Start HTTP Server
         server.listen(PORT, () => {
             logger.info(`Drone Service is UP and running on port ${PORT}`);

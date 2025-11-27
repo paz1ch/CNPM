@@ -6,7 +6,7 @@ const missionManager = require('../managers/missionManager');
 // Fallback to `AMQP_URL` or to the docker service name `rabbitmq` so containers
 // can resolve the hostname on the compose network.
 const AMQP_URL = process.env.RABBITMQ_URL || process.env.AMQP_URL || 'amqp://rabbitmq:5672';
-const ORDER_QUEUE = 'order.created'; // The queue this service will listen to
+const ORDER_QUEUE = 'ORDER_READY'; // The queue this service will listen to
 
 let channel = null;
 
@@ -49,13 +49,13 @@ async function handleMessage(msg) {
                 pickupLocation: orderData.restaurantLocation, // Assuming this structure
                 deliveryLocation: orderData.deliveryAddress.location // Assuming this structure
             };
-            
+
             if (!missionData.pickupLocation || !missionData.deliveryLocation) {
-                 throw new Error('Missing location data in order message.');
+                throw new Error('Missing location data in order message.');
             }
 
             const result = await missionManager.assignMission(missionData);
-            
+
             if (result.success) {
                 logger.info(`Mission assigned for order ${orderData.orderId}`);
                 // Acknowledge the message was processed successfully

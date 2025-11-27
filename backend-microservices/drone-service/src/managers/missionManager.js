@@ -1,6 +1,7 @@
 const Drone = require('../models/Drone');
 const Mission = require('../models/Mission');
 const logger = require('../utils/logger');
+const { publishToQueue } = require('../rabbitmq/publisher');
 
 exports.assignMission = async (missionData) => {
     try {
@@ -26,6 +27,14 @@ exports.assignMission = async (missionData) => {
         await drone.save();
 
         logger.info(`Mission ${mission._id} assigned to drone ${drone.name}`);
+
+        // Publish ORDER_OUT_FOR_DELIVERY event
+        await publishToQueue('ORDER_OUT_FOR_DELIVERY', {
+            orderId: missionData.orderId,
+            droneId: drone._id,
+            timestamp: new Date().toISOString()
+        });
+
         return { success: true, mission };
 
     } catch (error) {

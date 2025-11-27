@@ -39,7 +39,8 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center space-x-6">
                         <NavLink to="/">Home</NavLink>
                         <NavLink to="/tracking">Track Order</NavLink>
-                        {user?.role !== 'user' && <NavLink to="/dashboard">Dashboard</NavLink>}
+                        {user?.role === 'admin' && <NavLink to="/admin">Admin Dashboard</NavLink>}
+                        {user?.role === 'restaurant' && <NavLink to="/restaurant">Restaurant Dashboard</NavLink>}
                     </div>
 
                     {/* Right Side Actions */}
@@ -82,13 +83,15 @@ const Navbar = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-premium-lg border border-gray-100 py-2"
                                     >
-                                        <Link
-                                            to="/tracking"
-                                            onClick={() => setShowUserMenu(false)}
-                                            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
-                                        >
-                                            My Orders
-                                        </Link>
+                                        {user?.role === 'user' && (
+                                            <Link
+                                                to="/tracking"
+                                                onClick={() => setShowUserMenu(false)}
+                                                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                                            >
+                                                My Orders
+                                            </Link>
+                                        )}
                                         <button
                                             onClick={handleLogout}
                                             className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition"

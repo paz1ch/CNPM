@@ -3,13 +3,14 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import TrackingPage from './pages/TrackingPage';
-import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import RestaurantDashboard from './pages/RestaurantDashboard';
 import CartPage from './pages/CartPage';
 import LoginPage from './pages/LoginPage';
 import CheckoutPage from './pages/CheckoutPage';
 import { useAuth } from './context/AuthContext';
 
-const ProtectedRoute = ({ children, adminOnly = false }) => {
+const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { user, loading } = useAuth();
 
   if (loading) return <div className="text-center py-20">Loading...</div>;
@@ -18,10 +19,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     return <Navigate to="/login" />;
   }
 
-  console.log('ProtectedRoute check:', { user, role: user.role, adminOnly });
-
-  if (adminOnly && user.role !== 'admin') {
-    console.log('Access denied: User is not admin');
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     return <Navigate to="/" />;
   }
 
@@ -39,14 +37,37 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/tracking" element={<TrackingPage />} />
           <Route path="/tracking/:orderId" element={<TrackingPage />} />
+          
+          {/* Admin Route */}
           <Route
-            path="/dashboard"
+            path="/admin"
             element={
-              <ProtectedRoute adminOnly>
-                <Dashboard />
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
               </ProtectedRoute>
             }
           />
+
+          {/* Restaurant Route */}
+          <Route
+            path="/restaurant"
+            element={
+              <ProtectedRoute allowedRoles={['restaurant']}>
+                <RestaurantDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Smart Redirect for /dashboard */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'restaurant']}>
+                <DashboardRedirector />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -55,5 +76,13 @@ function App() {
     </div>
   );
 }
+
+// Helper component to redirect based on role
+const DashboardRedirector = () => {
+  const { user } = useAuth();
+  if (user?.role === 'admin') return <Navigate to="/admin" />;
+  if (user?.role === 'restaurant') return <Navigate to="/restaurant" />;
+  return <Navigate to="/" />;
+};
 
 export default App;

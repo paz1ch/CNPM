@@ -16,6 +16,7 @@ async function connectToRabbitMQ() {
         // Assert queues for order events
         await channel.assertQueue('ORDER_READY', { durable: true });
         await channel.assertQueue('ORDER_DELIVERED', { durable: true });
+        await channel.assertQueue('ORDER_OUT_FOR_DELIVERY', { durable: true });
 
         logger.info("Connected to RabbitMQ");
 
@@ -42,6 +43,32 @@ async function connectToRabbitMQ() {
                 channel.ack(message);
             } catch (error) {
                 logger.error('Error processing ORDER_DELIVERED event', { error: error.message });
+                channel.nack(message, false, false);
+            }
+        });
+
+        // Listen for ORDER_OUT_FOR_DELIVERY events from drone service
+        channel.consume('ORDER_OUT_FOR_DELIVERY', async (message) => {
+            if (!message) return;
+
+            try {
+                const deliveryData = JSON.parse(message.content.toString());
+                logger.info('Received ORDER_OUT_FOR_DELIVERY event', deliveryData);
+
+                const Order = require('../models/order');
+                const order = await Order.findOne({ orderID: deliveryData.orderId });
+
+                if (order) {
+                    order.status = 'Out for Delivery';
+                    await order.save();
+                    logger.info(`Order ${deliveryData.orderId} marked as Out for Delivery`);
+                } else {
+                    logger.warn(`Order ${deliveryData.orderId} not found for status update`);
+                }
+
+                channel.ack(message);
+            } catch (error) {
+                logger.error('Error processing ORDER_OUT_FOR_DELIVERY event', { error: error.message });
                 channel.nack(message, false, false);
             }
         });
