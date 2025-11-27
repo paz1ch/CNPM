@@ -163,6 +163,26 @@ app.use('/v1/payment', proxy(process.env.PAYMENT_SERVICE_URL, {
 app.use('/v1/drones', proxy(process.env.DRONE_SERVICE_URL || 'http://drone-service:3005', {
     ...proxyOptions,
     proxyReqPathResolver: (req) => {
+        return req.originalUrl.replace(/^\/v1\/drones/, "/api/v1/drones");
+    },
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers["Content-type"] = "application/json";
+        if (srcReq.user) {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
+        }
+        return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        logger.info(`Response received from Drone service (drones): ${proxyRes.statusCode}`);
+        return proxyResData;
+    }
+}));
+
+//setting up proxy for missions (handled by drone service)
+app.use('/v1/missions', proxy(process.env.DRONE_SERVICE_URL || 'http://drone-service:3005', {
+    ...proxyOptions,
+    proxyReqPathResolver: (req) => {
         return req.originalUrl.replace(/^\/v1\/missions/, "/api/v1/missions");
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
@@ -198,5 +218,6 @@ app.listen(PORT, () => {
     logger.info(`Product service running on port ${process.env.PRODUCT_SERVICE_URL}`);
     logger.info(`Order service running on port ${process.env.ORDER_SERVICE_URL}`);
     logger.info(`Payment service running on port ${process.env.PAYMENT_SERVICE_URL}`);
+    logger.info(`Drone service running on port ${process.env.DRONE_SERVICE_URL}`);
     logger.info(`Redis Url ${process.env.REDIS_URL}`);
 });

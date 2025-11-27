@@ -76,7 +76,7 @@ const AdminDashboard = () => {
         try {
             setLoading(true);
             const response = await api.get('/drones');
-            setDrones(response.data.drones || []);
+            setDrones(response.data.data || response.data.drones || []);
             setError('');
         } catch (err) {
             console.error('Error fetching drones:', err);
