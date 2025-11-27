@@ -10,3 +10,38 @@
 {"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:52:49.435Z"}
 {"level":"error","message":"Proxy error: Invalid value \"undefined\" for header \"x-user-role\"","service":"api-gateway","timestamp":"2025-11-01T18:54:02.038Z"}
 {"level":"error","message":"SyntaxError: Expected double-quoted property name in JSON at position 71 (line 4 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\lib\\types\\json.js:77:19)\n    at D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\lib\\read.js:123:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\ReactNativeProjects\\food-del\\backend-microservices\\api-gateway\\node_modules\\body-parser\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)","service":"api-gateway","timestamp":"2025-11-14T00:17:34.491Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:07.866Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:08.048Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:08.087Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:08.122Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:38.758Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:01:22.457Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:01:24.411Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:01:24.630Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:28.947Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:30.611Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:46.987Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:47.007Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:03:02.938Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:03:56.496Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:03:56.510Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:18.968Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:18.991Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:19.023Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:19.033Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.494Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.509Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.556Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.570Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.831Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.845Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.872Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.887Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.074Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.085Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.126Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.134Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.101Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.109Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.122Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.167Z"}

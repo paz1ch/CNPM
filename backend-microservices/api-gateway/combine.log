@@ -409,3 +409,120 @@
 {"level":"info","message":"Received GET request to /v1/products/","service":"api-gateway","timestamp":"2025-11-14T00:18:01.581Z"}
 {"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-14T00:18:01.581Z"}
 {"level":"info","message":"Response received from Product service: 200","service":"api-gateway","timestamp":"2025-11-14T00:18:01.788Z"}
+{"level":"info","message":"API Gateway running on port 3000","service":"api-gateway","timestamp":"2025-11-21T01:36:00.389Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-21T01:36:00.400Z"}
+{"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-21T01:36:00.401Z"}
+{"level":"info","message":"Order service running on port http://localhost:3003","service":"api-gateway","timestamp":"2025-11-21T01:36:00.402Z"}
+{"level":"info","message":"Payment service running on port http://localhost:3004","service":"api-gateway","timestamp":"2025-11-21T01:36:00.403Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-21T01:36:00.405Z"}
+{"level":"info","message":"API Gateway running on port 3000","service":"api-gateway","timestamp":"2025-11-27T07:55:34.735Z"}
+{"level":"info","message":"User service running on port http://localhost:3001","service":"api-gateway","timestamp":"2025-11-27T07:55:34.739Z"}
+{"level":"info","message":"Product service running on port http://localhost:3002","service":"api-gateway","timestamp":"2025-11-27T07:55:34.740Z"}
+{"level":"info","message":"Order service running on port http://localhost:3003","service":"api-gateway","timestamp":"2025-11-27T07:55:34.740Z"}
+{"level":"info","message":"Payment service running on port http://localhost:3004","service":"api-gateway","timestamp":"2025-11-27T07:55:34.741Z"}
+{"level":"info","message":"Redis Url redis://localhost:6379","service":"api-gateway","timestamp":"2025-11-27T07:55:34.741Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:00:07.845Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:00:07.847Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:07.866Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:00:08.032Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:00:08.034Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:08.048Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:00:08.073Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:00:08.074Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:08.087Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:00:08.113Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:00:08.115Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:08.122Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-27T08:00:38.754Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-27T08:00:38.754Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:00:38.758Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-27T08:01:22.454Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-27T08:01:22.455Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:01:22.457Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-27T08:01:24.408Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-27T08:01:24.409Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:01:24.411Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-27T08:01:24.626Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-27T08:01:24.626Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:01:24.630Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-27T08:02:28.945Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-27T08:02:28.945Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:28.947Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-27T08:02:30.607Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-27T08:02:30.608Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:30.611Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:02:46.980Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:02:46.981Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:46.987Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:02:47.000Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:02:47.001Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:02:47.007Z"}
+{"level":"info","message":"Received POST request to /v1/auth/login","service":"api-gateway","timestamp":"2025-11-27T08:03:02.935Z"}
+{"level":"info","message":"Request body, [object Object]","service":"api-gateway","timestamp":"2025-11-27T08:03:02.936Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:03:02.938Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:03:56.492Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:03:56.493Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:03:56.496Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:03:56.507Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:03:56.508Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:03:56.510Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:18.960Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:18.961Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:18.968Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:18.986Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:18.986Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:18.991Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:19.014Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:19.019Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:19.023Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:19.030Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:19.030Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:19.033Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:30.490Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:30.490Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.494Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:30.506Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:30.506Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.509Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:30.541Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:30.543Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.556Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:30.567Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:30.568Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:30.570Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:31.827Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:31.827Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.831Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:31.841Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:31.841Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.845Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:31.858Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:31.859Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.872Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:31.885Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:31.885Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:31.887Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:32.069Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:32.070Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.074Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:32.082Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:32.082Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.085Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:32.122Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:32.123Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.126Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:05:32.131Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:05:32.132Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:05:32.134Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:23:06.098Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:23:06.099Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.101Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:23:06.105Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:23:06.105Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.109Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:23:06.118Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:23:06.119Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.122Z"}
+{"level":"info","message":"Received GET request to /v1/products","service":"api-gateway","timestamp":"2025-11-27T08:23:06.131Z"}
+{"level":"info","message":"Request body, undefined","service":"api-gateway","timestamp":"2025-11-27T08:23:06.138Z"}
+{"level":"error","message":"Proxy error: ","service":"api-gateway","timestamp":"2025-11-27T08:23:06.167Z"}
