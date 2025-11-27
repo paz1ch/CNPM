@@ -155,32 +155,6 @@ app.use('/v1/drones', proxy(process.env.DRONE_SERVICE_URL || 'http://drone-servi
         proxyReqOpts.headers["Content-type"] = "application/json";
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
-        logger.info(`Response received from Drone service: ${proxyRes.statusCode}`);
-        return proxyResData;
-    }
-}));
-
-//setting up proxy for restaurant service (part of product service)
-app.use('/v1/restaurants', proxy(process.env.PRODUCT_SERVICE_URL, {
-    ...proxyOptions,
-    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
-        proxyReqOpts.headers["Content-type"] = "application/json";
-        if (srcReq.user) {
-            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
-            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
-        }
-        return proxyReqOpts;
-    },
-    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
-        logger.info(`Response received from Product service (restaurants): ${proxyRes.statusCode}`);
-        return proxyResData;
-    }
-}));
-
-// Proxy for missions (drone service exposes /api/v1/missions)
-app.use('/v1/missions', proxy(process.env.DRONE_SERVICE_URL || 'http://drone-service:3005', {
-    ...proxyOptions,
-    proxyReqPathResolver: (req) => {
         return req.originalUrl.replace(/^\/v1\/missions/, "/api/v1/missions");
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {

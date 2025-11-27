@@ -34,10 +34,14 @@ function App() {
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={
+            <HomeRedirector>
+              <HomePage />
+            </HomeRedirector>
+          } />
           <Route path="/tracking" element={<TrackingPage />} />
           <Route path="/tracking/:orderId" element={<TrackingPage />} />
-          
+
           {/* Admin Route */}
           <Route
             path="/admin"
@@ -83,6 +87,17 @@ const DashboardRedirector = () => {
   if (user?.role === 'admin') return <Navigate to="/admin" />;
   if (user?.role === 'restaurant') return <Navigate to="/restaurant" />;
   return <Navigate to="/" />;
+};
+
+// Helper component to redirect admins/restaurants away from home
+const HomeRedirector = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="text-center py-20">Loading...</div>;
+
+  if (user?.role === 'admin') return <Navigate to="/admin" />;
+  if (user?.role === 'restaurant') return <Navigate to="/restaurant" />;
+
+  return children;
 };
 
 export default App;

@@ -37,8 +37,12 @@ const Navbar = () => {
 
                     {/* Navigation Links */}
                     <div className="hidden md:flex items-center space-x-6">
-                        <NavLink to="/">Home</NavLink>
-                        <NavLink to="/tracking">Track Order</NavLink>
+                        {(!user || user.role === 'user') && (
+                            <>
+                                <NavLink to="/">Home</NavLink>
+                                <NavLink to="/tracking">Track Order</NavLink>
+                            </>
+                        )}
                         {user?.role === 'admin' && <NavLink to="/admin">Admin Dashboard</NavLink>}
                         {user?.role === 'restaurant' && <NavLink to="/restaurant">Restaurant Dashboard</NavLink>}
                     </div>

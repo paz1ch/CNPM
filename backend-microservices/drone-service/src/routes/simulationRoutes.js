@@ -31,12 +31,20 @@ router.post('/move-drones', async (req, res) => {
 
             if (distance < speed) {
                 // ARRIVED!
+
+                // Update Mission status FIRST before clearing it from drone
+                await Mission.findByIdAndUpdate(drone.mission._id, { status: 'DELIVERED' });
+
+                // Publish ORDER_DELIVERED event
+                await publishToQueue('ORDER_DELIVERED', {
+                    orderId: drone.mission.orderId,
+                    droneId: drone._id,
+                    timestamp: new Date().toISOString()
+                });
+
                 drone.currentLocation = target;
                 drone.status = 'IDLE';
                 drone.mission = null; // Clear mission from drone
-
-                // Update Mission status
-                await Mission.findByIdAndUpdate(drone.mission._id, { status: 'COMPLETED' });
 
                 // Publish ORDER_DELIVERED event
                 await publishToQueue('ORDER_DELIVERED', {

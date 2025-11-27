@@ -43,7 +43,14 @@ exports.createRestaurant = async (req, res) => {
 // Get all restaurants
 exports.getAllRestaurants = async (req, res) => {
     try {
-        const restaurants = await Restaurant.find().sort({ createdAt: -1 });
+        const { ownerId } = req.query;
+        const filter = {};
+
+        if (ownerId) {
+            filter.ownerId = ownerId;
+        }
+
+        const restaurants = await Restaurant.find(filter).sort({ createdAt: -1 });
         res.json({
             success: true,
             count: restaurants.length,

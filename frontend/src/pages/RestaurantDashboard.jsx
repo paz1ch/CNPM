@@ -23,13 +23,36 @@ const RestaurantDashboard = () => {
     });
 
     useEffect(() => {
-        // Get user info to find restaurantId
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (user.role === 'restaurant') {
-            // Assuming user object has restaurantID or we need to fetch it
-            // If user.restaurantID is present:
-            setRestaurantId(user.restaurantID || user._id); // Fallback to user ID if they are same
-        }
+        const fetchRestaurantId = async () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.role === 'restaurant') {
+                if (user.restaurantID) {
+                    setRestaurantId(user.restaurantID);
+                } else {
+                    try {
+                        // Fetch restaurant by ownerId (which is the user's ID)
+                        const userId = user.userId || user._id;
+                        if (!userId) return;
+
+                        const response = await api.get(`/restaurants?ownerId=${userId}`);
+                        if (response.data.restaurants && response.data.restaurants.length > 0) {
+                            setRestaurantId(response.data.restaurants[0]._id);
+                        } else {
+                            setError('No restaurant found for this user. Please contact admin.');
+                        }
+                    } catch (err) {
+                        console.error('Error fetching restaurant ID:', err);
+                        setError('Failed to load restaurant profile.');
+                    } finally {
+                        // If we still don't have an ID, stop loading so error shows
+                        if (!user.restaurantID) setLoading(false);
+                    }
+                }
+            } else {
+                setLoading(false);
+            }
+        };
+        fetchRestaurantId();
     }, []);
 
     useEffect(() => {
@@ -265,7 +288,7 @@ const RestaurantDashboard = () => {
                                                 <p className="text-xs text-gray-400 mt-1">User: {order.userID}</p>
                                             </div>
                                         </div>
-                                        
+
                                         {/* Order Actions for Restaurant */}
                                         <div className="mt-4 flex gap-2">
                                             {order.status === 'Pending' && (

@@ -127,10 +127,7 @@ const TrackingMap = ({ droneLocation, restaurantLocation, customerLocation }) =>
                 )}
             </GoogleMap>
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 07ff65d8b05eba48c88abed6a1cb85c697d2487c
         </div>
     );
 };
