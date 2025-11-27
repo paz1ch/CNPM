@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import OrderStatusBadge from './OrderStatusBadge';
 
-const DroneCard = ({ drone }) => {
+const DroneCard = ({ drone, onEdit, onDelete, onSetStatus }) => {
     const batteryColor = () => {
         if (drone.battery >= 70) return 'bg-green-500';
         if (drone.battery >= 30) return 'bg-yellow-500';
@@ -24,6 +24,38 @@ const DroneCard = ({ drone }) => {
                 </div>
                 <div className="text-4xl animate-float">
                     🚁
+                </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between">
+                <div className="flex space-x-2">
+                    <button
+                        onClick={() => onEdit && onEdit(drone)}
+                        className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => onDelete && onDelete(drone)}
+                        className="px-3 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-semibold"
+                    >
+                        Delete
+                    </button>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                    <button
+                        onClick={() => onSetStatus && onSetStatus(drone, 'IDLE')}
+                        className="px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-semibold"
+                    >
+                        Set Idle
+                    </button>
+                    <button
+                        onClick={() => onSetStatus && onSetStatus(drone, 'DELIVERING')}
+                        className="px-3 py-2 bg-yellow-50 text-yellow-700 rounded-lg text-sm font-semibold"
+                    >
+                        Set Delivering
+                    </button>
                 </div>
             </div>
 

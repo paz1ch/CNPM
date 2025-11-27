@@ -189,6 +189,22 @@ const getOrdersByPostalCode = async (req, res) => {
     }
 };
 
+/** Get all orders (admin) */
+const getAllOrders = async (req, res) => {
+    try {
+        // Only allow admin role
+        if (!req.user || req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
+        const orders = await Order.find({}).sort({ createdAt: -1 });
+        return res.status(200).json({ orders });
+    } catch (error) {
+        logger.error('Error fetching all orders: %o', error);
+        return res.status(500).json({ message: 'Failed to fetch orders' });
+    }
+};
+
 /** Modify pending order (user) */
 const modifyPendingOrder = async (req, res) => {
     try {
@@ -285,4 +301,5 @@ module.exports = {
     getOrdersByPostalCode,
     modifyPendingOrder,
     updateOrder,
+    getAllOrders,
 };

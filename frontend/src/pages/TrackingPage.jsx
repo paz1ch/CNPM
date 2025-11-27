@@ -22,17 +22,43 @@ const TrackingPage = () => {
 
         const fetchDeliveryStatus = async () => {
             try {
-                const response = await api.get(`/drones/delivery/${orderId}`);
+                // The drone service exposes mission status at /api/v1/missions/order/:orderId
+                // Gateway maps /v1 -> /api/v1 so call /missions/order/:orderId
+                const response = await api.get(`/missions/order/${orderId}`);
 
-                if (response.data.success) {
-                    const delivery = response.data.delivery;
-                    setDroneData(delivery);
-                    setOrderStatus(delivery.status === 'BUSY' ? 'DELIVERING' : delivery.status);
-                    setEstimatedTime(delivery.estimatedTime || 0);
-                    setError('');
+                if (response.data && response.data.success) {
+                    const mission = response.data.data || response.data.delivery || null;
+
+                    if (mission) {
+                        // mission.drone is populated with Drone model which contains currentLocation
+                        const drone = mission.drone || {};
+                        const location = (drone.currentLocation && { lat: drone.currentLocation.lat, lng: drone.currentLocation.lng })
+                            || mission.deliveryLocation
+                            || mission.pickupLocation
+                            || { lat: 10, lng: 10 };
+
+                        setDroneData({
+                            droneName: drone.name || 'Drone',
+                            battery: drone.batteryLevel ?? drone.battery ?? 100,
+                            location,
+                            status: mission.status || drone.status || 'PENDING'
+                        });
+
+                        // Normalize status for UI
+                        const normalizedStatus = (mission.status === 'IN_PROGRESS' || mission.status === 'DELIVERING' || mission.status === 'PENDING')
+                            ? (mission.status === 'IN_PROGRESS' ? 'DELIVERING' : mission.status)
+                            : mission.status;
+
+                        setOrderStatus(normalizedStatus || 'Pending');
+                        setEstimatedTime(mission.estimatedTravelTime || mission.estimatedTime || 0);
+                        setError('');
+                    } else {
+                        setError('No drone assigned yet. Please wait...');
+                    }
                 } else {
-                    setError(response.data.message);
+                    setError(response.data?.message || 'No drone assigned yet. Please wait...');
                 }
+
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching delivery status:', err);

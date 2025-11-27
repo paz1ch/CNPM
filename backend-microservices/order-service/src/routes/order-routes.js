@@ -42,6 +42,12 @@ const updateOrderValidation = [
 // Routes
 router.post('/create', protect, isUser, createOrderValidation, validateRequest, orderController.createOrder);
 router.get('/user', protect, isUser, orderController.getOrdersByUser);
+// Admin: get all orders
+router.get('/all', protect, (req, res, next) => {
+    // allow only admin role
+    if (req.user && req.user.role === 'admin') return next();
+    return res.status(403).json({ message: 'Forbidden, admin role required' });
+}, orderController.getAllOrders);
 router.get('/restaurant/:restaurantId', protect, isRestaurant, orderController.getOrdersByRestaurant);
 router.get('/postal-code/:postalCode', protect, isDelivery, orderController.getOrdersByPostalCode);
 router.get('/:id', protect, orderController.getOrderById);

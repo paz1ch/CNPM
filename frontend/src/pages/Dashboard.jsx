@@ -9,6 +9,7 @@ const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('drones');
     const [drones, setDrones] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [missions, setMissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -24,6 +25,8 @@ const Dashboard = () => {
             fetchDrones();
         } else if (activeTab === 'orders') {
             fetchOrders();
+        } else if (activeTab === 'missions') {
+            fetchMissions();
         }
     }, [activeTab]);
 
@@ -44,12 +47,42 @@ const Dashboard = () => {
     const fetchOrders = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/orders/user');
+            // Admin users should fetch all orders; regular users fetch their own
+            const savedUser = localStorage.getItem('user');
+            let response;
+            if (savedUser) {
+                try {
+                    const parsed = JSON.parse(savedUser);
+                    if (parsed.role === 'admin') {
+                        response = await api.get('/orders/all');
+                    } else {
+                        response = await api.get('/orders/user');
+                    }
+                } catch (e) {
+                    response = await api.get('/orders/user');
+                }
+            } else {
+                response = await api.get('/orders/user');
+            }
+
             setOrders(response.data.orders || []);
             setError('');
         } catch (err) {
             console.error('Error fetching orders:', err);
             setError('Failed to load orders');
+        } finally {
+            setLoading(false);
+        }
+    };
+    const fetchMissions = async () => {
+        try {
+            setLoading(true);
+            const res = await api.get('/missions');
+            setMissions(res.data.data || res.data.missions || []);
+            setError('');
+        } catch (err) {
+            console.error('Error fetching missions:', err);
+            setError('Failed to load missions');
         } finally {
             setLoading(false);
         }
@@ -65,6 +98,64 @@ const Dashboard = () => {
             alert('Failed to add drone: ' + (err.response?.data?.message || err.message));
         }
     };
+    const handleEditDrone = async (drone) => {
+        const name = window.prompt('Drone name:', drone.name);
+        if (name === null) return;
+        const batteryStr = window.prompt('Battery % (0-100):', drone.battery);
+        if (batteryStr === null) return;
+        const battery = parseInt(batteryStr);
+
+        try {
+            await api.put(`/drones/${drone._id}`, { name, battery });
+            fetchDrones();
+        } catch (err) {
+            alert('Failed to edit drone: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleDeleteDrone = async (drone) => {
+        if (!window.confirm(`Delete drone ${drone.name}? This is irreversible.`)) return;
+        try {
+            await api.delete(`/drones/${drone._id}`);
+            fetchDrones();
+        } catch (err) {
+            alert('Failed to delete drone: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleSetDroneStatus = async (drone, status) => {
+        try {
+            await api.patch(`/drones/${drone._id}/status`, { status });
+            fetchDrones();
+        } catch (err) {
+            alert('Failed to update status: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleAssignMission = async (order) => {
+        const pickupLat = window.prompt('Pickup latitude (restaurant):', '10.762622');
+        if (pickupLat === null) return;
+        const pickupLng = window.prompt('Pickup longitude (restaurant):', '106.660172');
+        if (pickupLng === null) return;
+        const deliveryLat = window.prompt('Delivery latitude (customer):', '10.780000');
+        if (deliveryLat === null) return;
+        const deliveryLng = window.prompt('Delivery longitude (customer):', '106.690000');
+        if (deliveryLng === null) return;
+
+        const body = {
+            orderId: order.orderID,
+            pickupLocation: { lat: parseFloat(pickupLat), lng: parseFloat(pickupLng) },
+            deliveryLocation: { lat: parseFloat(deliveryLat), lng: parseFloat(deliveryLng) }
+        };
+
+        try {
+            const res = await api.post('/missions', body);
+            alert('Mission assigned: ' + (res.data?.data?.message || 'OK'));
+            fetchMissions();
+        } catch (err) {
+            alert('Failed to assign mission: ' + (err.response?.data?.message || err.message));
+        }
+    };
 
     return (
         <div className="max-w-7xl mx-auto">
@@ -72,7 +163,7 @@ const Dashboard = () => {
 
             {/* Tabs */}
             <div className="flex gap-4 mb-8 border-b border-gray-200">
-                {['drones', 'orders', 'products'].map((tab) => (
+                {['drones', 'orders', 'missions', 'products'].map((tab) => (
                     <motion.button
                         key={tab}
                         whileHover={{ scale: 1.05 }}
@@ -154,7 +245,12 @@ const Dashboard = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                     >
-                                        <DroneCard drone={drone} />
+                                                        <DroneCard
+                                                            drone={drone}
+                                                            onEdit={handleEditDrone}
+                                                            onDelete={handleDeleteDrone}
+                                                            onSetStatus={handleSetDroneStatus}
+                                                        />
                                     </motion.div>
                                 ))
                             ) : (
@@ -202,6 +298,14 @@ const Dashboard = () => {
                                                 </p>
                                             </div>
                                         </div>
+                                                        <div className="mt-4 flex gap-2">
+                                                            <button
+                                                                onClick={() => handleAssignMission(order)}
+                                                                className="px-4 py-2 bg-gradient-primary text-white rounded-lg font-semibold"
+                                                            >
+                                                                Assign Drone / Create Mission
+                                                            </button>
+                                                        </div>
                                     </motion.div>
                                 ))
                             ) : (
@@ -214,7 +318,59 @@ const Dashboard = () => {
                 </div>
             )}
 
-            {/* Products Tab */}
+            {/* Missions Tab */}
+            {activeTab === 'missions' && (
+                <div>
+                    {loading ? (
+                        <LoadingSpinner />
+                    ) : error ? (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl">{error}</div>
+                    ) : (
+                        <div className="space-y-4">
+                            {missions.length > 0 ? (
+                                missions.map((m) => (
+                                    <div key={m._id} className="bg-white rounded-2xl shadow-premium p-6">
+                                        <div className="flex justify-between">
+                                            <div>
+                                                <h3 className="text-lg font-bold">Mission for Order {m.orderId}</h3>
+                                                <p className="text-sm text-gray-500">Status: {m.status}</p>
+                                                <p className="text-sm text-gray-500">Drone: {m.drone?.name || m.drone}</p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <button onClick={async () => {
+                                                    try {
+                                                        await api.patch(`/missions/${m._id}/status`, { status: 'IN_PROGRESS' });
+                                                        fetchMissions();
+                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
+                                                }} className="px-3 py-2 bg-green-50 text-green-700 rounded-lg">Start</button>
+                                                <button onClick={async () => {
+                                                    try {
+                                                        await api.patch(`/missions/${m._id}/status`, { status: 'DELIVERED' });
+                                                        fetchMissions();
+                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
+                                                }} className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg">Mark Delivered</button>
+                                                <button onClick={async () => {
+                                                    if (!window.confirm('Cancel mission?')) return;
+                                                    try {
+                                                        await api.delete(`/missions/${m._id}`);
+                                                        fetchMissions();
+                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
+                                                }} className="px-3 py-2 bg-red-50 text-red-700 rounded-lg">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-12">
+                                    <p className="text-xl text-gray-500">No missions found</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Products Tab (placeholder) */}
             {activeTab === 'products' && (
                 <div className="bg-white rounded-2xl shadow-premium p-8 text-center">
                     <p className="text-xl text-gray-500">Product management coming soon...</p>
