@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useJsApiLoader } from '@react-google-maps/api';
 import { motion } from 'framer-motion';
 import api from '../config/api';
 import DroneCard from '../components/DroneCard';
@@ -11,12 +10,9 @@ const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('drones');
     const [drones, setDrones] = useState([]);
     const [orders, setOrders] = useState([]);
-<<<<<<< HEAD
     const [missions, setMissions] = useState([]);
-=======
     const [restaurants, setRestaurants] = useState([]);
     const [products, setProducts] = useState([]);
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [userRole, setUserRole] = useState('');
@@ -59,16 +55,12 @@ const Dashboard = () => {
             fetchDrones();
         } else if (activeTab === 'orders') {
             fetchOrders();
-<<<<<<< HEAD
         } else if (activeTab === 'missions') {
             fetchMissions();
-=======
         } else if (activeTab === 'restaurants') {
             fetchRestaurants();
         } else if (activeTab === 'products') {
             fetchProducts();
-            fetchRestaurants(); // Need restaurants for dropdown
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
         }
     }, [activeTab]);
 
@@ -300,13 +292,8 @@ const Dashboard = () => {
             <h1 className="text-4xl font-bold text-secondary mb-8">Dashboard</h1>
 
             {/* Tabs */}
-<<<<<<< HEAD
-            <div className="flex gap-4 mb-8 border-b border-gray-200">
-                {['drones', 'orders', 'missions', 'products'].map((tab) => (
-=======
             <div className="flex gap-4 mb-8 border-b border-gray-200 overflow-x-auto">
-                {['drones', 'orders', 'restaurants', 'products'].map((tab) => (
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
+                {['drones', 'orders', 'missions', 'restaurants', 'products'].map((tab) => (
                     <motion.button
                         key={tab}
                         whileHover={{ scale: 1.05 }}
@@ -464,7 +451,6 @@ const Dashboard = () => {
                 </div>
             )}
 
-<<<<<<< HEAD
             {/* Missions Tab */}
             {activeTab === 'missions' && (
                 <div>
@@ -510,8 +496,7 @@ const Dashboard = () => {
                             ) : (
                                 <div className="text-center py-12">
                                     <p className="text-xl text-gray-500">No missions found</p>
-=======
-            {/* Restaurants Tab */}
+                {/* Restaurants Tab */}
             {activeTab === 'restaurants' && (
                 <div>
                     {/* Add Restaurant Form */}
@@ -575,7 +560,6 @@ const Dashboard = () => {
                             ) : (
                                 <div className="col-span-full text-center py-12">
                                     <p className="text-xl text-gray-500">No restaurants available</p>
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
                                 </div>
                             )}
                         </div>
@@ -583,11 +567,7 @@ const Dashboard = () => {
                 </div>
             )}
 
-<<<<<<< HEAD
-            {/* Products Tab (placeholder) */}
-=======
             {/* Products Tab */}
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
             {activeTab === 'products' && (
                 <div>
                     {/* Add Product Form */}
