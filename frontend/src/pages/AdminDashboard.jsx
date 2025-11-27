@@ -25,6 +25,27 @@ const AdminDashboard = () => {
         location: { lat: 10.762622, lng: 106.660172 }
     });
 
+    const handleGetCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setNewDrone(prev => ({
+                        ...prev,
+                        location: {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        }
+                    }));
+                },
+                (error) => {
+                    alert('Error getting location: ' + error.message);
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    };
+
 
 
 
@@ -254,39 +275,63 @@ const AdminDashboard = () => {
                         className="bg-white rounded-2xl shadow-premium p-6 mb-8"
                     >
                         <h3 className="text-2xl font-bold text-secondary mb-4">Add New Drone</h3>
-                        <form onSubmit={handleAddDrone} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <input
-                                type="text"
-                                placeholder="Drone Name (e.g., Drone-001)"
-                                value={newDrone.name}
-                                onChange={(e) => setNewDrone({ ...newDrone, name: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="number"
-                                placeholder="Battery %"
-                                min="0"
-                                max="100"
-                                value={newDrone.battery}
-                                onChange={(e) => setNewDrone({ ...newDrone, battery: parseInt(e.target.value) })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="number"
-                                step="any"
-                                placeholder="Latitude"
-                                value={newDrone.location.lat}
-                                onChange={(e) => setNewDrone({ ...newDrone, location: { ...newDrone.location, lat: parseFloat(e.target.value) } })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
+                        <form onSubmit={handleAddDrone} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Drone Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g., Drone-Alpha-01"
+                                    value={newDrone.name}
+                                    onChange={(e) => setNewDrone({ ...newDrone, name: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                            </div>
+
+                            <div className="md:col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                <div className="flex justify-between items-center mb-3">
+                                    <label className="text-sm font-medium text-gray-700">Initial Location</label>
+                                    <button
+                                        type="button"
+                                        onClick={handleGetCurrentLocation}
+                                        className="text-sm text-primary font-semibold hover:underline flex items-center gap-1"
+                                    >
+                                        📍 Get Current Location
+                                    </button>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <span className="text-xs text-gray-500 block mb-1">Latitude</span>
+                                        <input
+                                            type="number"
+                                            step="any"
+                                            placeholder="Latitude"
+                                            value={newDrone.location.lat}
+                                            onChange={(e) => setNewDrone({ ...newDrone, location: { ...newDrone.location, lat: parseFloat(e.target.value) } })}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <span className="text-xs text-gray-500 block mb-1">Longitude</span>
+                                        <input
+                                            type="number"
+                                            step="any"
+                                            placeholder="Longitude"
+                                            value={newDrone.location.lng}
+                                            onChange={(e) => setNewDrone({ ...newDrone, location: { ...newDrone.location, lng: parseFloat(e.target.value) } })}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 type="submit"
-                                className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg"
+                                className="md:col-span-2 bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg"
                             >
                                 Add Drone
                             </motion.button>
