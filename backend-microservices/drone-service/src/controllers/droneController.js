@@ -86,6 +86,8 @@ exports.getDeliveryStatus = async (req, res) => {
                 droneName: drone.name,
                 status: drone.status,
                 location: drone.location,
+                restaurantLocation: drone.restaurantLocation,
+                customerLocation: drone.customerLocation,
                 battery: drone.battery,
                 estimatedTime: calculateETA(drone.status, drone.battery)
             }

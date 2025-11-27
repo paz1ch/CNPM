@@ -41,6 +41,7 @@ const updateOrderValidation = [
 
 // Routes
 router.post('/create', protect, isUser, createOrderValidation, validateRequest, orderController.createOrder);
+router.get('/all', protect, orderController.getAllOrders); // Admin route
 router.get('/user', protect, isUser, orderController.getOrdersByUser);
 router.get('/restaurant/:restaurantId', protect, isRestaurant, orderController.getOrdersByRestaurant);
 router.get('/postal-code/:postalCode', protect, isDelivery, orderController.getOrdersByPostalCode);

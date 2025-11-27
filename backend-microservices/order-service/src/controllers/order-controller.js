@@ -8,7 +8,7 @@ const createOrder = async (req, res) => {
     try {
         const user = req.user;
 
-        const { restaurantID, items, postal_code_of_restaurant } = req.body || {};
+        const { restaurantID, items, postal_code_of_restaurant, restaurantLocation, customerLocation } = req.body || {};
 
         if (!items || !Array.isArray(items) || items.length === 0) {
             return res.status(400).json({ message: 'Invalid order data' });
@@ -54,6 +54,8 @@ const createOrder = async (req, res) => {
             totalAmount,
             status: 'Pending',
             postal_code_of_restaurant,
+            restaurantLocation,
+            customerLocation,
             paymentStatus: 'Unpaid',
             modification_deadline: new Date(Date.now() + ORDER_MODIFICATION_DEADLINE * 60000),
         });
@@ -118,12 +120,12 @@ const updateOrderStatus = async (req, res) => {
             const orderReadyMessage = {
                 orderId: order.orderID,
                 restaurantID: order.restaurantID,
-                restaurantLocation: {
-                    lat: 10.762622,  // Default restaurant location (should come from restaurant data)
+                restaurantLocation: order.restaurantLocation || {
+                    lat: 10.762622,
                     lng: 106.660172
                 },
-                customerLocation: {
-                    lat: 10.782622,   // Default customer location (should come from user/order data)
+                customerLocation: order.customerLocation || {
+                    lat: 10.782622,
                     lng: 106.680172
                 },
                 items: order.items,
@@ -276,6 +278,17 @@ const updateOrder = async (req, res) => {
     }
 };
 
+/** Get all orders (admin) */
+const getAllOrders = async (req, res) => {
+    try {
+        const orders = await Order.find().sort({ createdAt: -1 });
+        return res.status(200).json({ orders });
+    } catch (error) {
+        logger.error('Error fetching all orders: %o', error);
+        return res.status(500).json({ message: 'Failed to fetch all orders' });
+    }
+};
+
 module.exports = {
     createOrder,
     getOrderById,
@@ -285,4 +298,5 @@ module.exports = {
     getOrdersByPostalCode,
     modifyPendingOrder,
     updateOrder,
+    getAllOrders,
 };

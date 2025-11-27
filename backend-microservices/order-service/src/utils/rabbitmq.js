@@ -27,8 +27,18 @@ async function connectToRabbitMQ() {
                 const deliveryData = JSON.parse(message.content.toString());
                 logger.info('Received ORDER_DELIVERED event', deliveryData);
 
-                // Here you could update the order status in the database
-                // For now, just acknowledge the message
+                // Update the order status in the database
+                const Order = require('../models/order');
+                const order = await Order.findOne({ orderID: deliveryData.orderId });
+
+                if (order) {
+                    order.status = 'Delivered';
+                    await order.save();
+                    logger.info(`Order ${deliveryData.orderId} marked as Delivered`);
+                } else {
+                    logger.warn(`Order ${deliveryData.orderId} not found for delivery update`);
+                }
+
                 channel.ack(message);
             } catch (error) {
                 logger.error('Error processing ORDER_DELIVERED event', { error: error.message });

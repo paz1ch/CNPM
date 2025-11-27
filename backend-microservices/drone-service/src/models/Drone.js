@@ -13,6 +13,14 @@ const droneSchema = new mongoose.Schema({
     lat: { type: Number, default: 0 },
     lng: { type: Number, default: 0 }
   },
+  restaurantLocation: {
+    lat: { type: Number },
+    lng: { type: Number }
+  },
+  customerLocation: {
+    lat: { type: Number },
+    lng: { type: Number }
+  },
   status: {
     type: String,
     enum: ['IDLE', 'BUSY', 'CHARGING', 'RETURNING'],

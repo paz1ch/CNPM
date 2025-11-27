@@ -38,6 +38,8 @@ const connectRabbitMQ = async () => {
 
                     drone.status = 'BUSY';
                     drone.currentOrderId = order.orderId;
+                    drone.restaurantLocation = order.restaurantLocation;
+                    drone.customerLocation = order.customerLocation;
                     await drone.save();
 
                     // Simulate delivery process

@@ -13,45 +13,65 @@ const TrackingPage = () => {
     const [error, setError] = useState('');
     const [estimatedTime, setEstimatedTime] = useState(15);
 
-    // Poll for drone location updates every 2 seconds
+    // Poll for updates every 2 seconds
     useEffect(() => {
         if (!orderId) {
             setLoading(false);
             return;
         }
 
-        const fetchDeliveryStatus = async () => {
+        const fetchData = async () => {
             try {
-                const response = await api.get(`/drones/delivery/${orderId}`);
+                // Fetch Order Status
+                const orderResponse = await api.get(`/orders/${orderId}`);
+                const order = orderResponse.data.order;
 
-                if (response.data.success) {
-                    const delivery = response.data.delivery;
-                    setDroneData(delivery);
-                    setOrderStatus(delivery.status === 'BUSY' ? 'DELIVERING' : delivery.status);
-                    setEstimatedTime(delivery.estimatedTime || 0);
-                    setError('');
-                } else {
-                    setError(response.data.message);
+                // Fetch Drone Status
+                let delivery = null;
+                try {
+                    const droneResponse = await api.get(`/drones/delivery/${orderId}`);
+                    if (droneResponse.data.success) {
+                        delivery = droneResponse.data.delivery;
+                        setDroneData(delivery);
+                        setEstimatedTime(delivery.estimatedTime || 0);
+                    }
+                } catch (e) {
+                    // Drone might not be assigned yet, which is fine
                 }
+
+                // Determine Status to Display
+                if (order && order.status === 'Delivered') {
+                    setOrderStatus('Delivered');
+                    setDroneData(null); // Clear drone data on delivery
+                    setError('');
+                } else if (delivery) {
+                    setOrderStatus(delivery.status === 'BUSY' ? 'DELIVERING' : delivery.status);
+                    setError('');
+                } else if (order) {
+                    setOrderStatus(order.status);
+                    if (order.status !== 'Delivered' && order.status !== 'Cancelled') {
+                        setError('Waiting for drone assignment...');
+                    }
+                }
+
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching delivery status:', err);
-                setError('No drone assigned yet. Please wait...');
+                console.error('Error fetching data:', err);
+                setError('Failed to load order details');
                 setLoading(false);
             }
         };
 
         // Initial fetch
-        fetchDeliveryStatus();
+        fetchData();
 
         // Poll every 2 seconds
-        const interval = setInterval(fetchDeliveryStatus, 2000);
+        const interval = setInterval(fetchData, 2000);
 
         return () => clearInterval(interval);
     }, [orderId]);
 
-    const droneLocation = droneData?.location || { lat: 10, lng: 10 };
-    const customerLocation = { lat: 80, lng: 80 }; // Should come from order data
+    const droneLocation = droneData?.location || { lat: 10.762622, lng: 106.660172 };
 
     return (
         <div className="max-w-6xl mx-auto">
@@ -71,13 +91,13 @@ const TrackingPage = () => {
                 </div>
             )}
 
-            {error && !droneData && (
+            {error && !droneData && orderStatus !== 'Delivered' && (
                 <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-6 py-4 rounded-2xl mb-8">
                     <div className="flex items-center">
                         <span className="text-2xl mr-3">⏳</span>
                         <div>
                             <p className="font-semibold">{error}</p>
-                            <p className="text-sm mt-1">Your order is being prepared. A drone will be assigned soon!</p>
+                            <p className="text-sm mt-1">Your order is being processed.</p>
                         </div>
                     </div>
                 </div>
@@ -98,7 +118,7 @@ const TrackingPage = () => {
                         )}
                     </motion.div>
 
-                    {droneData && estimatedTime > 0 && (
+                    {droneData && estimatedTime > 0 && orderStatus !== 'Delivered' && (
                         <motion.div
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
@@ -111,7 +131,7 @@ const TrackingPage = () => {
                         </motion.div>
                     )}
 
-                    {droneData && (
+                    {droneData && orderStatus !== 'Delivered' && (
                         <motion.div
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
@@ -141,7 +161,7 @@ const TrackingPage = () => {
                         </motion.div>
                     )}
 
-                    {orderStatus === 'DELIVERED' && (
+                    {orderStatus === 'Delivered' && (
                         <motion.div
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
@@ -163,7 +183,8 @@ const TrackingPage = () => {
                     >
                         <TrackingMap
                             droneLocation={droneLocation}
-                            customerLocation={customerLocation}
+                            restaurantLocation={droneData?.restaurantLocation}
+                            customerLocation={droneData?.customerLocation}
                         />
                     </motion.div>
 

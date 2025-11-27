@@ -1,18 +1,23 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const droneController = require('./controllers/droneController');
+const helmet = require('helmet');
 const connectRabbitMQ = require('./rabbitmq/consumer');
 const logger = require('./utils/logger');
-
-dotenv.config();
+const errorHandler = require('./middleware/errorHandler');
+const droneRoutes = require('./routes/drone-routes');
 
 const app = express();
+const PORT = process.env.PORT || 3005;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/food-delivery';
+
+// Middleware
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// Request logging middleware
+// Request logging
 app.use((req, res, next) => {
     logger.info(`${req.method} ${req.path}`, {
         ip: req.ip,
@@ -21,10 +26,7 @@ app.use((req, res, next) => {
     next();
 });
 
-const PORT = process.env.PORT || 3005;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/food-delivery';
-
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
     res.json({
         status: 'healthy',
@@ -35,19 +37,10 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
-app.get('/api/drones', droneController.getDrones);
-app.post('/api/drones', droneController.addDrone);
-app.get('/api/drones/delivery/:orderId', droneController.getDeliveryStatus);
+app.use('/api/drones', droneRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    logger.error('Unhandled error', { error: err.message, stack: err.stack });
-    res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
+// Error handling
+app.use(errorHandler);
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)

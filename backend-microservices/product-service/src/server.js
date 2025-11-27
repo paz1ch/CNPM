@@ -18,7 +18,7 @@ const redisClient = new Redis(process.env.REDIS_URL);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, '..' ,'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 
 app.use((req, res, next) => {
@@ -30,8 +30,8 @@ app.use((req, res, next) => {
 
 const rateLimiter = async (req, res, next) => {
     const ip = req.ip;
-    const windowSizeInSeconds = 60; 
-    const maxRequests = 100; 
+    const windowSizeInSeconds = 60;
+    const maxRequests = 100;
     const key = `rate-limit:${ip}`;
 
     try {
@@ -56,10 +56,13 @@ const rateLimiter = async (req, res, next) => {
 app.use(rateLimiter);
 
 //routes -> pass redisclient to routes
-app.use('/api/products', (req, res, next) =>{
+app.use('/api/products', (req, res, next) => {
     req.redisClient = redisClient;
     next();
 }, productRoutes);
+
+const restaurantRoutes = require("./routes/restaurant-routes");
+app.use('/api/restaurants', restaurantRoutes);
 
 app.use(errorHandler);
 
@@ -87,7 +90,7 @@ mongoose.connect(process.env.MONGO_URI)
     });
 
 
-process.on("unhandledRejection", (reason, promise) =>{
+process.on("unhandledRejection", (reason, promise) => {
     logger.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
