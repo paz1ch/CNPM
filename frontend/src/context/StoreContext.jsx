@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const StoreContext = createContext(null)
 
@@ -8,11 +9,13 @@ const StoreContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
     const url = "/v1";
     const [food_list, setFoodList] = useState([]);
+    const navigate = useNavigate();
 
     const addToCart = async (itemId) => {
         const token = localStorage.getItem('authToken');
         if (!token) {
             alert("Please login to add items to cart");
+            navigate('/login');
             return;
         }
         if (!cartItems[itemId]) {

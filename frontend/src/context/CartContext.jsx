@@ -1,9 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Load cart from localStorage on mount
@@ -24,6 +26,13 @@ export const CartProvider = ({ children }) => {
     }, [cartItems]);
 
     const addToCart = (product) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert("Please login to add items to cart");
+            navigate('/login');
+            return;
+        }
+
         setCartItems(prevItems => {
             const existingItem = prevItems.find(item => item._id === product._id);
 

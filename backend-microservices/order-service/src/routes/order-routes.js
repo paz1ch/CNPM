@@ -41,6 +41,7 @@ const updateOrderValidation = [
 
 // Routes
 router.post('/create', protect, isUser, createOrderValidation, validateRequest, orderController.createOrder);
+router.get('/all', protect, orderController.getAllOrders); // Admin route
 router.get('/user', protect, isUser, orderController.getOrdersByUser);
 // Admin: get all orders
 router.get('/all', protect, (req, res, next) => {

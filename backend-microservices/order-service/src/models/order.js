@@ -17,6 +17,14 @@ const OrderSchema = new Schema({
     totalAmount: { type: Number, required: true },
     status: { type: String, enum: ['Pending', 'Confirmed', 'Preparing', 'Ready', 'Out for Delivery', 'Delivered', 'Cancelled'], default: 'Pending' },
     postal_code_of_restaurant: { type: String, required: true },
+    restaurantLocation: {
+        lat: { type: Number },
+        lng: { type: Number }
+    },
+    customerLocation: {
+        lat: { type: Number },
+        lng: { type: Number }
+    },
     paymentStatus: { type: String, enum: ['Paid', 'Unpaid'], default: 'Unpaid' },
     modification_deadline: { type: Date, required: true },
 }, { timestamps: true });

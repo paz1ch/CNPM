@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -23,7 +24,7 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-// Request logging middleware
+// Request logging
 app.use((req, res, next) => {
     logger.info(`--> ${req.method} ${req.originalUrl}`, { body: req.body });
     res.on('finish', () => {
