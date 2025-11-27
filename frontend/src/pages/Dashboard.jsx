@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useJsApiLoader } from '@react-google-maps/api';
 import { motion } from 'framer-motion';
 import api from '../config/api';
 import DroneCard from '../components/DroneCard';
