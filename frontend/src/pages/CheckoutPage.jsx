@@ -75,7 +75,7 @@ const CheckoutPage = () => {
 
         const geocoder = new window.google.maps.Geocoder();
 
-        return new Promise((resolve, reject) => {
+        const geocodePromise = new Promise((resolve, reject) => {
             geocoder.geocode({ address }, (results, status) => {
                 if (status === 'OK' && results[0]) {
                     const location = results[0].geometry.location;
@@ -88,19 +88,29 @@ const CheckoutPage = () => {
                 }
             });
         });
+
+        // Add 5 second timeout
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Geocoding timed out')), 5000)
+        );
+
+        return Promise.race([geocodePromise, timeoutPromise]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('handleSubmit started');
         setLoading(true);
         setError('');
 
         if (!user) {
+            console.log('No user, redirecting to login');
             navigate('/login');
             return;
         }
 
         if (cartItems.length === 0) {
+            console.log('Cart empty');
             setError('Your cart is empty');
             setLoading(false);
             return;
@@ -108,18 +118,23 @@ const CheckoutPage = () => {
 
         try {
             // Geocode addresses
-            let restaurantLocation = null;
-            let customerLocation = null;
+            let restaurantLocation = undefined;
+            let customerLocation = undefined;
 
+            console.log('Starting geocoding...');
             try {
                 // Use selected restaurant's location if available, otherwise geocode
                 if (selectedRestaurant && selectedRestaurant.location) {
+                    console.log('Using existing restaurant location');
                     restaurantLocation = selectedRestaurant.location;
                 } else {
+                    console.log('Geocoding restaurant address:', formData.restaurantAddress);
                     restaurantLocation = await geocodeAddress(formData.restaurantAddress);
                 }
 
+                console.log('Geocoding delivery address:', formData.deliveryAddress);
                 customerLocation = await geocodeAddress(formData.deliveryAddress);
+                console.log('Geocoding finished', { restaurantLocation, customerLocation });
             } catch (geoError) {
                 console.error('Geocoding error:', geoError);
                 // Fallback or alert user - for now we proceed but log error
@@ -139,7 +154,9 @@ const CheckoutPage = () => {
                 })),
             };
 
+            console.log('Creating order with data:', orderData);
             const orderResponse = await api.post('/orders/create', orderData);
+            console.log('Order created:', orderResponse.data);
             const order = orderResponse.data.orderDetails;
 
             // Create payment - use the MongoDB _id (ObjectId) for payments
@@ -149,7 +166,9 @@ const CheckoutPage = () => {
                 amount: getCartTotal(),
             };
 
+            console.log('Creating payment with data:', paymentData);
             await api.post('/payment', paymentData);
+            console.log('Payment created');
 
             // Clear cart and redirect to tracking
             clearCart();
@@ -158,6 +177,7 @@ const CheckoutPage = () => {
             console.error('Checkout error:', err);
             setError(err.response?.data?.message || 'Failed to complete checkout');
         } finally {
+            console.log('handleSubmit finally block');
             setLoading(false);
         }
     };

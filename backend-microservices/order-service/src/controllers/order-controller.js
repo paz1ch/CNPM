@@ -294,16 +294,7 @@ const updateOrder = async (req, res) => {
     }
 };
 
-/** Get all orders (admin) */
-const getAllOrders = async (req, res) => {
-    try {
-        const orders = await Order.find().sort({ createdAt: -1 });
-        return res.status(200).json({ orders });
-    } catch (error) {
-        logger.error('Error fetching all orders: %o', error);
-        return res.status(500).json({ message: 'Failed to fetch all orders' });
-    }
-};
+
 
 module.exports = {
     createOrder,

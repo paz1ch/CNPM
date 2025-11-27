@@ -46,8 +46,8 @@ async function handleMessage(msg) {
             // The message should contain the necessary data to start a mission
             const missionData = {
                 orderId: orderData.orderId,
-                pickupLocation: orderData.restaurantLocation, // Assuming this structure
-                deliveryLocation: orderData.deliveryAddress.location // Assuming this structure
+                pickupLocation: orderData.restaurantLocation,
+                deliveryLocation: orderData.customerLocation
             };
 
             if (!missionData.pickupLocation || !missionData.deliveryLocation) {

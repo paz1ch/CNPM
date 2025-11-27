@@ -39,7 +39,7 @@ app.use(ratelimitOptions);
 
 app.use((req, res, next) => {
     logger.info(`Received ${req.method} request to ${req.url}`);
-    logger.info(`Request body, ${req.body}`);
+    logger.info(`Request body, ${JSON.stringify(req.body)}`);
     next();
 });
 
@@ -52,10 +52,17 @@ const proxyOptions = {
     proxyErrorHandler: (err, res, next) => {
         logger.error(`Proxy error: ${err.message}`);
         res.status(500).json({
-            message: `Internal server error:`, error: err.message
+            message: `Internal server error: ${err.message}`,
+            error: err.message
         })
+    },
+    proxyReqBodyDecorator: function (bodyContent, srcReq) {
+        if (typeof bodyContent === 'object') {
+            return JSON.stringify(bodyContent);
+        }
+        return bodyContent;
     }
-}
+};
 
 
 //setting proxy for user service

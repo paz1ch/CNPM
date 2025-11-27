@@ -11,6 +11,8 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 const PORT = process.env.PORT || 3003;
 
+let isReady = false;
+
 // Middleware
 app.use(helmet());
 app.use(cors());
@@ -21,35 +23,69 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
-app.use('/api/orders', orderRoutes);
+// Health check endpoint
+app.get('/health', (req, res) => {
+    if (isReady) {
+        res.status(200).json({ status: 'UP' });
+    } else {
+        res.status(503).json({ status: 'STARTING' });
+    }
+});
+
+// Readiness check middleware for API routes
+app.use('/api/orders', (req, res, next) => {
+    if (!isReady) {
+        return res.status(503).json({ message: 'Service is starting up, please try again later.' });
+    }
+    next();
+}, orderRoutes);
 
 // Error handler
 app.use(errorHandler);
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        logger.info('Ket noi db thanh cong');
-
-        async function startServer() {
-            try {
-                await connectToRabbitMQ();
-                app.listen(PORT, () => {
-                    logger.info(`Order service running on port ${PORT}`);
-                });
-            } catch (error) {
-                logger.error('Failed to start server', error);
-                process.exit(1);
-            }
+// Connect to MongoDB with retry
+const connectToDB = async () => {
+    const retries = 10;
+    const interval = 5000;
+    for (let i = 0; i < retries; i++) {
+        try {
+            await mongoose.connect(process.env.MONGO_URI);
+            logger.info('Connected to MongoDB');
+            return true;
+        } catch (err) {
+            logger.error(`Failed to connect to MongoDB (Attempt ${i + 1}/${retries}): ${err.message}`);
+            await new Promise(resolve => setTimeout(resolve, interval));
         }
+    }
+    logger.error('Could not connect to MongoDB after multiple retries.');
+    return false;
+};
 
-        startServer();
-    })
-    .catch(e => {
-        logger.error("Ket noi db that bai", e);
-        process.exit(1);
+// Start Server
+async function startServer() {
+    app.listen(PORT, () => {
+        logger.info(`Order service running on port ${PORT}`);
     });
+
+    const dbConnected = await connectToDB();
+    if (!dbConnected) {
+        logger.error('Exiting due to DB connection failure');
+        // process.exit(1); // Don't exit, keep container running for debugging? Or exit to let Docker restart?
+        // If we keep it running, at least logs are accessible and DNS works.
+        return;
+    }
+
+    try {
+        await connectToRabbitMQ();
+        isReady = true;
+        logger.info('Order Service is READY');
+    } catch (error) {
+        logger.error('Failed to connect to RabbitMQ', error);
+        // Keep running but not ready
+    }
+}
+
+startServer();
 
 process.on('unhandledRejection', (reason, promise) => {
     logger.error('Unhandled Rejection at', promise, "reason: ", reason);
