@@ -56,14 +56,19 @@ exports.addDrone = async (req, res) => {
     try {
         const { name, model, payloadCapacity, maxSpeed, location, battery } = req.body;
 
-        const newDrone = await Drone.create({
+        // Construct drone data, relying on Mongoose defaults for missing optional fields
+        const droneData = {
             name,
-            model,
-            payloadCapacity,
-            maxSpeed,
             currentLocation: location, // Map frontend 'location' to schema 'currentLocation'
-            batteryLevel: battery // Map frontend 'battery' to schema 'batteryLevel'
-        });
+            batteryLevel: battery !== undefined ? battery : 100 // Map frontend 'battery' to schema 'batteryLevel'
+        };
+
+        // Only add optional fields if they exist in the request, otherwise let Mongoose defaults take over
+        if (model) droneData.model = model;
+        if (payloadCapacity) droneData.payloadCapacity = payloadCapacity;
+        if (maxSpeed) droneData.maxSpeed = maxSpeed;
+
+        const newDrone = await Drone.create(droneData);
 
         logger.info(`New drone registered: ${newDrone.name} (${newDrone._id})`);
         res.status(201).json({
@@ -73,6 +78,10 @@ exports.addDrone = async (req, res) => {
         });
     } catch (err) {
         logger.error(`Error registering drone: ${err.message}`);
+        if (err.name === 'ValidationError') {
+            const messages = Object.values(err.errors).map(val => val.message);
+            return res.status(400).json({ success: false, message: messages.join(', ') });
+        }
         if (err.code === 11000) {
             return res.status(400).json({ success: false, message: 'Drone name already exists.' });
         }
@@ -199,4 +208,32 @@ exports.getAvailableDrones = async (req, res) => {
         logger.error(`Error fetching available drones: ${err.message}`);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
-}
+};
+
+// @desc    Get delivery status for an order
+// @route   GET /api/v1/drones/delivery/:orderId
+// @access  Public
+exports.getDeliveryStatus = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        // This is a placeholder. In a real app, you'd query the Mission or Drone by orderId
+        // For now, let's assume we find a mission
+        const mission = await Mission.findOne({ orderId }).populate('drone');
+
+        if (!mission) {
+            return res.status(404).json({ success: false, message: 'Delivery not found for this order' });
+        }
+
+        res.json({
+            success: true,
+            data: {
+                status: mission.status,
+                drone: mission.drone,
+                location: mission.drone ? mission.drone.currentLocation : null
+            }
+        });
+    } catch (err) {
+        logger.error(`Error getting delivery status: ${err.message}`);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
