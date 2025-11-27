@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/Product'); 
 const logger = require('../utils/logger');
 
 const protect = async (req, res, next) => {
@@ -8,7 +7,8 @@ const protect = async (req, res, next) => {
 
     if (userId && userRole) {
         req.user = {
-            _id: userId,
+            userId: userId, // Changed from _id to userId to match controller expectation
+            _id: userId,    // Keep _id for compatibility
             role: userRole,
         };
         next();

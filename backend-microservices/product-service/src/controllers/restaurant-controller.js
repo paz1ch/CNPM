@@ -13,6 +13,21 @@ exports.createRestaurant = async (req, res) => {
             });
         }
 
+        // Check if user already has a restaurant
+        if (req.user && req.user.userId) {
+            console.log('Checking existing restaurant for user:', req.user.userId);
+            const existingRestaurant = await Restaurant.findOne({ ownerId: req.user.userId });
+            if (existingRestaurant) {
+                console.log('Found existing restaurant:', existingRestaurant._id);
+                return res.status(400).json({
+                    success: false,
+                    message: 'You have already created a restaurant profile.'
+                });
+            }
+        } else {
+            console.warn('Create restaurant called without user ID in req.user:', req.user);
+        }
+
         const restaurant = new Restaurant({
             name,
             address,
@@ -23,7 +38,7 @@ exports.createRestaurant = async (req, res) => {
 
         await restaurant.save();
 
-        logger.info('New restaurant created', { restaurantId: restaurant._id, name: restaurant.name });
+        logger.info('New restaurant created', { restaurantId: restaurant._id, name: restaurant.name, ownerId: restaurant.ownerId });
 
         res.status(201).json({
             success: true,
@@ -44,13 +59,15 @@ exports.createRestaurant = async (req, res) => {
 exports.getAllRestaurants = async (req, res) => {
     try {
         const { ownerId } = req.query;
+        console.log('Get all restaurants query:', req.query);
         const filter = {};
 
         if (ownerId) {
             filter.ownerId = ownerId;
         }
 
-        const restaurants = await Restaurant.find(filter).sort({ createdAt: -1 });
+        const restaurants = await Restaurant.find(filter).sort({ createdAt: 1 });
+        console.log(`Found ${restaurants.length} restaurants for filter:`, filter);
         res.json({
             success: true,
             count: restaurants.length,

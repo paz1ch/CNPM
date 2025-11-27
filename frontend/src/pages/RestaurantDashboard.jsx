@@ -24,6 +24,12 @@ const RestaurantDashboard = () => {
 
     // ... (useEffect hooks)
 
+    const [newRestaurant, setNewRestaurant] = useState({
+        name: '',
+        address: '',
+        imageUrl: ''
+    });
+
     const [restaurantInfo, setRestaurantInfo] = useState(null);
 
     useEffect(() => {
@@ -89,7 +95,89 @@ const RestaurantDashboard = () => {
         }
     };
 
-    // ... (handleAddProduct, handleDeleteProduct, handleUpdateOrderStatus)
+    const fetchProducts = async () => {
+        console.log('Fetching products for Restaurant ID:', restaurantId);
+        if (!restaurantId) return;
+        try {
+            // Use the correct endpoint for fetching products by restaurant
+            const res = await api.get(`/products/restaurant/${restaurantId}`);
+            console.log('Fetch products response:', res.data);
+            // API returns { success: true, data: [...] }
+            setProducts(res.data.data || []);
+            setLoading(false);
+        } catch (err) {
+            console.error('Error fetching products:', err);
+            setError('Failed to load products');
+            setLoading(false);
+        }
+    };
+
+    const fetchOrders = async () => {
+        if (!restaurantId) return;
+        try {
+            const res = await api.get(`/orders/restaurant/${restaurantId}`);
+            // Handle potential response structures
+            setOrders(res.data.orders || res.data.data || []);
+            setLoading(false);
+        } catch (err) {
+            console.error('Error fetching orders:', err);
+            setError('Failed to load orders');
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (restaurantId) {
+            if (activeTab === 'menu') {
+                fetchProducts();
+            } else if (activeTab === 'orders') {
+                fetchOrders();
+            }
+        }
+    }, [activeTab, restaurantId]);
+
+    const handleAddProduct = async (e) => {
+        e.preventDefault();
+
+        console.log('Submitting product with Restaurant ID:', restaurantId, 'Type:', typeof restaurantId);
+
+        if (!restaurantId) {
+            alert('Error: Restaurant ID is missing. Please reload the page.');
+            return;
+        }
+
+        try {
+            await api.post('/products', {
+                ...newProduct,
+                stock: 100, // Default stock
+                restaurantId: String(restaurantId) // Ensure it's a string
+            });
+            setNewProduct({ name: '', price: '', description: '', category: '', imageUrl: '' });
+            fetchProducts();
+        } catch (err) {
+            console.error('Add product error:', err);
+            alert('Failed to add product: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleDeleteProduct = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this product?')) return;
+        try {
+            await api.delete(`/products/${id}`);
+            fetchProducts();
+        } catch (err) {
+            alert('Failed to delete product: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleUpdateOrderStatus = async (orderId, status) => {
+        try {
+            await api.patch(`/orders/${orderId}/status`, { status });
+            fetchOrders();
+        } catch (err) {
+            alert('Failed to update status: ' + (err.response?.data?.message || err.message));
+        }
+    };
 
     return (
         <div className="max-w-7xl mx-auto pb-20"> {/* Added padding bottom */}
