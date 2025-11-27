@@ -127,10 +127,7 @@ const TrackingMap = ({ droneLocation, restaurantLocation, customerLocation }) =>
                 )}
             </GoogleMap>
 
-            {/* API Key Warning Overlay (Remove this in production if key is set) */}
-            <div className="absolute top-2 left-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg text-xs font-mono opacity-70 hover:opacity-100 transition-opacity pointer-events-none">
-                Note: Replace YOUR_GOOGLE_MAPS_API_KEY in TrackingMap.jsx
-            </div>
+
         </div>
     );
 };
