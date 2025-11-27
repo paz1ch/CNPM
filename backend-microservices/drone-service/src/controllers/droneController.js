@@ -54,13 +54,15 @@ exports.getDroneById = async (req, res) => {
 // @access  Admin
 exports.addDrone = async (req, res) => {
     try {
-        const { name, model, payloadCapacity, maxSpeed } = req.body;
+        const { name, model, payloadCapacity, maxSpeed, location, battery } = req.body;
 
         const newDrone = await Drone.create({
             name,
             model,
             payloadCapacity,
-            maxSpeed
+            maxSpeed,
+            currentLocation: location, // Map frontend 'location' to schema 'currentLocation'
+            batteryLevel: battery // Map frontend 'battery' to schema 'batteryLevel'
         });
 
         logger.info(`New drone registered: ${newDrone.name} (${newDrone._id})`);
