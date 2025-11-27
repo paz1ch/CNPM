@@ -91,23 +91,6 @@ app.use('/v1/products', proxy(process.env.PRODUCT_SERVICE_URL, {
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
         proxyReqOpts.headers["Content-type"] = "application/json";
-        if (srcReq.user) {
-            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
-            proxyReqOpts.headers["x-user-role"] = srcReq.user.role;
-        }
-        return proxyReqOpts;
-    },
-    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
-        logger.info(`Response received from Product service: ${proxyRes.statusCode}`);
-
-        return proxyResData;
-    }
-}))
-
-//setting up proxy for order service
-app.use('/v1/orders', proxy(process.env.ORDER_SERVICE_URL, {
-    ...proxyOptions,
-    proxyReqPathResolver: (req) => {
         // Order service mounts under /api/orders (no v1)
         return req.originalUrl.replace(/^\/v1\/orders/, "/api/orders");
     },

@@ -24,6 +24,28 @@ const RestaurantDashboard = () => {
 
     // ... (useEffect hooks)
 
+    const [newRestaurant, setNewRestaurant] = useState({
+        name: '',
+        address: '',
+        imageUrl: ''
+    });
+
+    const handleCreateRestaurant = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await api.post('/restaurants', {
+                ...newRestaurant,
+                location: { lat: 10.762622, lng: 106.660172 } // Default location (HCMC)
+            });
+            setRestaurantId(response.data.restaurant._id);
+            // Update local storage if needed, or just rely on state
+            alert('Restaurant profile created successfully!');
+        } catch (err) {
+            console.error('Create restaurant error:', err);
+            alert('Failed to create restaurant: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
     const handleAddProduct = async (e) => {
         e.preventDefault();
 
@@ -92,68 +114,106 @@ const RestaurantDashboard = () => {
             {/* Menu Tab */}
             {activeTab === 'menu' && (
                 <div>
-                    {/* Add Product Form */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl shadow-premium p-6 mb-8"
-                    >
-                        <h3 className="text-2xl font-bold text-secondary mb-4">Add New Item</h3>
-                        <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <input
-                                type="text"
-                                placeholder="Dish Name"
-                                value={newProduct.name}
-                                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="number"
-                                placeholder="Price"
-                                value={newProduct.price}
-                                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <select
-                                value={newProduct.category}
-                                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
-                                required
-                            >
-                                <option value="" disabled>Select Category</option>
-                                <option value="Main">Main Course</option>
-                                <option value="Appetizer">Appetizer</option>
-                                <option value="Dessert">Dessert</option>
-                                <option value="Drink">Drink</option>
-                                <option value="Side">Side Dish</option>
-                            </select>
-                            <input
-                                type="text"
-                                placeholder="Image URL"
-                                value={newProduct.imageUrl}
-                                onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                            />
+                    {/* Create Restaurant Form or Add Product Form */}
+                    {!restaurantId ? (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white rounded-2xl shadow-premium p-6 mb-8"
+                        >
+                            <h3 className="text-2xl font-bold text-secondary mb-4">Create Restaurant Profile</h3>
+                            <p className="text-gray-600 mb-6">You need to create a restaurant profile before adding menu items.</p>
+                            <form onSubmit={handleCreateRestaurant} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input
+                                    type="text"
+                                    placeholder="Restaurant Name"
+                                    value={newRestaurant.name}
+                                    onChange={(e) => setNewRestaurant({ ...newRestaurant, name: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Address"
+                                    value={newRestaurant.address}
+                                    onChange={(e) => setNewRestaurant({ ...newRestaurant, address: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
 
-                            <input
-                                type="text"
-                                placeholder="Description"
-                                value={newProduct.description}
-                                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                            />
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg md:col-span-3"
-                            >
-                                Add to Menu
-                            </motion.button>
-                        </form>
-                    </motion.div>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    type="submit"
+                                    className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg md:col-span-2"
+                                >
+                                    Create Profile
+                                </motion.button>
+                            </form>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white rounded-2xl shadow-premium p-6 mb-8"
+                        >
+                            <h3 className="text-2xl font-bold text-secondary mb-4">Add New Item</h3>
+                            <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <input
+                                    type="text"
+                                    placeholder="Dish Name"
+                                    value={newProduct.name}
+                                    onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                                <input
+                                    type="number"
+                                    placeholder="Price"
+                                    value={newProduct.price}
+                                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                                <select
+                                    value={newProduct.category}
+                                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+                                    required
+                                >
+                                    <option value="" disabled>Select Category</option>
+                                    <option value="Main">Main Course</option>
+                                    <option value="Appetizer">Appetizer</option>
+                                    <option value="Dessert">Dessert</option>
+                                    <option value="Drink">Drink</option>
+                                    <option value="Side">Side Dish</option>
+                                </select>
+                                <input
+                                    type="text"
+                                    placeholder="Image URL"
+                                    value={newProduct.imageUrl}
+                                    onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                />
+
+                                <input
+                                    type="text"
+                                    placeholder="Description"
+                                    value={newProduct.description}
+                                    onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent md:col-span-2"
+                                />
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    type="submit"
+                                    className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg md:col-span-3"
+                                >
+                                    Add to Menu
+                                </motion.button>
+                            </form>
+                        </motion.div>
+                    )}
 
                     {/* Products List */}
                     {loading ? (
