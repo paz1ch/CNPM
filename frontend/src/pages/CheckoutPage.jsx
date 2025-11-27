@@ -15,7 +15,7 @@ const CheckoutPage = () => {
 
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: "AIzaSyA81ehjfUrZJ65iNbBgjWAmSBumY8g-oks"
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     });
 
     const [restaurants, setRestaurants] = useState([]);
