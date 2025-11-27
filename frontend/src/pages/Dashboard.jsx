@@ -11,12 +11,9 @@ const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('drones');
     const [drones, setDrones] = useState([]);
     const [orders, setOrders] = useState([]);
-<<<<<<< HEAD
     const [missions, setMissions] = useState([]);
-=======
     const [restaurants, setRestaurants] = useState([]);
     const [products, setProducts] = useState([]);
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [userRole, setUserRole] = useState('');
@@ -59,16 +56,13 @@ const Dashboard = () => {
             fetchDrones();
         } else if (activeTab === 'orders') {
             fetchOrders();
-<<<<<<< HEAD
         } else if (activeTab === 'missions') {
             fetchMissions();
-=======
         } else if (activeTab === 'restaurants') {
             fetchRestaurants();
         } else if (activeTab === 'products') {
             fetchProducts();
             fetchRestaurants(); // Need restaurants for dropdown
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
         }
     }, [activeTab]);
 
@@ -89,7 +83,6 @@ const Dashboard = () => {
     const fetchOrders = async () => {
         try {
             setLoading(true);
-<<<<<<< HEAD
             // Admin users should fetch all orders; regular users fetch their own
             const savedUser = localStorage.getItem('user');
             let response;
@@ -108,12 +101,6 @@ const Dashboard = () => {
                 response = await api.get('/orders/user');
             }
 
-=======
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const endpoint = user.role === 'admin' ? '/orders/all' : '/orders/user';
-
-            const response = await api.get(endpoint);
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
             setOrders(response.data.orders || []);
             setError('');
         } catch (err) {
@@ -300,13 +287,8 @@ const Dashboard = () => {
             <h1 className="text-4xl font-bold text-secondary mb-8">Dashboard</h1>
 
             {/* Tabs */}
-<<<<<<< HEAD
-            <div className="flex gap-4 mb-8 border-b border-gray-200">
-                {['drones', 'orders', 'missions', 'products'].map((tab) => (
-=======
             <div className="flex gap-4 mb-8 border-b border-gray-200 overflow-x-auto">
-                {['drones', 'orders', 'restaurants', 'products'].map((tab) => (
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
+                {['drones', 'orders', 'missions', 'restaurants', 'products'].map((tab) => (
                     <motion.button
                         key={tab}
                         whileHover={{ scale: 1.05 }}
@@ -388,12 +370,12 @@ const Dashboard = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                     >
-                                                        <DroneCard
-                                                            drone={drone}
-                                                            onEdit={handleEditDrone}
-                                                            onDelete={handleDeleteDrone}
-                                                            onSetStatus={handleSetDroneStatus}
-                                                        />
+                                        <DroneCard
+                                            drone={drone}
+                                            onEdit={handleEditDrone}
+                                            onDelete={handleDeleteDrone}
+                                            onSetStatus={handleSetDroneStatus}
+                                        />
                                     </motion.div>
                                 ))
                             ) : (
@@ -444,14 +426,14 @@ const Dashboard = () => {
                                                 )}
                                             </div>
                                         </div>
-                                                        <div className="mt-4 flex gap-2">
-                                                            <button
-                                                                onClick={() => handleAssignMission(order)}
-                                                                className="px-4 py-2 bg-gradient-primary text-white rounded-lg font-semibold"
-                                                            >
-                                                                Assign Drone / Create Mission
-                                                            </button>
-                                                        </div>
+                                        <div className="mt-4 flex gap-2">
+                                            <button
+                                                onClick={() => handleAssignMission(order)}
+                                                className="px-4 py-2 bg-gradient-primary text-white rounded-lg font-semibold"
+                                            >
+                                                Assign Drone / Create Mission
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 ))
                             ) : (
@@ -464,7 +446,6 @@ const Dashboard = () => {
                 </div>
             )}
 
-<<<<<<< HEAD
             {/* Missions Tab */}
             {activeTab === 'missions' && (
                 <div>
@@ -510,7 +491,13 @@ const Dashboard = () => {
                             ) : (
                                 <div className="text-center py-12">
                                     <p className="text-xl text-gray-500">No missions found</p>
-=======
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Restaurants Tab */}
             {activeTab === 'restaurants' && (
                 <div>
@@ -575,7 +562,6 @@ const Dashboard = () => {
                             ) : (
                                 <div className="col-span-full text-center py-12">
                                     <p className="text-xl text-gray-500">No restaurants available</p>
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
                                 </div>
                             )}
                         </div>
@@ -583,11 +569,7 @@ const Dashboard = () => {
                 </div>
             )}
 
-<<<<<<< HEAD
-            {/* Products Tab (placeholder) */}
-=======
             {/* Products Tab */}
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
             {activeTab === 'products' && (
                 <div>
                     {/* Add Product Form */}

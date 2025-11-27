@@ -22,7 +22,6 @@ const TrackingPage = () => {
 
         const fetchData = async () => {
             try {
-<<<<<<< HEAD
                 // The drone service exposes mission status at /api/v1/missions/order/:orderId
                 // Gateway maps /v1 -> /api/v1 so call /missions/order/:orderId
                 const response = await api.get(`/missions/order/${orderId}`);
@@ -60,40 +59,6 @@ const TrackingPage = () => {
                     setError(response.data?.message || 'No drone assigned yet. Please wait...');
                 }
 
-=======
-                // Fetch Order Status
-                const orderResponse = await api.get(`/orders/${orderId}`);
-                const order = orderResponse.data.order;
-
-                // Fetch Drone Status
-                let delivery = null;
-                try {
-                    const droneResponse = await api.get(`/drones/delivery/${orderId}`);
-                    if (droneResponse.data.success) {
-                        delivery = droneResponse.data.delivery;
-                        setDroneData(delivery);
-                        setEstimatedTime(delivery.estimatedTime || 0);
-                    }
-                } catch (e) {
-                    // Drone might not be assigned yet, which is fine
-                }
-
-                // Determine Status to Display
-                if (order && order.status === 'Delivered') {
-                    setOrderStatus('Delivered');
-                    setDroneData(null); // Clear drone data on delivery
-                    setError('');
-                } else if (delivery) {
-                    setOrderStatus(delivery.status === 'BUSY' ? 'DELIVERING' : delivery.status);
-                    setError('');
-                } else if (order) {
-                    setOrderStatus(order.status);
-                    if (order.status !== 'Delivered' && order.status !== 'Cancelled') {
-                        setError('Waiting for drone assignment...');
-                    }
-                }
-
->>>>>>> 6769043a0a1089ac4eb7e6f1bffeb03c3cb63378
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching data:', err);
