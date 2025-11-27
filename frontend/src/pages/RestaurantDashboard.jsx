@@ -26,15 +26,24 @@ const RestaurantDashboard = () => {
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
+
+        console.log('Submitting product with Restaurant ID:', restaurantId, 'Type:', typeof restaurantId);
+
+        if (!restaurantId) {
+            alert('Error: Restaurant ID is missing. Please reload the page.');
+            return;
+        }
+
         try {
             await api.post('/products', {
                 ...newProduct,
                 stock: 100, // Default stock
-                restaurantId: restaurantId
+                restaurantId: String(restaurantId) // Ensure it's a string
             });
             setNewProduct({ name: '', price: '', description: '', category: '', imageUrl: '' });
             fetchProducts();
         } catch (err) {
+            console.error('Add product error:', err);
             alert('Failed to add product: ' + (err.response?.data?.message || err.message));
         }
     };
