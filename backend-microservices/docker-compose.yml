@@ -21,6 +21,7 @@ services:
     build: ./user-service
     environment:
       - PORT=3001
+      - JWT_SECRET=JWT_SECRET
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
       - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db

@@ -2,77 +2,107 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const droneController = require('./controllers/droneController');
-const connectRabbitMQ = require('./rabbitmq/consumer');
+const http = require('http');
+
+const { initWebSocketServer } = require('./websocket/websocket');
+const { connectRabbitMQ } = require('./rabbitmq/consumer');
 const logger = require('./utils/logger');
 
+// Load environment variables
 dotenv.config();
 
+// --- Route Imports ---
+const droneRoutes = require('./routes/droneRoutes');
+const missionRoutes = require('./routes/missionRoutes');
+const simulationRoutes = require('./routes/simulationRoutes');
+
 const app = express();
+const server = http.createServer(app);
+
+// --- Middleware ---
 app.use(cors());
 app.use(express.json());
 
 // Request logging middleware
 app.use((req, res, next) => {
-    logger.info(`${req.method} ${req.path}`, {
-        ip: req.ip,
-        userAgent: req.get('user-agent')
+    logger.info(`--> ${req.method} ${req.originalUrl}`, { body: req.body });
+    res.on('finish', () => {
+        logger.info(`<-- ${req.method} ${req.originalUrl} ${res.statusCode}`);
     });
     next();
 });
 
-const PORT = process.env.PORT || 3005;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/food-delivery';
+// --- API Routes ---
+app.use('/api/v1/drones', droneRoutes);
+app.use('/api/v1/missions', missionRoutes);
+app.use('/api/v1/simulation', simulationRoutes);
 
-// Health check endpoint
+// --- Health Check ---
 app.get('/health', (req, res) => {
-    res.json({
-        status: 'healthy',
+    res.status(200).json({
+        status: 'UP',
         service: 'drone-service',
         timestamp: new Date().toISOString(),
-        uptime: process.uptime()
+        uptime: process.uptime(),
+        dbState: mongoose.STATES[mongoose.connection.readyState]
     });
 });
 
-// Routes
-app.get('/api/drones', droneController.getDrones);
-app.post('/api/drones', droneController.addDrone);
-app.get('/api/drones/delivery/:orderId', droneController.getDeliveryStatus);
-
-// Error handling middleware
+// --- Centralized Error Handling ---
 app.use((err, req, res, next) => {
-    logger.error('Unhandled error', { error: err.message, stack: err.stack });
-    res.status(500).json({
+    logger.error('Unhandled application error', { 
+        error: err.message, 
+        stack: err.stack,
+        path: req.path,
+        method: req.method
+    });
+    res.status(err.statusCode || 500).json({
         success: false,
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        message: err.message || 'An unexpected error occurred.',
+        error: process.env.NODE_ENV === 'production' ? {} : err.stack
     });
 });
 
-// Connect to MongoDB
-mongoose.connect(MONGO_URI)
-    .then(() => {
-        logger.info('Connected to MongoDB', { database: MONGO_URI.split('@')[1] });
+// --- Server Initialization ---
+const PORT = process.env.PORT || 3005;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/drone-delivery';
 
-        // Start RabbitMQ Consumer
-        connectRabbitMQ().catch(err => {
-            logger.error('Failed to connect to RabbitMQ', { error: err.message });
+async function startServer() {
+    try {
+        // 1. Connect to MongoDB
+        await mongoose.connect(MONGO_URI);
+        logger.info(`Connected to MongoDB: ${mongoose.connection.host}`);
+
+        // 2. Initialize WebSocket Server
+        initWebSocketServer(server);
+
+        // 3. Connect to RabbitMQ
+        await connectRabbitMQ();
+        
+        // 4. Start HTTP Server
+        server.listen(PORT, () => {
+            logger.info(`Drone Service is UP and running on port ${PORT}`);
         });
 
-        app.listen(PORT, () => {
-            logger.info(`Drone Service running on port ${PORT}`);
-        });
-    })
-    .catch(err => {
-        logger.error('MongoDB connection error', { error: err.message });
+    } catch (error) {
+        logger.error('Failed to start server', { error: error.message, stack: error.stack });
         process.exit(1);
-    });
+    }
+}
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    logger.info('SIGTERM received, shutting down gracefully');
-    mongoose.connection.close(() => {
-        logger.info('MongoDB connection closed');
-        process.exit(0);
+startServer();
+
+// --- Graceful Shutdown ---
+const gracefulShutdown = (signal) => {
+    logger.warn(`${signal} received. Shutting down gracefully...`);
+    server.close(() => {
+        logger.info('HTTP server closed.');
+        mongoose.connection.close(false, () => {
+            logger.info('MongoDB connection closed.');
+            process.exit(0);
+        });
     });
-});
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

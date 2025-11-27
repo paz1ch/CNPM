@@ -1,111 +1,200 @@
 const Drone = require('../models/Drone');
+const Mission = require('../models/Mission');
 const logger = require('../utils/logger');
 
+// @desc    Get all drones
+// @route   GET /api/v1/drones
+// @access  Public
 exports.getDrones = async (req, res) => {
     try {
-        const { status } = req.query;
-        const filter = status ? { status } : {};
+        const { status, model } = req.query;
+        const filter = {};
 
-        const drones = await Drone.find(filter).sort({ createdAt: -1 });
+        if (status) {
+            filter.status = status;
+        }
+        if (model) {
+            filter.model = { $regex: model, $options: 'i' };
+        }
 
-        logger.info('Retrieved drones list', { count: drones.length, filter });
+        const drones = await Drone.find(filter).populate('mission').sort({ createdAt: -1 });
 
         res.json({
             success: true,
             count: drones.length,
-            drones
+            data: drones
         });
-    } catch (error) {
-        logger.error('Error fetching drones', { error: error.message });
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch drones',
-            error: error.message
-        });
+    } catch (err) {
+        logger.error(`Error fetching drones: ${err.message}`);
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
 
-exports.addDrone = async (req, res) => {
+// @desc    Get a single drone by ID
+// @route   GET /api/v1/drones/:id
+// @access  Public
+exports.getDroneById = async (req, res) => {
     try {
-        const { name, battery, location } = req.body;
-
-        if (!name) {
-            return res.status(400).json({
-                success: false,
-                message: 'Drone name is required'
-            });
-        }
-
-        const drone = new Drone({
-            name,
-            battery: battery || 100,
-            location: location || { lat: 10.762622, lng: 106.660172 },
-            status: 'IDLE'
-        });
-
-        await drone.save();
-
-        logger.info('New drone added', { droneId: drone._id, name: drone.name });
-
-        res.status(201).json({
-            success: true,
-            message: 'Drone created successfully',
-            drone
-        });
-    } catch (error) {
-        logger.error('Error adding drone', { error: error.message });
-        res.status(400).json({
-            success: false,
-            message: 'Failed to create drone',
-            error: error.message
-        });
-    }
-};
-
-exports.getDeliveryStatus = async (req, res) => {
-    try {
-        const { orderId } = req.params;
-
-        const drone = await Drone.findOne({ currentOrderId: orderId });
+        const drone = await Drone.findById(req.params.id).populate('mission');
 
         if (!drone) {
-            logger.warn('No drone found for order', { orderId });
-            return res.status(404).json({
+            logger.warn(`Drone not found with ID: ${req.params.id}`);
+            return res.status(404).json({ success: false, message: 'Drone not found' });
+        }
+
+        res.json({ success: true, data: drone });
+    } catch (err) {
+        logger.error(`Error fetching drone ${req.params.id}: ${err.message}`);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+// @desc    Register a new drone
+// @route   POST /api/v1/drones
+// @access  Admin
+exports.addDrone = async (req, res) => {
+    try {
+        const { name, model, payloadCapacity, maxSpeed } = req.body;
+
+        const newDrone = await Drone.create({
+            name,
+            model,
+            payloadCapacity,
+            maxSpeed
+        });
+
+        logger.info(`New drone registered: ${newDrone.name} (${newDrone._id})`);
+        res.status(201).json({
+            success: true,
+            message: 'Drone registered successfully',
+            data: newDrone
+        });
+    } catch (err) {
+        logger.error(`Error registering drone: ${err.message}`);
+        if (err.code === 11000) {
+            return res.status(400).json({ success: false, message: 'Drone name already exists.' });
+        }
+        res.status(400).json({ success: false, message: err.message });
+    }
+};
+
+// @desc    Update a drone's details
+// @route   PUT /api/v1/drones/:id
+// @access  Admin
+exports.updateDrone = async (req, res) => {
+    try {
+        const droneId = req.params.id;
+        const updates = req.body;
+
+        const drone = await Drone.findById(droneId);
+
+        if (!drone) {
+            logger.warn(`Update failed. Drone not found with ID: ${droneId}`);
+            return res.status(404).json({ success: false, message: 'Drone not found' });
+        }
+
+        // Prevent updates if the drone is actively on a mission
+        if (['DELIVERING', 'RETURNING'].includes(drone.status)) {
+            return res.status(409).json({
                 success: false,
-                message: 'No drone assigned to this order yet. Please wait...'
+                message: `Cannot update drone while it is ${drone.status}.`
             });
         }
 
-        logger.info('Delivery status retrieved', { orderId, droneId: drone._id });
+        const updatedDrone = await Drone.findByIdAndUpdate(droneId, updates, {
+            new: true,
+            runValidators: true
+        });
+
+        logger.info(`Drone ${droneId} was updated.`);
+        res.json({ success: true, message: 'Drone updated successfully', data: updatedDrone });
+
+    } catch (err) {
+        logger.error(`Error updating drone ${req.params.id}: ${err.message}`);
+        res.status(400).json({ success: false, message: err.message });
+    }
+};
+
+// @desc    Update a drone's status
+// @route   PATCH /api/v1/drones/:id/status
+// @access  Admin/System
+exports.updateDroneStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        if (!status) {
+            return res.status(400).json({ success: false, message: 'Status is required.' });
+        }
+
+        const drone = await Drone.findById(req.params.id);
+        if (!drone) {
+            return res.status(404).json({ success: false, message: 'Drone not found' });
+        }
+
+        drone.status = status;
+        await drone.save();
+
+        logger.info(`Drone ${drone._id} status updated to ${status}`);
+        res.json({ success: true, data: drone });
+    } catch (err) {
+        logger.error(`Error updating drone status: ${err.message}`);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+}
+
+// @desc    Delete a drone
+// @route   DELETE /api/v1/drones/:id
+// @access  Admin
+exports.deleteDrone = async (req, res) => {
+    try {
+        const droneId = req.params.id;
+        const drone = await Drone.findById(droneId);
+
+        if (!drone) {
+            logger.warn(`Delete failed. Drone not found with ID: ${droneId}`);
+            return res.status(404).json({ success: false, message: 'Drone not found' });
+        }
+
+        // Prevent deletion if the drone is not in a deletable state
+        if (['DELIVERING', 'RETURNING'].includes(drone.status)) {
+            return res.status(409).json({
+                success: false,
+                message: `Cannot delete a drone that is currently ${drone.status}.`
+            });
+        }
+
+        await drone.deleteOne();
+
+        logger.info(`Drone ${droneId} was deleted.`);
+        res.json({ success: true, message: 'Drone deleted successfully' });
+    } catch (err) {
+        logger.error(`Error deleting drone ${req.params.id}: ${err.message}`);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+// @desc    Get available drones for a new mission
+// @route   GET /api/v1/drones/available
+// @access  System
+exports.getAvailableDrones = async (req, res) => {
+    try {
+        // Find drones that are idle and have enough battery
+        const availableDrones = await Drone.find({
+            status: 'IDLE',
+            batteryLevel: { $gt: 25 } // Example threshold: must have > 25% battery
+        }).sort({ batteryLevel: -1 });
+
+        if (availableDrones.length === 0) {
+            logger.warn('No available drones for new mission.');
+            return res.status(404).json({ success: false, message: 'No drones are currently available.' });
+        }
 
         res.json({
             success: true,
-            delivery: {
-                orderId,
-                droneId: drone._id,
-                droneName: drone.name,
-                status: drone.status,
-                location: drone.location,
-                battery: drone.battery,
-                estimatedTime: calculateETA(drone.status, drone.battery)
-            }
+            count: availableDrones.length,
+            data: availableDrones
         });
-    } catch (error) {
-        logger.error('Error fetching delivery status', { error: error.message, orderId: req.params.orderId });
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch delivery status',
-            error: error.message
-        });
+    } catch (err) {
+        logger.error(`Error fetching available drones: ${err.message}`);
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
-};
-
-// Helper function to calculate estimated time of arrival
-function calculateETA(status, battery) {
-    if (status === 'DELIVERED') return 0;
-    if (status === 'IDLE') return null;
-
-    // Rough estimate: 2 minutes per 10% battery consumed
-    const estimatedMinutes = Math.ceil((100 - battery) / 5);
-    return Math.max(1, 15 - estimatedMinutes); // Max 15 minutes
 }

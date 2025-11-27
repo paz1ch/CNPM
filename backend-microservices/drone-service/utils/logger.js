@@ -1,27 +1,37 @@
-const winston = require('winston');
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, printf, colorize, errors } = format;
 
-const logger = winston.createLogger({
-    level: process.env.LOG_LEVEL || 'info',
-    format: winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        winston.format.errors({ stack: true }),
-        winston.format.splat(),
-        winston.format.json()
-    ),
-    defaultMeta: { service: 'drone-service' },
-    transports: [
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'combined.log' }),
-    ],
+// Custom log format
+const logFormat = printf(({ level, message, timestamp, stack, ...metadata }) => {
+    let msg = `${timestamp} [${level}]: ${message}`;
+    // Add metadata if it exists
+    if (metadata && Object.keys(metadata).length) {
+        msg += ' ' + JSON.stringify(metadata);
+    }
+    // Add stack trace for errors
+    if (stack) {
+        msg += `\n${stack}`;
+    }
+    return msg;
 });
 
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple()
-        )
-    }));
-}
+const logger = createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: combine(
+        colorize(),
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        errors({ stack: true }), // This is key to getting stack traces
+        logFormat
+    ),
+    transports: [
+        new transports.Console()
+    ],
+    exceptionHandlers: [
+        new transports.Console()
+    ],
+    rejectionHandlers: [
+        new transports.Console()
+    ]
+});
 
 module.exports = logger;

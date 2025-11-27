@@ -53,9 +53,9 @@ const CheckoutPage = () => {
             const orderResponse = await api.post('/orders/create', orderData);
             const order = orderResponse.data.orderDetails;
 
-            // Create payment
+            // Create payment - use the MongoDB _id (ObjectId) for payments
             const paymentData = {
-                orderId: order.orderID,
+                orderId: order._id,
                 paymentMethod: formData.paymentMethod,
                 amount: getCartTotal(),
             };
