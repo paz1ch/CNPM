@@ -8,6 +8,7 @@ import RestaurantDashboard from './pages/RestaurantDashboard';
 import CartPage from './pages/CartPage';
 import LoginPage from './pages/LoginPage';
 import CheckoutPage from './pages/CheckoutPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import { useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -41,6 +42,7 @@ function App() {
           } />
           <Route path="/tracking" element={<TrackingPage />} />
           <Route path="/tracking/:orderId" element={<TrackingPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
 
           {/* Admin Route */}
           <Route

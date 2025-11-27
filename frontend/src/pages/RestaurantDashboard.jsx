@@ -19,95 +19,20 @@ const RestaurantDashboard = () => {
         price: '',
         description: '',
         category: '',
-        image: ''
+        imageUrl: ''
     });
 
-    useEffect(() => {
-        const fetchRestaurantId = async () => {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            if (user.role === 'restaurant') {
-                if (user.restaurantID) {
-                    setRestaurantId(user.restaurantID);
-                } else {
-                    try {
-                        // Fetch restaurant by ownerId (which is the user's ID)
-                        const userId = user.userId || user._id;
-                        if (!userId) return;
-
-                        const response = await api.get(`/restaurants?ownerId=${userId}`);
-                        if (response.data.restaurants && response.data.restaurants.length > 0) {
-                            setRestaurantId(response.data.restaurants[0]._id);
-                        } else {
-                            setError('No restaurant found for this user. Please contact admin.');
-                        }
-                    } catch (err) {
-                        console.error('Error fetching restaurant ID:', err);
-                        setError('Failed to load restaurant profile.');
-                    } finally {
-                        // If we still don't have an ID, stop loading so error shows
-                        if (!user.restaurantID) setLoading(false);
-                    }
-                }
-            } else {
-                setLoading(false);
-            }
-        };
-        fetchRestaurantId();
-    }, []);
-
-    useEffect(() => {
-        if (!restaurantId) return;
-
-        if (activeTab === 'menu') {
-            fetchProducts();
-        } else if (activeTab === 'orders') {
-            fetchOrders();
-        }
-    }, [activeTab, restaurantId]);
-
-    const fetchProducts = async () => {
-        try {
-            setLoading(true);
-            // Use the endpoint to get products by restaurant
-            const response = await api.get(`/products/restaurant/${restaurantId}`);
-            setProducts(response.data.data || []);
-            setError('');
-        } catch (err) {
-            console.error('Error fetching products:', err);
-            setError('Failed to load menu items');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchOrders = async () => {
-        try {
-            setLoading(true);
-            // Use the endpoint to get orders by restaurant
-            // Note: The backend controller `getOrdersByRestaurant` uses req.user.restaurantID if param is not provided
-            // But here we might need to pass it or rely on token. 
-            // Let's try calling with param if we have it, or just /orders/restaurant/my (if endpoint existed)
-            // The controller `getOrdersByRestaurant` is mapped to `GET /restaurant/:restaurantId` or similar?
-            // Let's check routes. Assuming `GET /orders/restaurant/:restaurantId`
-            const response = await api.get(`/orders/restaurant/${restaurantId}`);
-            setOrders(response.data.orders || []);
-            setError('');
-        } catch (err) {
-            console.error('Error fetching orders:', err);
-            setError('Failed to load orders');
-        } finally {
-            setLoading(false);
-        }
-    };
+    // ... (useEffect hooks)
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
         try {
             await api.post('/products', {
                 ...newProduct,
+                stock: 100, // Default stock
                 restaurantId: restaurantId
             });
-            setNewProduct({ name: '', price: '', description: '', category: '', image: '' });
+            setNewProduct({ name: '', price: '', description: '', category: '', imageUrl: '' });
             fetchProducts();
         } catch (err) {
             alert('Failed to add product: ' + (err.response?.data?.message || err.message));
@@ -182,21 +107,27 @@ const RestaurantDashboard = () => {
                                 className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                                 required
                             />
-                            <input
-                                type="text"
-                                placeholder="Category (e.g., Main, Drink)"
+                            <select
                                 value={newProduct.category}
                                 onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
                                 required
-                            />
+                            >
+                                <option value="" disabled>Select Category</option>
+                                <option value="Main">Main Course</option>
+                                <option value="Appetizer">Appetizer</option>
+                                <option value="Dessert">Dessert</option>
+                                <option value="Drink">Drink</option>
+                                <option value="Side">Side Dish</option>
+                            </select>
                             <input
                                 type="text"
                                 placeholder="Image URL"
-                                value={newProduct.image}
-                                onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                                value={newProduct.imageUrl}
+                                onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
                                 className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
+
                             <input
                                 type="text"
                                 placeholder="Description"

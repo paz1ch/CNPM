@@ -138,7 +138,7 @@ const LoginPage = () => {
                             >
                                 <option value="user">Customer</option>
                                 <option value="restaurant">Restaurant</option>
-                                <option value="delivery">Delivery</option>
+
                             </select>
                         </div>
                     )}

@@ -1,18 +1,25 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
+    const navigate = useNavigate();
 
-    const handleAddToCart = () => {
+    const handleAddToCart = (e) => {
+        e.stopPropagation(); // Prevent navigation when clicking add to cart
         addToCart(product);
+    };
+
+    const handleCardClick = () => {
+        navigate(`/product/${product._id || product.id}`);
     };
 
     return (
         <motion.div
             whileHover={{ y: -10, boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.2)' }}
             transition={{ duration: 0.3 }}
+            onClick={handleCardClick}
             className="bg-white rounded-2xl shadow-premium overflow-hidden cursor-pointer"
         >
             <div className="relative overflow-hidden h-48">
