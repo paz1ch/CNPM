@@ -106,9 +106,14 @@ const updateOrderStatus = async (req, res) => {
 
         const { status } = req.body;
 
-        const allowedNext = statusFlow[user.role]?.[order.status] || [];
-        if (!allowedNext.includes(status)) {
-            return res.status(400).json({ message: `Invalid status transition from ${order.status} to ${status}` });
+        // Special case: Allow user to confirm delivery if they own the order
+        if (user.role === 'user' && status === 'Delivered' && order.userID.toString() === user._id.toString()) {
+            // Allow transition
+        } else {
+            const allowedNext = statusFlow[user.role]?.[order.status] || [];
+            if (!allowedNext.includes(status)) {
+                return res.status(400).json({ message: `Invalid status transition from ${order.status} to ${status}` });
+            }
         }
 
         order.status = status;
@@ -135,6 +140,15 @@ const updateOrderStatus = async (req, res) => {
             };
 
             await publishToQueue('ORDER_READY', orderReadyMessage);
+        }
+
+        // Publish ORDER_DELIVERED event when order is Delivered
+        if (status === 'Delivered') {
+            logger.info('Order is delivered, publishing ORDER_DELIVERED event', { orderId: order.orderID });
+            await publishToQueue('ORDER_DELIVERED', {
+                orderId: order.orderID,
+                deliveredAt: new Date().toISOString()
+            });
         }
 
         return res.status(200).json({ order });

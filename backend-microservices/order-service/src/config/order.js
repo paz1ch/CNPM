@@ -3,6 +3,8 @@ const ORDER_MODIFICATION_DEADLINE = process.env.ORDER_MODIFICATION_DEADLINE || 3
 const statusFlow = {
     'user': {
         'Pending': ['Cancelled'],
+        'Out for Delivery': ['Delivered'],
+        'Ready': ['Delivered'], // Fallback if Out for Delivery update is missed
     },
     'restaurant': {
         'Pending': ['Preparing'],
