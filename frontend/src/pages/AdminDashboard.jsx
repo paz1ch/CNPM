@@ -25,6 +25,17 @@ const AdminDashboard = () => {
         location: { lat: 10.762622, lng: 106.660172 }
     });
 
+    // New product form
+    const [newProduct, setNewProduct] = useState({
+        name: '',
+        price: '',
+        description: '',
+        category: '',
+        imageUrl: '',
+        stock: 10,
+        restaurantId: ''
+    });
+
     const handleGetCurrentLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -46,12 +57,6 @@ const AdminDashboard = () => {
         }
     };
 
-
-
-
-
-
-
     useEffect(() => {
         // Get user role
         const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -69,6 +74,7 @@ const AdminDashboard = () => {
             fetchRestaurants();
         } else if (activeTab === 'products') {
             fetchProducts();
+            fetchRestaurants(); // Fetch restaurants for the dropdown
         }
     }, [activeTab]);
 
@@ -227,12 +233,6 @@ const AdminDashboard = () => {
         }
     };
 
-
-
-
-
-
-
     const handleToggleProductStatus = async (product) => {
         const newStatus = !product.isAvailable;
         const action = newStatus ? 'Show' : 'Hide';
@@ -267,6 +267,50 @@ const AdminDashboard = () => {
             fetchRestaurants();
         } catch (err) {
             alert('Failed to delete restaurant: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleAddProduct = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post('/products', newProduct);
+            setNewProduct({ name: '', price: '', description: '', category: '', imageUrl: '', stock: 10, restaurantId: '' });
+            fetchProducts();
+        } catch (err) {
+            alert('Failed to add product: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleEditProduct = async (product) => {
+        const name = window.prompt('Product Name:', product.name);
+        if (name === null) return;
+        const priceStr = window.prompt('Price:', product.price);
+        if (priceStr === null) return;
+        const price = parseFloat(priceStr);
+        if (isNaN(price)) { alert('Invalid price'); return; }
+
+        const description = window.prompt('Description:', product.description);
+        if (description === null) return;
+        const category = window.prompt('Category:', product.category);
+        if (category === null) return;
+        const image = window.prompt('Image URL:', product.image);
+        if (image === null) return;
+
+        try {
+            await api.put(`/products/${product._id}`, { name, price, description, category, image });
+            fetchProducts();
+        } catch (err) {
+            alert('Failed to edit product: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleDeleteProduct = async (product) => {
+        if (!window.confirm(`Delete product ${product.name}? This cannot be undone.`)) return;
+        try {
+            await api.delete(`/products/${product._id}`);
+            fetchProducts();
+        } catch (err) {
+            alert('Failed to delete product: ' + (err.response?.data?.message || err.message));
         }
     };
 
@@ -561,7 +605,105 @@ const AdminDashboard = () => {
             {/* Products Tab */}
             {activeTab === 'products' && (
                 <div>
-
+                    {/* Add Product Form */}
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white rounded-2xl shadow-premium p-6 mb-8"
+                    >
+                        <h3 className="text-2xl font-bold text-secondary mb-4">Add New Product</h3>
+                        <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g., Spicy Chicken Burger"
+                                    value={newProduct.name}
+                                    onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="e.g., 9.99"
+                                    value={newProduct.price}
+                                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea
+                                    placeholder="Product description..."
+                                    value={newProduct.description}
+                                    onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    rows="3"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g., Burgers"
+                                    value={newProduct.category}
+                                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                                <input
+                                    type="text"
+                                    placeholder="https://example.com/image.jpg"
+                                    value={newProduct.imageUrl}
+                                    onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                                <input
+                                    type="number"
+                                    placeholder="e.g., 50"
+                                    value={newProduct.stock}
+                                    onChange={(e) => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Restaurant</label>
+                                <select
+                                    value={newProduct.restaurantId}
+                                    onChange={(e) => setNewProduct({ ...newProduct, restaurantId: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                >
+                                    <option value="">Select a Restaurant</option>
+                                    {restaurants.map((r) => (
+                                        <option key={r._id} value={r._id}>{r.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="submit"
+                                className="md:col-span-2 bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg"
+                            >
+                                Add Product
+                            </motion.button>
+                        </form>
+                    </motion.div>
 
                     {/* Products List */}
                     {loading ? (
@@ -582,16 +724,32 @@ const AdminDashboard = () => {
                                         className={`relative ${!product.isAvailable ? 'opacity-60' : ''}`}
                                     >
                                         <ProductCard product={product} showAddToCart={false} />
-                                        <button
-                                            onClick={() => handleToggleProductStatus(product)}
-                                            className={`absolute top-2 right-2 p-2 rounded-full shadow-lg transition-colors ${product.isAvailable
-                                                ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                                                : 'bg-green-100 text-green-600 hover:bg-green-200'
-                                                }`}
-                                            title={product.isAvailable ? "Hide Product" : "Show Product"}
-                                        >
-                                            {product.isAvailable ? '🚫' : '✅'}
-                                        </button>
+                                        <div className="absolute top-2 right-2 flex flex-col gap-2">
+                                            <button
+                                                onClick={() => handleToggleProductStatus(product)}
+                                                className={`p-2 rounded-full shadow-lg transition-colors ${product.isAvailable
+                                                    ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                                                    : 'bg-green-100 text-green-600 hover:bg-green-200'
+                                                    }`}
+                                                title={product.isAvailable ? "Hide Product" : "Show Product"}
+                                            >
+                                                {product.isAvailable ? '🚫' : '✅'}
+                                            </button>
+                                            <button
+                                                onClick={() => handleEditProduct(product)}
+                                                className="p-2 rounded-full shadow-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                                                title="Edit Product"
+                                            >
+                                                ✏️
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteProduct(product)}
+                                                className="p-2 rounded-full shadow-lg bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 transition-colors"
+                                                title="Delete Product"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 ))
                             ) : (
