@@ -106,3 +106,114 @@ exports.getRestaurantById = async (req, res) => {
         });
     }
 };
+
+// Update restaurant
+exports.updateRestaurant = async (req, res) => {
+    try {
+        const { name, address, location, imageUrl } = req.body;
+        const restaurant = await Restaurant.findById(req.params.id);
+
+        if (!restaurant) {
+            return res.status(404).json({
+                success: false,
+                message: 'Restaurant not found'
+            });
+        }
+
+        // Check ownership/role
+        if (req.user.role !== 'admin' && restaurant.ownerId && restaurant.ownerId.toString() !== req.user.userId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this restaurant'
+            });
+        }
+
+        if (name) restaurant.name = name;
+        if (address) restaurant.address = address;
+        if (location) restaurant.location = location;
+        if (imageUrl) restaurant.imageUrl = imageUrl;
+
+        await restaurant.save();
+
+        res.json({
+            success: true,
+            message: 'Restaurant updated successfully',
+            restaurant
+        });
+    } catch (error) {
+        logger.error('Error updating restaurant', { error: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update restaurant',
+            error: error.message
+        });
+    }
+};
+
+// Delete restaurant
+exports.deleteRestaurant = async (req, res) => {
+    try {
+        const restaurant = await Restaurant.findById(req.params.id);
+
+        if (!restaurant) {
+            return res.status(404).json({
+                success: false,
+                message: 'Restaurant not found'
+            });
+        }
+
+        // Check ownership/role
+        if (req.user.role !== 'admin' && restaurant.ownerId && restaurant.ownerId.toString() !== req.user.userId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to delete this restaurant'
+            });
+        }
+
+        // Check for active orders
+        try {
+            const orderServiceUrl = process.env.ORDER_SERVICE_URL || 'http://order-service:3003';
+            const response = await fetch(`${orderServiceUrl}/api/orders/internal/restaurant/${req.params.id}/active`);
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.hasActiveOrders) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Cannot delete restaurant with active orders. Please complete or cancel them first.'
+                    });
+                }
+            } else {
+                logger.warn('Failed to check active orders, proceeding with caution or blocking?', { status: response.status });
+                // Decide policy: Block if check fails? Or allow? 
+                // Safer to block if we can't verify.
+                return res.status(500).json({
+                    success: false,
+                    message: 'Could not verify active orders. Please try again later.'
+                });
+            }
+        } catch (err) {
+            logger.error('Error communicating with order service', { error: err.message });
+            return res.status(500).json({
+                success: false,
+                message: 'Could not verify active orders. Please try again later.'
+            });
+        }
+
+        await restaurant.deleteOne();
+
+        logger.info('Restaurant deleted', { restaurantId: req.params.id, deletedBy: req.user.userId });
+
+        res.json({
+            success: true,
+            message: 'Restaurant deleted successfully'
+        });
+    } catch (error) {
+        logger.error('Error deleting restaurant', { error: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete restaurant',
+            error: error.message
+        });
+    }
+};
