@@ -136,6 +136,7 @@ const TrackingPage = () => {
     }, [orderId]);
 
     const droneLocation = droneData?.location || { lat: 10.762622, lng: 106.660172 };
+    const selectedOrder = orders.find(o => o.orderID === orderId);
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -157,15 +158,15 @@ const TrackingPage = () => {
                                 key={order.orderID}
                                 onClick={() => navigate(`/tracking/${order.orderID}`)}
                                 className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${orderId === order.orderID
-                                        ? 'border-primary bg-orange-50 shadow-md'
-                                        : 'border-transparent bg-white hover:bg-gray-50 shadow-sm'
+                                    ? 'border-primary bg-orange-50 shadow-md'
+                                    : 'border-transparent bg-white hover:bg-gray-50 shadow-sm'
                                     }`}
                             >
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="font-mono font-bold text-sm text-gray-600">#{order.orderID.slice(-6)}</span>
                                     <span className={`text-xs px-2 py-1 rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                                            order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                                                'bg-blue-100 text-blue-700'
+                                        order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                            'bg-blue-100 text-blue-700'
                                         }`}>
                                         {order.status}
                                     </span>
@@ -192,17 +193,6 @@ const TrackingPage = () => {
                                 </p>
                             </div>
 
-                            {error && !droneData && orderStatus !== 'Delivered' && (
-                                <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-6 py-4 rounded-2xl mb-8">
-                                    <div className="flex items-center">
-                                        <span className="text-2xl mr-3">⏳</span>
-                                        <div>
-                                            <p className="font-semibold">{error}</p>
-                                            <p className="text-sm mt-1">Your order is being processed.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 {/* Order Status Panel */}
@@ -268,6 +258,37 @@ const TrackingPage = () => {
                                             <div className="text-6xl mb-3">✅</div>
                                             <h3 className="text-xl font-bold text-green-900 mb-2">Delivered!</h3>
                                             <p className="text-green-700">Enjoy your meal!</p>
+                                        </motion.div>
+                                    )}
+
+                                    {/* Order Items List */}
+                                    {selectedOrder && (
+                                        <motion.div
+                                            initial={{ x: -20, opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            transition={{ delay: 0.25 }}
+                                            className="bg-white p-6 rounded-2xl shadow-premium"
+                                        >
+                                            <h3 className="text-gray-500 text-sm uppercase font-bold mb-4">Order Details</h3>
+                                            <div className="space-y-3">
+                                                {selectedOrder.items.map((item, index) => (
+                                                    <div key={index} className="flex justify-between items-center text-sm">
+                                                        <div className="flex items-center space-x-2">
+                                                            <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-bold">
+                                                                {item.quantity}x
+                                                            </span>
+                                                            <span className="text-gray-700 font-medium">
+                                                                Item {item.menuItemId ? item.menuItemId.slice(-4) : 'Unknown'}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-gray-600">${item.price}</span>
+                                                    </div>
+                                                ))}
+                                                <div className="border-t pt-3 mt-3 flex justify-between items-center font-bold text-gray-800">
+                                                    <span>Total</span>
+                                                    <span>${selectedOrder.totalAmount.toFixed(2)}</span>
+                                                </div>
+                                            </div>
                                         </motion.div>
                                     )}
                                 </div>
