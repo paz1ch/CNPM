@@ -56,4 +56,7 @@ router.put('/:id/status', protect, updateStatusValidation, validateRequest, orde
 router.put('/:id/update', protect, isRestaurant || isDelivery, updateOrderValidation, validateRequest, orderController.updateOrder);
 router.put('/:id', protect, isUser, modifyOrderValidation, validateRequest, orderController.modifyPendingOrder);
 
+// Internal routes
+router.get('/internal/restaurant/:restaurantId/active', orderController.checkActiveOrders);
+
 module.exports = router;

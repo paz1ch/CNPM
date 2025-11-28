@@ -30,6 +30,7 @@ const Dashboard = () => {
         address: '',
         imageUrl: ''
     });
+    const [editingRestaurant, setEditingRestaurant] = useState(null);
 
     const [newProduct, setNewProduct] = useState({
         name: '',
@@ -250,15 +251,53 @@ const Dashboard = () => {
                 return;
             }
 
-            await api.post('/restaurants', {
-                ...newRestaurant,
-                location
-            });
+            if (editingRestaurant) {
+                await api.put(`/restaurants/${editingRestaurant._id}`, {
+                    ...newRestaurant,
+                    location
+                });
+                setEditingRestaurant(null);
+                alert('Restaurant updated successfully');
+            } else {
+                await api.post('/restaurants', {
+                    ...newRestaurant,
+                    location
+                });
+                alert('Restaurant added successfully');
+            }
+
             setNewRestaurant({ name: '', address: '', imageUrl: '' });
             fetchRestaurants();
         } catch (err) {
-            alert('Failed to add restaurant: ' + (err.response?.data?.message || err.message));
+            alert('Failed to save restaurant: ' + (err.response?.data?.message || err.message));
         }
+    };
+
+    const handleEditRestaurant = (restaurant) => {
+        setEditingRestaurant(restaurant);
+        setNewRestaurant({
+            name: restaurant.name,
+            address: restaurant.address,
+            imageUrl: restaurant.imageUrl || ''
+        });
+        // Scroll to form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleDeleteRestaurant = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this restaurant? This cannot be undone.')) return;
+        try {
+            await api.delete(`/restaurants/${id}`);
+            fetchRestaurants();
+            alert('Restaurant deleted successfully');
+        } catch (err) {
+            alert('Failed to delete restaurant: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingRestaurant(null);
+        setNewRestaurant({ name: '', address: '', imageUrl: '' });
     };
 
     const handleAddProduct = async (e) => {
@@ -507,7 +546,19 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-white rounded-2xl shadow-premium p-6 mb-8"
                     >
-                        <h3 className="text-2xl font-bold text-secondary mb-4">Add New Restaurant</h3>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-2xl font-bold text-secondary">
+                                {editingRestaurant ? 'Edit Restaurant' : 'Add New Restaurant'}
+                            </h3>
+                            {editingRestaurant && (
+                                <button
+                                    onClick={handleCancelEdit}
+                                    className="text-gray-500 hover:text-gray-700"
+                                >
+                                    Cancel Edit
+                                </button>
+                            )}
+                        </div>
                         <form onSubmit={handleAddRestaurant} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <input
                                 type="text"
@@ -531,7 +582,7 @@ const Dashboard = () => {
                                 type="submit"
                                 className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg"
                             >
-                                Add Restaurant
+                                {editingRestaurant ? 'Update Restaurant' : 'Add Restaurant'}
                             </motion.button>
                         </form>
                     </motion.div>
@@ -552,11 +603,28 @@ const Dashboard = () => {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
-                                        className="bg-white rounded-2xl shadow-premium p-6"
+                                        className="bg-white rounded-2xl shadow-premium p-6 relative group"
                                     >
                                         <h3 className="text-xl font-bold text-secondary mb-2">{restaurant.name}</h3>
                                         <p className="text-gray-600 mb-2">{restaurant.address}</p>
                                         <p className="text-xs text-gray-400">ID: {restaurant._id}</p>
+
+                                        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                onClick={() => handleEditRestaurant(restaurant)}
+                                                className="bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+                                                title="Edit Restaurant"
+                                            >
+                                                ✏️
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteRestaurant(restaurant._id)}
+                                                className="bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                                                title="Delete Restaurant"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 ))
                             ) : (
@@ -567,116 +635,119 @@ const Dashboard = () => {
                         </div>
                     )}
                 </div>
-            )}
+            )
+            }
 
             {/* Products Tab */}
-            {activeTab === 'products' && (
-                <div>
-                    {/* Add Product Form */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl shadow-premium p-6 mb-8"
-                    >
-                        <h3 className="text-2xl font-bold text-secondary mb-4">Add New Product</h3>
-                        <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <input
-                                type="text"
-                                placeholder="Product Name"
-                                value={newProduct.name}
-                                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="number"
-                                placeholder="Price"
-                                value={newProduct.price}
-                                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <select
-                                value={newProduct.restaurantId}
-                                onChange={(e) => setNewProduct({ ...newProduct, restaurantId: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            >
-                                <option value="">Select Restaurant</option>
-                                {restaurants.map(r => (
-                                    <option key={r._id} value={r._id}>{r.name}</option>
-                                ))}
-                            </select>
-                            <input
-                                type="text"
-                                placeholder="Category"
-                                value={newProduct.category}
-                                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                required
-                            />
-                            <input
-                                type="text"
-                                placeholder="Image URL"
-                                value={newProduct.image}
-                                onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Description"
-                                value={newProduct.description}
-                                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                            />
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg md:col-span-3"
-                            >
-                                Add Product
-                            </motion.button>
-                        </form>
-                    </motion.div>
+            {
+                activeTab === 'products' && (
+                    <div>
+                        {/* Add Product Form */}
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white rounded-2xl shadow-premium p-6 mb-8"
+                        >
+                            <h3 className="text-2xl font-bold text-secondary mb-4">Add New Product</h3>
+                            <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <input
+                                    type="text"
+                                    placeholder="Product Name"
+                                    value={newProduct.name}
+                                    onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                                <input
+                                    type="number"
+                                    placeholder="Price"
+                                    value={newProduct.price}
+                                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                                <select
+                                    value={newProduct.restaurantId}
+                                    onChange={(e) => setNewProduct({ ...newProduct, restaurantId: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                >
+                                    <option value="">Select Restaurant</option>
+                                    {restaurants.map(r => (
+                                        <option key={r._id} value={r._id}>{r.name}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    type="text"
+                                    placeholder="Category"
+                                    value={newProduct.category}
+                                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Image URL"
+                                    value={newProduct.image}
+                                    onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Description"
+                                    value={newProduct.description}
+                                    onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                />
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    type="submit"
+                                    className="bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg md:col-span-3"
+                                >
+                                    Add Product
+                                </motion.button>
+                            </form>
+                        </motion.div>
 
-                    {/* Products List */}
-                    {loading ? (
-                        <LoadingSpinner />
-                    ) : error ? (
-                        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl">
-                            {error}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {products.length > 0 ? (
-                                products.map((product, index) => (
-                                    <motion.div
-                                        key={product._id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        className="relative"
-                                    >
-                                        <ProductCard product={product} />
-                                        <button
-                                            onClick={() => handleDeleteProduct(product._id)}
-                                            className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                        {/* Products List */}
+                        {loading ? (
+                            <LoadingSpinner />
+                        ) : error ? (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl">
+                                {error}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {products.length > 0 ? (
+                                    products.map((product, index) => (
+                                        <motion.div
+                                            key={product._id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="relative"
                                         >
-                                            🗑️
-                                        </button>
-                                    </motion.div>
-                                ))
-                            ) : (
-                                <div className="col-span-full text-center py-12">
-                                    <p className="text-xl text-gray-500">No products available</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+                                            <ProductCard product={product} />
+                                            <button
+                                                onClick={() => handleDeleteProduct(product._id)}
+                                                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </motion.div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full text-center py-12">
+                                        <p className="text-xl text-gray-500">No products available</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+        </div >
     );
 };
 

@@ -290,7 +290,26 @@ const updateOrder = async (req, res) => {
         return res.status(200).json(order);
     } catch (error) {
         logger.error('Error updating order: %o', error);
-        return res.status(500).json({ message: 'Failed to update order' });
+    }
+};
+
+/** Check active orders for a restaurant (Internal) */
+const checkActiveOrders = async (req, res) => {
+    try {
+        const { restaurantId } = req.params;
+
+        const activeOrdersCount = await Order.countDocuments({
+            restaurantID: restaurantId,
+            status: { $nin: ['Delivered', 'Cancelled'] }
+        });
+
+        return res.status(200).json({
+            hasActiveOrders: activeOrdersCount > 0,
+            count: activeOrdersCount
+        });
+    } catch (error) {
+        logger.error('Error checking active orders: %o', error);
+        return res.status(500).json({ message: 'Failed to check active orders' });
     }
 };
 
@@ -306,4 +325,5 @@ module.exports = {
     modifyPendingOrder,
     updateOrder,
     getAllOrders,
+    checkActiveOrders,
 };
