@@ -2,6 +2,7 @@ const Drone = require('../models/Drone');
 const Mission = require('../models/Mission');
 const logger = require('../utils/logger');
 const { publishToQueue } = require('../rabbitmq/publisher');
+const simulationService = require('../services/simulationService');
 
 exports.assignMission = async (missionData) => {
     try {
@@ -24,6 +25,8 @@ exports.assignMission = async (missionData) => {
         // Update drone status
         drone.status = 'DELIVERING';
         drone.mission = mission._id;
+        // Set initial location to pickup (restaurant)
+        drone.currentLocation = missionData.pickupLocation;
         await drone.save();
 
         logger.info(`Mission ${mission._id} assigned to drone ${drone.name}`);
@@ -34,6 +37,9 @@ exports.assignMission = async (missionData) => {
             droneId: drone._id,
             timestamp: new Date().toISOString()
         });
+
+        // Start Simulation
+        simulationService.startSimulation(drone._id, mission._id);
 
         return { success: true, mission };
 

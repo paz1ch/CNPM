@@ -226,7 +226,7 @@ const TrackingPage = () => {
                                             transition={{ delay: 0.2 }}
                                             className="bg-blue-50 p-5 rounded-2xl border border-blue-100"
                                         >
-                                            <div className="flex items-center space-x-4">
+                                            <div className="flex items-center space-x-4 mb-4">
                                                 <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-3xl shadow-lg">
                                                     🚁
                                                 </div>
@@ -241,11 +241,31 @@ const TrackingPage = () => {
                                                             />
                                                         </div>
                                                         <span className="text-xs text-blue-700 font-semibold ml-2">
-                                                            {droneData.battery}%
+                                                            {droneData.battery.toFixed(0)}%
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {/* Confirm Delivery Button */}
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const res = await api.put(`/orders/${orderId}/status`, { status: 'Delivered' });
+                                                        if (res.data) {
+                                                            setOrderStatus('Delivered');
+                                                            // Optionally refresh page or state
+                                                        }
+                                                    } catch (err) {
+                                                        console.error("Failed to confirm delivery", err);
+                                                        alert("Failed to confirm delivery");
+                                                    }
+                                                }}
+                                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition-colors flex items-center justify-center space-x-2"
+                                            >
+                                                <span>🎁</span>
+                                                <span>Confirm Delivery Received</span>
+                                            </button>
                                         </motion.div>
                                     )}
 
