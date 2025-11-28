@@ -226,3 +226,29 @@
 {"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-19T16:54:21.053Z"}
 {"level":"info","message":"Connected to RabbitMQ","service":"product-service","timestamp":"2025-11-19T16:54:21.093Z"}
 {"level":"info","message":"Product Service running on port 3002","service":"product-service","timestamp":"2025-11-19T16:54:21.098Z"}
+{"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-28T01:40:58.518Z"}
+{"level":"info","message":"Connected to RabbitMQ","service":"product-service","timestamp":"2025-11-28T01:40:59.036Z"}
+{"level":"info","message":"Product Service running on port 3002","service":"product-service","timestamp":"2025-11-28T01:40:59.048Z"}
+{"level":"info","message":"Received POST request to /api/restaurants/create","service":"product-service","timestamp":"2025-11-28T01:41:51.634Z"}
+{"level":"info","message":"Request body, [object Object]","service":"product-service","timestamp":"2025-11-28T01:41:51.634Z"}
+{"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-28T01:42:21.204Z"}
+{"level":"info","message":"Connected to RabbitMQ","service":"product-service","timestamp":"2025-11-28T01:42:21.231Z"}
+{"level":"info","message":"Product Service running on port 3002","service":"product-service","timestamp":"2025-11-28T01:42:21.234Z"}
+{"level":"info","message":"Received POST request to /api/restaurants","service":"product-service","timestamp":"2025-11-28T01:42:33.139Z"}
+{"level":"info","message":"Request body, [object Object]","service":"product-service","timestamp":"2025-11-28T01:42:33.140Z"}
+{"level":"info","message":"New restaurant created","name":"Test Restaurant Deletion","ownerId":"test-user","restaurantId":"6928fe0920ce42c264336766","service":"product-service","timestamp":"2025-11-28T01:42:33.364Z"}
+{"level":"info","message":"Received DELETE request to /api/restaurants/6928fe0920ce42c264336766","service":"product-service","timestamp":"2025-11-28T01:42:33.989Z"}
+{"level":"info","message":"Request body, undefined","service":"product-service","timestamp":"2025-11-28T01:42:33.990Z"}
+{"level":"info","message":"Checking active orders for restaurant deletion: http://localhost:3003/api/orders/internal/restaurant/6928fe0920ce42c264336766/active","service":"product-service","timestamp":"2025-11-28T01:42:34.077Z"}
+{"count":0,"hasActiveOrders":false,"level":"info","message":"Active orders check result:","service":"product-service","timestamp":"2025-11-28T01:42:34.269Z"}
+{"deletedBy":"test-user","level":"info","message":"Restaurant deleted","restaurantId":"6928fe0920ce42c264336766","service":"product-service","timestamp":"2025-11-28T01:42:34.351Z"}
+{"level":"info","message":"Received POST request to /api/restaurants","service":"product-service","timestamp":"2025-11-28T01:43:21.109Z"}
+{"level":"info","message":"Request body, [object Object]","service":"product-service","timestamp":"2025-11-28T01:43:21.109Z"}
+{"level":"info","message":"New restaurant created","name":"Test Restaurant Deletion","ownerId":"test-user","restaurantId":"6928fe3920ce42c26433676b","service":"product-service","timestamp":"2025-11-28T01:43:21.295Z"}
+{"level":"info","message":"Received DELETE request to /api/restaurants/6928fe3920ce42c26433676b","service":"product-service","timestamp":"2025-11-28T01:43:21.534Z"}
+{"level":"info","message":"Request body, undefined","service":"product-service","timestamp":"2025-11-28T01:43:21.535Z"}
+{"level":"info","message":"Checking active orders for restaurant deletion: http://localhost:3003/api/orders/internal/restaurant/6928fe3920ce42c26433676b/active","service":"product-service","timestamp":"2025-11-28T01:43:21.616Z"}
+{"count":1,"hasActiveOrders":true,"level":"info","message":"Active orders check result:","service":"product-service","timestamp":"2025-11-28T01:43:21.724Z"}
+{"level":"info","message":"Connected to MongoDB","service":"product-service","timestamp":"2025-11-28T01:43:36.100Z"}
+{"level":"info","message":"Connected to RabbitMQ","service":"product-service","timestamp":"2025-11-28T01:43:36.123Z"}
+{"level":"info","message":"Product Service running on port 3002","service":"product-service","timestamp":"2025-11-28T01:43:36.126Z"}

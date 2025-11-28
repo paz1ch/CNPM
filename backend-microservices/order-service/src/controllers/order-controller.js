@@ -313,10 +313,14 @@ const checkActiveOrders = async (req, res) => {
     try {
         const { restaurantId } = req.params;
 
+        logger.info(`Checking active orders for restaurant: ${restaurantId}`);
+
         const activeOrdersCount = await Order.countDocuments({
             restaurantID: restaurantId,
             status: { $nin: ['Delivered', 'Cancelled'] }
         });
+
+        logger.info(`Found ${activeOrdersCount} active orders for restaurant ${restaurantId}`);
 
         return res.status(200).json({
             hasActiveOrders: activeOrdersCount > 0,

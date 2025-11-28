@@ -45,6 +45,7 @@ services:
       - RABBITMQ_URL=amqp://rabbitmq:5672
       - MONGO_URI=mongodb+srv://phucsung111:phucsung111@fastfood-db.gaqqdcl.mongodb.net/?retryWrites=true&w=majority&appName=fastfood-db
       - JWT_SECRET=JWT_SECRET
+      - ORDER_SERVICE_URL=http://order-service:3003
     depends_on:
       redis:
         condition: service_started

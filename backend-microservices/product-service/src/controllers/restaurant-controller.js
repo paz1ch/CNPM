@@ -172,21 +172,27 @@ exports.deleteRestaurant = async (req, res) => {
 
         // Check for active orders
         try {
-            const orderServiceUrl = process.env.ORDER_SERVICE_URL || 'http://order-service:3003';
-            const response = await fetch(`${orderServiceUrl}/api/orders/internal/restaurant/${req.params.id}/active`);
+            // Use environment variable or fallback to localhost for local dev
+            const orderServiceUrl = process.env.ORDER_SERVICE_URL || 'http://localhost:3003';
+            const checkUrl = `${orderServiceUrl}/api/orders/internal/restaurant/${req.params.id}/active`;
+
+            logger.info(`Checking active orders for restaurant deletion: ${checkUrl}`);
+
+            const response = await fetch(checkUrl);
 
             if (response.ok) {
                 const data = await response.json();
+                logger.info('Active orders check result:', data);
+
                 if (data.hasActiveOrders) {
                     return res.status(400).json({
                         success: false,
-                        message: 'Cannot delete restaurant with active orders. Please complete or cancel them first.'
+                        message: `Cannot delete restaurant with ${data.count} active orders. Please complete or cancel them first.`
                     });
                 }
             } else {
-                logger.warn('Failed to check active orders, proceeding with caution or blocking?', { status: response.status });
-                // Decide policy: Block if check fails? Or allow? 
-                // Safer to block if we can't verify.
+                logger.warn('Failed to check active orders', { status: response.status, statusText: response.statusText });
+                // If we can't verify, it's safer to block deletion to prevent data inconsistency
                 return res.status(500).json({
                     success: false,
                     message: 'Could not verify active orders. Please try again later.'
@@ -196,7 +202,7 @@ exports.deleteRestaurant = async (req, res) => {
             logger.error('Error communicating with order service', { error: err.message });
             return res.status(500).json({
                 success: false,
-                message: 'Could not verify active orders. Please try again later.'
+                message: 'Could not verify active orders (Connection Error). Please try again later.'
             });
         }
 
