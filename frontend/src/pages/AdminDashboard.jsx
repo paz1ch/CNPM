@@ -246,6 +246,30 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleEditRestaurant = async (restaurant) => {
+        const name = window.prompt('Restaurant Name:', restaurant.name);
+        if (name === null) return;
+        const address = window.prompt('Restaurant Address:', restaurant.address);
+        if (address === null) return;
+
+        try {
+            await api.put(`/restaurants/${restaurant._id}`, { name, address });
+            fetchRestaurants();
+        } catch (err) {
+            alert('Failed to edit restaurant: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const handleDeleteRestaurant = async (restaurant) => {
+        if (!window.confirm(`Delete restaurant ${restaurant.name}? This cannot be undone.`)) return;
+        try {
+            await api.delete(`/restaurants/${restaurant._id}`);
+            fetchRestaurants();
+        } catch (err) {
+            alert('Failed to delete restaurant: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
     return (
         <div className="max-w-7xl mx-auto">
             <h1 className="text-4xl font-bold text-secondary mb-8">Admin Dashboard</h1>
@@ -502,11 +526,26 @@ const AdminDashboard = () => {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
-                                        className="bg-white rounded-2xl shadow-premium p-6"
+                                        className="bg-white rounded-2xl shadow-premium p-6 relative"
                                     >
                                         <h3 className="text-xl font-bold text-secondary mb-2">{restaurant.name}</h3>
                                         <p className="text-gray-600 mb-2">{restaurant.address}</p>
                                         <p className="text-xs text-gray-400">ID: {restaurant._id}</p>
+
+                                        <div className="mt-4 flex gap-2 justify-end">
+                                            <button
+                                                onClick={() => handleEditRestaurant(restaurant)}
+                                                className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteRestaurant(restaurant)}
+                                                className="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 ))
                             ) : (
