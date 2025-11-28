@@ -37,6 +37,7 @@ const createOrder = async (req, res) => {
             const orderItem = {
                 orderItemID: `ITEM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
                 menuItemId: item.menuItemId,
+                name: item.name || 'Unknown Item', // Save name
                 quantity: item.quantity,
                 price: item.price,
                 totalPrice: item.price * item.quantity,

@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 
 const paymentSchema = new mongoose.Schema({
   orderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Order',
+    type: String, // Changed to String to match Order Service's custom ID
     required: true,
   },
   paymentMethod: {

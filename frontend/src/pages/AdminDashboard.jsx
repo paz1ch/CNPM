@@ -233,13 +233,16 @@ const AdminDashboard = () => {
 
 
 
-    const handleDeleteProduct = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this product?')) return;
+    const handleToggleProductStatus = async (product) => {
+        const newStatus = !product.isAvailable;
+        const action = newStatus ? 'Show' : 'Hide';
+        if (!window.confirm(`Are you sure you want to ${action} this product?`)) return;
+
         try {
-            await api.delete(`/products/${id}`);
+            await api.put(`/products/${product._id}`, { isAvailable: newStatus });
             fetchProducts();
         } catch (err) {
-            alert('Failed to delete product: ' + (err.response?.data?.message || err.message));
+            alert(`Failed to ${action} product: ` + (err.response?.data?.message || err.message));
         }
     };
 
@@ -457,12 +460,6 @@ const AdminDashboard = () => {
                                                     } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
                                                 }} className="px-3 py-2 bg-green-50 text-green-700 rounded-lg">Start</button>
                                                 <button onClick={async () => {
-                                                    try {
-                                                        await api.patch(`/missions/${m._id}/status`, { status: 'DELIVERED' });
-                                                        fetchMissions();
-                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
-                                                }} className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg">Mark Delivered</button>
-                                                <button onClick={async () => {
                                                     if (!window.confirm('Cancel mission?')) return;
                                                     try {
                                                         await api.delete(`/missions/${m._id}`);
@@ -543,14 +540,18 @@ const AdminDashboard = () => {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
-                                        className="relative"
+                                        className={`relative ${!product.isAvailable ? 'opacity-60' : ''}`}
                                     >
-                                        <ProductCard product={product} />
+                                        <ProductCard product={product} showAddToCart={false} />
                                         <button
-                                            onClick={() => handleDeleteProduct(product._id)}
-                                            className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                                            onClick={() => handleToggleProductStatus(product)}
+                                            className={`absolute top-2 right-2 p-2 rounded-full shadow-lg transition-colors ${product.isAvailable
+                                                ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                                                : 'bg-green-100 text-green-600 hover:bg-green-200'
+                                                }`}
+                                            title={product.isAvailable ? "Hide Product" : "Show Product"}
                                         >
-                                            🗑️
+                                            {product.isAvailable ? '🚫' : '✅'}
                                         </button>
                                     </motion.div>
                                 ))

@@ -298,7 +298,7 @@ const TrackingPage = () => {
                                                                 {item.quantity}x
                                                             </span>
                                                             <span className="text-gray-700 font-medium">
-                                                                Item {item.menuItemId ? item.menuItemId.slice(-4) : 'Unknown'}
+                                                                {item.name || `Item ${item.menuItemId.slice(-4)}`}
                                                             </span>
                                                         </div>
                                                         <span className="text-gray-600">${item.price}</span>
