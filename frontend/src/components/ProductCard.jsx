@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, showAddToCart = true }) => {
     const { addToCart } = useCart();
     const navigate = useNavigate();
 
@@ -53,14 +53,16 @@ const ProductCard = ({ product }) => {
                     </p>
                 )}
 
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleAddToCart}
-                    className="w-full bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-shadow"
-                >
-                    Add to Cart
-                </motion.button>
+                {showAddToCart && (
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleAddToCart}
+                        className="w-full bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-shadow"
+                    >
+                        Add to Cart
+                    </motion.button>
+                )}
             </div>
         </motion.div>
     );
