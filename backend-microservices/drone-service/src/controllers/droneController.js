@@ -173,6 +173,15 @@ exports.deleteDrone = async (req, res) => {
             });
         }
 
+        // Check for historical missions
+        const missionCount = await Mission.countDocuments({ drone: droneId });
+        if (missionCount > 0) {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot delete drone that has performed ${missionCount} missions. Historical data must be preserved.`
+            });
+        }
+
         await drone.deleteOne();
 
         logger.info(`Drone ${droneId} was deleted.`);

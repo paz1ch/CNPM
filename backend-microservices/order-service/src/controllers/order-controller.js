@@ -308,27 +308,33 @@ const updateOrder = async (req, res) => {
     }
 };
 
-/** Check active orders for a restaurant (Internal) */
-const checkActiveOrders = async (req, res) => {
+/** Check restaurant orders (Internal) */
+const checkRestaurantOrders = async (req, res) => {
     try {
         const { restaurantId } = req.params;
 
-        logger.info(`Checking active orders for restaurant: ${restaurantId}`);
+        logger.info(`Checking orders for restaurant: ${restaurantId}`);
 
         const activeOrdersCount = await Order.countDocuments({
             restaurantID: restaurantId,
             status: { $nin: ['Delivered', 'Cancelled'] }
         });
 
-        logger.info(`Found ${activeOrdersCount} active orders for restaurant ${restaurantId}`);
+        const totalOrdersCount = await Order.countDocuments({
+            restaurantID: restaurantId
+        });
+
+        logger.info(`Found ${activeOrdersCount} active and ${totalOrdersCount} total orders for restaurant ${restaurantId}`);
 
         return res.status(200).json({
             hasActiveOrders: activeOrdersCount > 0,
-            count: activeOrdersCount
+            activeCount: activeOrdersCount,
+            hasAnyOrders: totalOrdersCount > 0,
+            totalCount: totalOrdersCount
         });
     } catch (error) {
-        logger.error('Error checking active orders: %o', error);
-        return res.status(500).json({ message: 'Failed to check active orders' });
+        logger.error('Error checking restaurant orders: %o', error);
+        return res.status(500).json({ message: 'Failed to check restaurant orders' });
     }
 };
 
@@ -344,5 +350,5 @@ module.exports = {
     modifyPendingOrder,
     updateOrder,
     getAllOrders,
-    checkActiveOrders,
+    checkRestaurantOrders,
 };
