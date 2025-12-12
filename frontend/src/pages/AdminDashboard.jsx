@@ -469,25 +469,54 @@ const AdminDashboard = () => {
                                                 <p className="text-sm text-gray-500">Drone: {m.drone?.name || m.drone}</p>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <button onClick={async () => {
-                                                    try {
-                                                        await api.patch(`/missions/${m._id}/status`, { status: 'IN_PROGRESS' });
-                                                        fetchMissions();
-                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
-                                                }} className="px-3 py-2 bg-green-50 text-green-700 rounded-lg">Start</button>
-                                                <button onClick={async () => {
-                                                    try {
-                                                        await api.patch(`/missions/${m._id}/status`, { status: 'DELIVERED' });
-                                                        fetchMissions();
-                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
-                                                }} className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg">Mark Delivered</button>
-                                                <button onClick={async () => {
-                                                    if (!window.confirm('Cancel mission?')) return;
-                                                    try {
-                                                        await api.delete(`/missions/${m._id}`);
-                                                        fetchMissions();
-                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
-                                                }} className="px-3 py-2 bg-red-50 text-red-700 rounded-lg">Cancel</button>
+                                                {m.status === 'PENDING' && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                await api.patch(`/missions/${m._id}/status`, { status: 'IN_PROGRESS' });
+                                                                fetchMissions();
+                                                            } catch (err) {
+                                                                alert('Failed: ' + (err.response?.data?.message || err.message));
+                                                            }
+                                                        }}
+                                                        className="px-3 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-medium transition-colors"
+                                                    >
+                                                        Start Mission
+                                                    </button>
+                                                )}
+
+                                                {['IN_PROGRESS', 'DELIVERING'].includes(m.status) && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                await api.patch(`/missions/${m._id}/status`, { status: 'DELIVERED' });
+                                                                fetchMissions();
+                                                            } catch (err) {
+                                                                alert('Failed: ' + (err.response?.data?.message || err.message));
+                                                            }
+                                                        }}
+                                                        className="px-3 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-medium transition-colors"
+                                                    >
+                                                        Mark Delivered
+                                                    </button>
+                                                )}
+
+                                                {!['DELIVERED', 'CANCELLED', 'FAILED'].includes(m.status) && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (!window.confirm('Are you sure you want to cancel this mission?')) return;
+                                                            try {
+                                                                await api.delete(`/missions/${m._id}`);
+                                                                fetchMissions();
+                                                            } catch (err) {
+                                                                alert('Failed: ' + (err.response?.data?.message || err.message));
+                                                            }
+                                                        }}
+                                                        className="px-3 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg font-medium transition-colors"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -606,16 +635,16 @@ const AdminDashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
-                                        {revenueStats.length > 0 ? (
-                                            revenueStats.map((stat, index) => {
-                                                const restaurant = restaurants.find(r => r._id === stat._id);
+                                        {restaurants.length > 0 ? (
+                                            restaurants.map((restaurant) => {
+                                                const stat = revenueStats.find(s => s._id === restaurant._id) || { orderCount: 0, totalRevenue: 0 };
                                                 return (
-                                                    <tr key={stat._id} className="hover:bg-gray-50 transition-colors">
+                                                    <tr key={restaurant._id} className="hover:bg-gray-50 transition-colors">
                                                         <td className="px-6 py-4">
                                                             <div className="font-medium text-secondary">
-                                                                {restaurant ? restaurant.name : 'Unknown Restaurant'}
+                                                                {restaurant.name}
                                                             </div>
-                                                            <div className="text-xs text-gray-400">ID: {stat._id}</div>
+                                                            <div className="text-xs text-gray-400">ID: {restaurant._id}</div>
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <div className="text-sm text-gray-600">Orders Delivered</div>
@@ -631,7 +660,7 @@ const AdminDashboard = () => {
                                         ) : (
                                             <tr>
                                                 <td colSpan="3" className="px-6 py-12 text-center text-gray-500">
-                                                    No revenue data available
+                                                    No restaurants found
                                                 </td>
                                             </tr>
                                         )}
