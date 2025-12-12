@@ -174,28 +174,28 @@ exports.deleteRestaurant = async (req, res) => {
         try {
             // Use environment variable or fallback to localhost for local dev
             const orderServiceUrl = process.env.ORDER_SERVICE_URL || 'http://localhost:3003';
-            const checkUrl = `${orderServiceUrl}/api/orders/internal/restaurant/${req.params.id}/check`;
+            const checkUrl = `${orderServiceUrl}/api/orders/internal/restaurant/${req.params.id}/active`;
 
-            logger.info(`Checking orders for restaurant deletion: ${checkUrl}`);
+            logger.info(`Checking active orders for restaurant deletion: ${checkUrl}`);
 
             const response = await fetch(checkUrl);
 
             if (response.ok) {
                 const data = await response.json();
-                logger.info('Orders check result:', data);
+                logger.info('Active orders check result:', data);
 
-                if (data.hasAnyOrders) {
+                if (data.hasActiveOrders) {
                     return res.status(400).json({
                         success: false,
-                        message: `Cannot delete restaurant with ${data.totalCount} associated orders (active or historical). Please contact support if you need to archive this restaurant.`
+                        message: `Cannot delete restaurant with ${data.count} active orders. Please complete or cancel them first.`
                     });
                 }
             } else {
-                logger.warn('Failed to check orders', { status: response.status, statusText: response.statusText });
+                logger.warn('Failed to check active orders', { status: response.status, statusText: response.statusText });
                 // If we can't verify, it's safer to block deletion to prevent data inconsistency
                 return res.status(500).json({
                     success: false,
-                    message: 'Could not verify orders. Please try again later.'
+                    message: 'Could not verify active orders. Please try again later.'
                 });
             }
         } catch (err) {

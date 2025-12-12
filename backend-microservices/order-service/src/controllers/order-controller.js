@@ -339,6 +339,32 @@ const checkRestaurantOrders = async (req, res) => {
 };
 
 
+/** Get revenue analytics (Admin) */
+const getRevenueAnalytics = async (req, res) => {
+    try {
+        // Only allow admin role
+        if (!req.user || req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
+        const analytics = await Order.aggregate([
+            { $match: { status: 'Delivered' } },
+            {
+                $group: {
+                    _id: '$restaurantID',
+                    totalRevenue: { $sum: '$totalAmount' },
+                    orderCount: { $sum: 1 }
+                }
+            },
+            { $sort: { totalRevenue: -1 } }
+        ]);
+
+        return res.status(200).json({ analytics });
+    } catch (error) {
+        logger.error('Error fetching revenue analytics: %o', error);
+        return res.status(500).json({ message: 'Failed to fetch revenue analytics' });
+    }
+};
 
 module.exports = {
     createOrder,
@@ -351,4 +377,5 @@ module.exports = {
     updateOrder,
     getAllOrders,
     checkRestaurantOrders,
+    getRevenueAnalytics,
 };

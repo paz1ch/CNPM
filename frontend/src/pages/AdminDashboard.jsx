@@ -14,6 +14,7 @@ const AdminDashboard = () => {
     const [missions, setMissions] = useState([]);
     const [restaurants, setRestaurants] = useState([]);
     const [products, setProducts] = useState([]);
+    const [revenueStats, setRevenueStats] = useState([]); // New state for revenue
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [userRole, setUserRole] = useState('');
@@ -23,17 +24,6 @@ const AdminDashboard = () => {
         name: '',
         battery: 100,
         location: { lat: 10.762622, lng: 106.660172 }
-    });
-
-    // New product form
-    const [newProduct, setNewProduct] = useState({
-        name: '',
-        price: '',
-        description: '',
-        category: '',
-        imageUrl: '',
-        stock: 10,
-        restaurantId: ''
     });
 
     const handleGetCurrentLocation = () => {
@@ -57,6 +47,12 @@ const AdminDashboard = () => {
         }
     };
 
+
+
+
+
+
+
     useEffect(() => {
         // Get user role
         const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -74,7 +70,10 @@ const AdminDashboard = () => {
             fetchRestaurants();
         } else if (activeTab === 'products') {
             fetchProducts();
-            fetchRestaurants(); // Fetch restaurants for the dropdown
+            fetchRestaurants();
+        } else if (activeTab === 'statistics') { // New tab case
+            fetchRevenueStats();
+            fetchRestaurants(); // Need names
         }
     }, [activeTab]);
 
@@ -87,6 +86,20 @@ const AdminDashboard = () => {
         } catch (err) {
             console.error('Error fetching drones:', err);
             setError('Failed to load drones');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchRevenueStats = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/orders/analytics/revenue');
+            setRevenueStats(response.data.analytics || []);
+            setError('');
+        } catch (err) {
+            console.error('Error fetching revenue stats:', err);
+            setError('Failed to load revenue statistics');
         } finally {
             setLoading(false);
         }
@@ -233,81 +246,16 @@ const AdminDashboard = () => {
         }
     };
 
-    const handleToggleProductStatus = async (product) => {
-        const newStatus = !product.isAvailable;
-        const action = newStatus ? 'Show' : 'Hide';
-        if (!window.confirm(`Are you sure you want to ${action} this product?`)) return;
 
+
+
+
+
+
+    const handleDeleteProduct = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this product?')) return;
         try {
-            await api.put(`/products/${product._id}`, { isAvailable: newStatus });
-            fetchProducts();
-        } catch (err) {
-            alert(`Failed to ${action} product: ` + (err.response?.data?.message || err.message));
-        }
-    };
-
-    const handleEditRestaurant = async (restaurant) => {
-        const name = window.prompt('Restaurant Name:', restaurant.name);
-        if (name === null) return;
-        const address = window.prompt('Restaurant Address:', restaurant.address);
-        if (address === null) return;
-
-        try {
-            await api.put(`/restaurants/${restaurant._id}`, { name, address });
-            fetchRestaurants();
-        } catch (err) {
-            alert('Failed to edit restaurant: ' + (err.response?.data?.message || err.message));
-        }
-    };
-
-    const handleDeleteRestaurant = async (restaurant) => {
-        if (!window.confirm(`Delete restaurant ${restaurant.name}? This cannot be undone.`)) return;
-        try {
-            await api.delete(`/restaurants/${restaurant._id}`);
-            fetchRestaurants();
-        } catch (err) {
-            alert('Failed to delete restaurant: ' + (err.response?.data?.message || err.message));
-        }
-    };
-
-    const handleAddProduct = async (e) => {
-        e.preventDefault();
-        try {
-            await api.post('/products', newProduct);
-            setNewProduct({ name: '', price: '', description: '', category: '', imageUrl: '', stock: 10, restaurantId: '' });
-            fetchProducts();
-        } catch (err) {
-            alert('Failed to add product: ' + (err.response?.data?.message || err.message));
-        }
-    };
-
-    const handleEditProduct = async (product) => {
-        const name = window.prompt('Product Name:', product.name);
-        if (name === null) return;
-        const priceStr = window.prompt('Price:', product.price);
-        if (priceStr === null) return;
-        const price = parseFloat(priceStr);
-        if (isNaN(price)) { alert('Invalid price'); return; }
-
-        const description = window.prompt('Description:', product.description);
-        if (description === null) return;
-        const category = window.prompt('Category:', product.category);
-        if (category === null) return;
-        const image = window.prompt('Image URL:', product.image);
-        if (image === null) return;
-
-        try {
-            await api.put(`/products/${product._id}`, { name, price, description, category, image });
-            fetchProducts();
-        } catch (err) {
-            alert('Failed to edit product: ' + (err.response?.data?.message || err.message));
-        }
-    };
-
-    const handleDeleteProduct = async (product) => {
-        if (!window.confirm(`Delete product ${product.name}? This cannot be undone.`)) return;
-        try {
-            await api.delete(`/products/${product._id}`);
+            await api.delete(`/products/${id}`);
             fetchProducts();
         } catch (err) {
             alert('Failed to delete product: ' + (err.response?.data?.message || err.message));
@@ -320,7 +268,7 @@ const AdminDashboard = () => {
 
             {/* Tabs */}
             <div className="flex gap-4 mb-8 border-b border-gray-200 overflow-x-auto">
-                {['drones', 'orders', 'missions', 'restaurants', 'products'].map((tab) => (
+                {['drones', 'orders', 'missions', 'restaurants', 'products', 'statistics'].map((tab) => (
                     <motion.button
                         key={tab}
                         whileHover={{ scale: 1.05 }}
@@ -528,6 +476,12 @@ const AdminDashboard = () => {
                                                     } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
                                                 }} className="px-3 py-2 bg-green-50 text-green-700 rounded-lg">Start</button>
                                                 <button onClick={async () => {
+                                                    try {
+                                                        await api.patch(`/missions/${m._id}/status`, { status: 'DELIVERED' });
+                                                        fetchMissions();
+                                                    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
+                                                }} className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg">Mark Delivered</button>
+                                                <button onClick={async () => {
                                                     if (!window.confirm('Cancel mission?')) return;
                                                     try {
                                                         await api.delete(`/missions/${m._id}`);
@@ -570,26 +524,11 @@ const AdminDashboard = () => {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
-                                        className="bg-white rounded-2xl shadow-premium p-6 relative"
+                                        className="bg-white rounded-2xl shadow-premium p-6"
                                     >
                                         <h3 className="text-xl font-bold text-secondary mb-2">{restaurant.name}</h3>
                                         <p className="text-gray-600 mb-2">{restaurant.address}</p>
                                         <p className="text-xs text-gray-400">ID: {restaurant._id}</p>
-
-                                        <div className="mt-4 flex gap-2 justify-end">
-                                            <button
-                                                onClick={() => handleEditRestaurant(restaurant)}
-                                                className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteRestaurant(restaurant)}
-                                                className="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
                                     </motion.div>
                                 ))
                             ) : (
@@ -605,105 +544,7 @@ const AdminDashboard = () => {
             {/* Products Tab */}
             {activeTab === 'products' && (
                 <div>
-                    {/* Add Product Form */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl shadow-premium p-6 mb-8"
-                    >
-                        <h3 className="text-2xl font-bold text-secondary mb-4">Add New Product</h3>
-                        <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g., Spicy Chicken Burger"
-                                    value={newProduct.name}
-                                    onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="e.g., 9.99"
-                                    value={newProduct.price}
-                                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                <textarea
-                                    placeholder="Product description..."
-                                    value={newProduct.description}
-                                    onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    rows="3"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g., Burgers"
-                                    value={newProduct.category}
-                                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                                <input
-                                    type="text"
-                                    placeholder="https://example.com/image.jpg"
-                                    value={newProduct.imageUrl}
-                                    onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                                <input
-                                    type="number"
-                                    placeholder="e.g., 50"
-                                    value={newProduct.stock}
-                                    onChange={(e) => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Restaurant</label>
-                                <select
-                                    value={newProduct.restaurantId}
-                                    onChange={(e) => setNewProduct({ ...newProduct, restaurantId: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    required
-                                >
-                                    <option value="">Select a Restaurant</option>
-                                    {restaurants.map((r) => (
-                                        <option key={r._id} value={r._id}>{r.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                className="md:col-span-2 bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg"
-                            >
-                                Add Product
-                            </motion.button>
-                        </form>
-                    </motion.div>
+
 
                     {/* Products List */}
                     {loading ? (
@@ -721,35 +562,15 @@ const AdminDashboard = () => {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
-                                        className={`relative ${!product.isAvailable ? 'opacity-60' : ''}`}
+                                        className="relative"
                                     >
-                                        <ProductCard product={product} showAddToCart={false} />
-                                        <div className="absolute top-2 right-2 flex flex-col gap-2">
-                                            <button
-                                                onClick={() => handleToggleProductStatus(product)}
-                                                className={`p-2 rounded-full shadow-lg transition-colors ${product.isAvailable
-                                                    ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                                                    : 'bg-green-100 text-green-600 hover:bg-green-200'
-                                                    }`}
-                                                title={product.isAvailable ? "Hide Product" : "Show Product"}
-                                            >
-                                                {product.isAvailable ? '🚫' : '✅'}
-                                            </button>
-                                            <button
-                                                onClick={() => handleEditProduct(product)}
-                                                className="p-2 rounded-full shadow-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
-                                                title="Edit Product"
-                                            >
-                                                ✏️
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteProduct(product)}
-                                                className="p-2 rounded-full shadow-lg bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 transition-colors"
-                                                title="Delete Product"
-                                            >
-                                                🗑️
-                                            </button>
-                                        </div>
+                                        <ProductCard product={product} />
+                                        <button
+                                            onClick={() => handleDeleteProduct(product._id)}
+                                            className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                                        >
+                                            🗑️
+                                        </button>
                                     </motion.div>
                                 ))
                             ) : (
@@ -757,6 +578,66 @@ const AdminDashboard = () => {
                                     <p className="text-xl text-gray-500">No products available</p>
                                 </div>
                             )}
+                        </div>
+                    )}
+                </div>
+            )}
+            {/* Statistics Tab */}
+            {activeTab === 'statistics' && (
+                <div>
+                    {loading ? (
+                        <LoadingSpinner />
+                    ) : error ? (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl">
+                            {error}
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-2xl shadow-premium overflow-hidden">
+                            <div className="p-6 border-b border-gray-100">
+                                <h3 className="text-xl font-bold text-secondary">Revenue by Restaurant</h3>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Restaurant</th>
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Metric</th>
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {revenueStats.length > 0 ? (
+                                            revenueStats.map((stat, index) => {
+                                                const restaurant = restaurants.find(r => r._id === stat._id);
+                                                return (
+                                                    <tr key={stat._id} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="px-6 py-4">
+                                                            <div className="font-medium text-secondary">
+                                                                {restaurant ? restaurant.name : 'Unknown Restaurant'}
+                                                            </div>
+                                                            <div className="text-xs text-gray-400">ID: {stat._id}</div>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <div className="text-sm text-gray-600">Orders Delivered</div>
+                                                            <div className="text-sm text-gray-600">Total Revenue</div>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <div className="font-semibold text-secondary">{stat.orderCount}</div>
+                                                            <div className="font-bold text-green-600">${stat.totalRevenue.toFixed(2)}</div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="3" className="px-6 py-12 text-center text-gray-500">
+                                                    No revenue data available
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     )}
                 </div>
