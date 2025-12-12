@@ -43,85 +43,89 @@ const TrackingPage = () => {
 
         const fetchData = async () => {
             try {
-                // The drone service exposes mission status at /api/v1/missions/order/:orderId
-                // Gateway maps /v1 -> /api/v1 so call /missions/order/:orderId
-                const response = await api.get(`/missions/order/${orderId}`);
-
-                if (response.data && response.data.success) {
-                    const mission = response.data.data || response.data.delivery || null;
-
-                    if (mission) {
-                        // mission.drone is populated with Drone model which contains currentLocation
-                        const drone = mission.drone || {};
-                        const location = (drone.currentLocation && { lat: drone.currentLocation.lat, lng: drone.currentLocation.lng })
-                            || mission.deliveryLocation
-                            || mission.pickupLocation
-                            || { lat: 10, lng: 10 };
-
-                        setDroneData({
-                            droneName: drone.name || 'Drone',
-                            battery: drone.batteryLevel ?? drone.battery ?? 100,
-                            location,
-                            status: mission.status || drone.status || 'PENDING',
-                            restaurantLocation: mission.pickupLocation,
-                            customerLocation: mission.deliveryLocation
-                        });
-
-                        // Normalize status for UI
-                        const normalizedStatus = (mission.status === 'IN_PROGRESS' || mission.status === 'DELIVERING' || mission.status === 'PENDING')
-                            ? (mission.status === 'IN_PROGRESS' ? 'DELIVERING' : mission.status)
-                            : mission.status;
-
-                        setOrderStatus(normalizedStatus || 'Pending');
-                        setEstimatedTime(mission.estimatedTravelTime || mission.estimatedTime || 0);
-                        setError('');
-                    } else {
-                        // If no mission found, try to get order status from order service
-                        try {
-                            const orderRes = await api.get(`/orders/${orderId}`);
-                            if (orderRes.data && orderRes.data.order) {
-                                setOrderStatus(orderRes.data.order.status);
-                                // Also set locations if available in order
-                                if (orderRes.data.order.restaurantLocation && orderRes.data.order.customerLocation) {
-                                    setDroneData(prev => ({
-                                        ...prev,
-                                        restaurantLocation: orderRes.data.order.restaurantLocation,
-                                        customerLocation: orderRes.data.order.customerLocation,
-                                        // Default drone location to restaurant if not started
-                                        location: orderRes.data.order.restaurantLocation
-                                    }));
-                                }
-                            }
-                        } catch (e) {
-                            console.error("Could not fetch order details", e);
-                        }
-                        setError('No drone assigned yet. Please wait...');
+                // 1. Fetch Order details first (Authoritative source for 'Delivered')
+                let order = null;
+                try {
+                    const orderRes = await api.get(`/orders/${orderId}`);
+                    if (orderRes.data && orderRes.data.order) {
+                        order = orderRes.data.order;
                     }
+                } catch (e) {
+                    console.error("Error fetching order:", e);
+                    setError('Order not found');
+                    setLoading(false);
+                    return;
+                }
+
+                if (!order) return;
+
+                // 2. Try to fetch Mission details
+                let mission = null;
+                try {
+                    const missionRes = await api.get(`/missions/order/${orderId}`);
+                    if (missionRes.data && missionRes.data.success) {
+                        mission = missionRes.data.data || missionRes.data.delivery;
+                    }
+                } catch (e) {
+                    // Mission might not exist yet, ignore error
+                }
+
+                // 3. Determine Status
+                // If Order is Delivered, that beats everything else
+                let displayStatus = order.status;
+
+                if (displayStatus !== 'Delivered' && mission) {
+                    // If not delivered, utilize mission status for more granularity (e.g. DELIVERING)
+                    const mStatus = mission.status;
+                    displayStatus = (mStatus === 'IN_PROGRESS' || mStatus === 'DELIVERING' || mStatus === 'PENDING')
+                        ? (mStatus === 'IN_PROGRESS' ? 'DELIVERING' : mStatus)
+                        : mStatus;
+                }
+
+                setOrderStatus(displayStatus);
+
+                // 4. Update Drone/Location Data
+                if (mission) {
+                    const drone = mission.drone || {};
+                    const location = (drone.currentLocation && { lat: drone.currentLocation.lat, lng: drone.currentLocation.lng })
+                        || mission.deliveryLocation
+                        || mission.pickupLocation
+                        || { lat: 10, lng: 10 };
+
+                    setDroneData({
+                        droneName: drone.name || 'Drone',
+                        battery: drone.batteryLevel ?? drone.battery ?? 100,
+                        location,
+                        status: mission.status,
+                        restaurantLocation: mission.pickupLocation,
+                        customerLocation: mission.deliveryLocation
+                    });
+                    setEstimatedTime(mission.estimatedTravelTime || mission.estimatedTime || 0);
+                    setError('');
                 } else {
-                    // Fallback to check order status directly if mission not found
-                    try {
-                        const orderRes = await api.get(`/orders/${orderId}`);
-                        if (orderRes.data && orderRes.data.order) {
-                            setOrderStatus(orderRes.data.order.status);
-                            if (orderRes.data.order.restaurantLocation && orderRes.data.order.customerLocation) {
-                                setDroneData(prev => ({
-                                    ...prev,
-                                    restaurantLocation: orderRes.data.order.restaurantLocation,
-                                    customerLocation: orderRes.data.order.customerLocation,
-                                    location: orderRes.data.order.restaurantLocation
-                                }));
-                            }
-                        }
-                    } catch (e) {
-                        console.error("Could not fetch order details", e);
+                    // Fallback to order locations if no mission
+                    if (order.restaurantLocation && order.customerLocation) {
+                        setDroneData(prev => ({
+                            ...prev,
+                            restaurantLocation: order.restaurantLocation,
+                            customerLocation: order.customerLocation,
+                            location: order.restaurantLocation,
+                            droneName: prev?.droneName || 'Drone',
+                            battery: prev?.battery || 100
+                        }));
                     }
-                    setError(response.data?.message || 'No drone assigned yet. Please wait...');
+                    if (displayStatus !== 'Delivered' && displayStatus !== 'Cancelled') {
+                        // Only show waiting message if active and no mission
+                        setError('Waiting for drone assignment...');
+                    } else {
+                        setError('');
+                    }
                 }
 
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Failed to load order details');
+                console.error('Error in fetchData:', err);
+                // setError('Failed to load data');
                 setLoading(false);
             }
         };
