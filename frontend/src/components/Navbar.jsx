@@ -49,25 +49,27 @@ const Navbar = () => {
 
                     {/* Right Side Actions */}
                     <div className="flex items-center space-x-4">
-                        {/* Cart */}
-                        <Link to="/cart" className="relative">
-                            <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="p-2 text-2xl relative"
-                            >
-                                🛒
-                                {cartCount > 0 && (
-                                    <motion.span
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        className="absolute -top-1 -right-1 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
-                                    >
-                                        {cartCount}
-                                    </motion.span>
-                                )}
-                            </motion.button>
-                        </Link>
+                        {/* Cart - Hide for Admin */}
+                        {user?.role !== 'admin' && (
+                            <Link to="/cart" className="relative">
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="p-2 text-2xl relative"
+                                >
+                                    🛒
+                                    {cartCount > 0 && (
+                                        <motion.span
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="absolute -top-1 -right-1 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
+                                        >
+                                            {cartCount}
+                                        </motion.span>
+                                    )}
+                                </motion.button>
+                            </Link>
+                        )}
 
                         {/* User Menu */}
                         {user ? (

@@ -564,7 +564,7 @@ const AdminDashboard = () => {
                                         transition={{ delay: index * 0.05 }}
                                         className="relative"
                                     >
-                                        <ProductCard product={product} />
+                                        <ProductCard product={product} showAddToCart={false} />
                                         <button
                                             onClick={() => handleDeleteProduct(product._id)}
                                             className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-colors"
