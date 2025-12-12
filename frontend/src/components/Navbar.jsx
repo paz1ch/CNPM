@@ -49,8 +49,8 @@ const Navbar = () => {
 
                     {/* Right Side Actions */}
                     <div className="flex items-center space-x-4">
-                        {/* Cart - Hide for Admin */}
-                        {user?.role !== 'admin' && (
+                        {/* Cart - Hide for Admin and Restaurant */}
+                        {!['admin', 'restaurant'].includes(user?.role) && (
                             <Link to="/cart" className="relative">
                                 <motion.button
                                     whileHover={{ scale: 1.1 }}
